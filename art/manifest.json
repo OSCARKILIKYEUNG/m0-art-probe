@@ -1,0 +1,125 @@
+{
+  "note": "Written by scripts/sync-art.mjs from art/processed/m0-*. Do not edit by hand.",
+  "source": "art/processed",
+  "slots": [
+    {
+      "slot": "m0-env-a.png",
+      "present": true
+    },
+    {
+      "slot": "m0-env-a.collision.json",
+      "present": true
+    },
+    {
+      "slot": "m0-env-b-tiles.png",
+      "present": true
+    },
+    {
+      "slot": "m0-env-b-tiles.json",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-sprite.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-anime-neutral.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-anime-smiling.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-anime-surprised.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-anime-determined.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-painted-neutral.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-painted-smiling.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-painted-surprised.png",
+      "present": true
+    },
+    {
+      "slot": "m0-harry-portrait-painted-determined.png",
+      "present": true
+    }
+  ],
+  "files": [
+    {
+      "name": "m0-env-a.collision.json",
+      "bytes": 1626,
+      "sha256": "3ec7c63619c4c5e92a0e0d4c556aba34afe60f7763f9201e97d3fd44501eb9b0"
+    },
+    {
+      "name": "m0-env-a.png",
+      "bytes": 34229,
+      "sha256": "d750fdad97d64d98f3935f49f662e9e83daa2c5fa44fecd870cd9ebef07adc40"
+    },
+    {
+      "name": "m0-env-b-tiles.json",
+      "bytes": 7671,
+      "sha256": "87a60c68458bab8561ebd34ba73ef67677534e98f8f4df5cf77e85e7ac34c87d"
+    },
+    {
+      "name": "m0-env-b-tiles.png",
+      "bytes": 18357,
+      "sha256": "70f203f5ccf703bd5f65a4c54599bd60af0077859e50f4c033ddde22862b3e40"
+    },
+    {
+      "name": "m0-harry-portrait-anime-determined.png",
+      "bytes": 111205,
+      "sha256": "e004697632ec2505ef2d7e956b2bd96d55761f450e2b2b1331c863ed2a73cd97"
+    },
+    {
+      "name": "m0-harry-portrait-anime-neutral.png",
+      "bytes": 111073,
+      "sha256": "8c99add10491520dfbe3bb18cfce3c57b3ead138d583a67874f797ad59e3be33"
+    },
+    {
+      "name": "m0-harry-portrait-anime-smiling.png",
+      "bytes": 111460,
+      "sha256": "149dd7f02df3e3b7c5222ab84a1eb3cf1d30b681e0f42b346efe3f6a889f7bfe"
+    },
+    {
+      "name": "m0-harry-portrait-anime-surprised.png",
+      "bytes": 113425,
+      "sha256": "3ce3a0ce1d4fa80d87c340e227d2925589a15775c414dd7bc858593097559e65"
+    },
+    {
+      "name": "m0-harry-portrait-painted-determined.png",
+      "bytes": 108749,
+      "sha256": "0d6cb738035daf08ef23a95a6978aa5d80f7dddf70354b23b333e096fa3fa78e"
+    },
+    {
+      "name": "m0-harry-portrait-painted-neutral.png",
+      "bytes": 109203,
+      "sha256": "0d1937c0afbce28ea0fd1eca172a5d0b8794adc9488e8953ecb60b1a1a7a4230"
+    },
+    {
+      "name": "m0-harry-portrait-painted-smiling.png",
+      "bytes": 111397,
+      "sha256": "6411cf71acd75326b809d7d3bf17bb0c657d6636d163d6f9295d87443724a02b"
+    },
+    {
+      "name": "m0-harry-portrait-painted-surprised.png",
+      "bytes": 111814,
+      "sha256": "b7986e80d40483aabbce59e0d39872301fda900ff025cbf761c983232111ebdd"
+    },
+    {
+      "name": "m0-harry-sprite.png",
+      "bytes": 8260,
+      "sha256": "5e31032c73bad459de652342bfc9127637ffbda77d11bd7bf3d2bff3f46ccfb3"
+    }
+  ]
+}

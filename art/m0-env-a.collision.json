@@ -1,0 +1,19 @@
+{
+  "note": "Hand-authored for m0-env-a.png (unit M0-P2, T1). Rectangles are in GAME px: the room image is 256 x 150 true pixels drawn at artScale 2 = 512 x 300 game px; the walk grid is 32 game px from the image's top-left (16 x 9 tiles). Measured on the processed image with a 16-game-px grid overlay: floor = game y 136-255 (wall-base outline at 134, low front wall's dark edge at 256-258) -> walkable rows 4-7, feet at y 160 / 192 / 224 / 256. Back wall ends at y 128 (row 3 blocked). Armour in its alcove: alcove x 222-292, armour figure x 244-272, helmet top y 50, plinth bottom y 134. Door: arch x 416-490, wood x 428-478 from y 50 to 132. Windows: glass x 82-114 and 322-356, y 38-104. No side walls in the art: the floor runs to both image edges, so the room bounds stop Harry there.",
+  "artScale": 2,
+  "solids": [
+    { "id": "back-wall-west (window, torch, banner)", "x": 0, "y": 0, "w": 222, "h": 128 },
+    { "id": "armour-alcove", "x": 222, "y": 0, "w": 70, "h": 128 },
+    { "id": "back-wall-middle (window, torch)", "x": 292, "y": 0, "w": 124, "h": 128 },
+    { "id": "door", "x": 416, "y": 0, "w": 74, "h": 128 },
+    { "id": "back-wall-east", "x": 490, "y": 0, "w": 22, "h": 128 },
+    { "id": "front-low-wall", "x": 0, "y": 256, "w": 512, "h": 44 }
+  ],
+  "talk": [{ "id": "armour", "x": 236, "y": 64, "w": 56, "h": 64 }],
+  "moonPools": [
+    { "x": 98, "y": 168, "rx": 30, "ry": 14, "windowX": 98, "windowY": 71 },
+    { "x": 339, "y": 168, "rx": 30, "ry": 14, "windowX": 339, "windowY": 71 }
+  ],
+  "spawn": { "tx": 3, "ty": 5, "facing": "right" },
+  "talkSpot": { "tx": 8, "ty": 4, "facing": "up" }
+}
