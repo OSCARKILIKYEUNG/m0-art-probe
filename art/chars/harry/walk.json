@@ -1,0 +1,20 @@
+{
+ "cell": [
+  80,
+  80
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 8,
+ "fps": 10,
+ "source": "PixelLab character 19ddee91 skeleton-v3 walking-8-frames (group fb4bb295)",
+ "feet_y": 65
+}

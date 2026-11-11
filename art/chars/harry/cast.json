@@ -1,0 +1,20 @@
+{
+ "cell": [
+  80,
+  80
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 6,
+ "fps": 12,
+ "feet_y": 64,
+ "source": "PixelLab character 19ddee91 skeleton-v3 fireball (group edbc61ca); baked flame pixels removed and stray fragments dropped by Friday (effects are drawn in code)"
+}
