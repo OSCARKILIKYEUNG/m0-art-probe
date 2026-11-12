@@ -1,0 +1,20 @@
+{
+ "cell": [
+  80,
+  80
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 8,
+ "fps": 8,
+ "feet_y": 63,
+ "source": "PixelLab skeleton-v3 walking-8-frames stride 1.25, character 412bd1de, group f8be7852"
+}

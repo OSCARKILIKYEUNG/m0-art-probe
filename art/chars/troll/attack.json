@@ -1,0 +1,20 @@
+{
+ "cell": [
+  168,
+  168
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 6,
+ "fps": 10,
+ "feet_y": 133,
+ "source": "PixelLab v3 custom: club raised overhead and smashed down; character 895d2a86, group 10e3b9f0"
+}

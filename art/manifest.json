@@ -72,6 +72,16 @@
       "sha256": "060e4bb1478b9beac17955a4e7356348937aa39f66286b148f8c839171543732"
     },
     {
+      "name": "chars/filch/walk.json",
+      "bytes": 307,
+      "sha256": "43d939b3cd9fde788f3cb81cd62c21b4bbe4521aaf3bdf14f7a5e41573de643f"
+    },
+    {
+      "name": "chars/filch/walk.png",
+      "bytes": 51442,
+      "sha256": "03a56add2e20cc144e0b89e5f1ed9a26673e03f20a19545b306afa94f1a2733c"
+    },
+    {
       "name": "chars/flitwick/rot.json",
       "bytes": 359,
       "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
@@ -262,6 +272,16 @@
       "sha256": "e4ebf2280a64741328b7bb408a3a8042bf94c76d4187fab916e98b12b581402a"
     },
     {
+      "name": "chars/mcgonagall/walk.json",
+      "bytes": 307,
+      "sha256": "829b8c81870312c451e518f06515878beb38813f8f80fc8dff98f2dd9812ddb3"
+    },
+    {
+      "name": "chars/mcgonagall/walk.png",
+      "bytes": 45817,
+      "sha256": "de95b383784ba5e812502d04b8fb833a6393d9c2c4718a0ce95ee5266813cb62"
+    },
+    {
       "name": "chars/mrs-norris/rot.json",
       "bytes": 359,
       "sha256": "7a30a5d050d6634e681d38bf191b34d708900a2fa4943ac15bf063568ee138c3"
@@ -432,6 +452,16 @@
       "sha256": "8aa772ecc80fde8b7adb6fa3585fb5016d2d20d0bf6f58e9f0e75ed0fcf6d841"
     },
     {
+      "name": "chars/troll/attack.json",
+      "bytes": 319,
+      "sha256": "0c95cb26620c62d74bb900059aab3a5669e8cd9849cb71bc7f7c2bacae3abce2"
+    },
+    {
+      "name": "chars/troll/attack.png",
+      "bytes": 257375,
+      "sha256": "5646d5486d2cbf10dd40c7e1c5b7af86e2e746ccfe10e41cdb00e70d8929e8a0"
+    },
+    {
       "name": "chars/troll/rot.json",
       "bytes": 362,
       "sha256": "bd1e56f209dc3666ae627ac5cfc9bc2d5c168695ea73c3fd549feaf629b5cb8f"
@@ -440,6 +470,16 @@
       "name": "chars/troll/rot.png",
       "bytes": 48594,
       "sha256": "57e6310a9fdf416e8c2a7cb2f9be28644fec233eed0660a585bc1d61baaa6f10"
+    },
+    {
+      "name": "chars/troll/walk.json",
+      "bytes": 298,
+      "sha256": "3a4c0cb5387a3751037c944cbe322a0a1ccf8baaec0b577d7475bf7a2eb92b16"
+    },
+    {
+      "name": "chars/troll/walk.png",
+      "bytes": 307670,
+      "sha256": "6b23b6c52ec76e355917ec8048a21005814e8d8fb46ec3c1990344f1a4f4bfc7"
     },
     {
       "name": "chars/trolley-witch/rot.json",
@@ -650,6 +690,11 @@
       "name": "stills/still-castle.png",
       "bytes": 62349,
       "sha256": "465e1e8074e0f02eac40c9ee52d5b83257c1befea6afb1589c249af0c98e20e8"
+    },
+    {
+      "name": "stills/still-fluffy.png",
+      "bytes": 64489,
+      "sha256": "d201646c2f48bb0377745399e15aae922c199cc530f7d9be1b03edff3d4b7314"
     }
   ],
   "sheets": {
@@ -672,7 +717,8 @@
       "rot"
     ],
     "filch": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "flitwick": [
       "rot"
@@ -715,7 +761,8 @@
       "walk"
     ],
     "mcgonagall": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "mrs-norris": [
       "rot"
@@ -763,7 +810,9 @@
       "rot"
     ],
     "troll": [
-      "rot"
+      "attack",
+      "rot",
+      "walk"
     ],
     "trolley-witch": [
       "rot"
