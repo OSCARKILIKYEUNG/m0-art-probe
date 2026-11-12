@@ -1,0 +1,20 @@
+{
+ "cell": [
+  80,
+  80
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 4,
+ "fps": 6,
+ "feet_y": 62,
+ "source": "PixelLab character fd08e882 skeleton-v3 breathing-idle (group 07c5f836)"
+}

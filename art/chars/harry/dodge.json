@@ -1,0 +1,20 @@
+{
+ "cell": [
+  80,
+  80
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 6,
+ "fps": 14,
+ "feet_y": 65,
+ "source": "skeleton-v3 running-slide, 8 dirs"
+}

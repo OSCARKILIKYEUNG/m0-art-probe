@@ -1,7 +1,7 @@
 {
  "cell": [
-  80,
-  80
+  76,
+  76
  ],
  "rows": [
   "south",
@@ -15,6 +15,6 @@
  ],
  "frames": 6,
  "fps": 12,
- "feet_y": 64,
- "source": "PixelLab character 19ddee91 skeleton-v3 fireball (group edbc61ca); baked flame pixels removed and stray fragments dropped by Friday (effects are drawn in code)"
+ "feet_y": 63,
+ "source": "PixelLab character 19ddee91 v3 custom wand cast (group d46ca019); cells 76 px"
 }

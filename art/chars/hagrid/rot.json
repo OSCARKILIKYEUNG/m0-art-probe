@@ -1,0 +1,24 @@
+{
+ "cell": [
+  96,
+  96
+ ],
+ "rows": [
+  "rot"
+ ],
+ "cols": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 8,
+ "fps": 0,
+ "feet_y": 92,
+ "layout": "rot: one row, one frame per direction in the order of cols",
+ "source": "PixelLab pro, style of Harry 19ddee91"
+}

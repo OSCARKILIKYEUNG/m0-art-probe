@@ -2,14 +2,164 @@
   "note": "Written by scripts/sync-art.mjs from art/processed. Do not edit by hand.",
   "files": [
     {
+      "name": "chars/adult-a/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/adult-a/rot.png",
+      "bytes": 5211,
+      "sha256": "c7fba5a8871e3a1d88042e7e20bba05b247b30555ce0b5ac77c4b5e3c48b85f2"
+    },
+    {
+      "name": "chars/adult-b/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/adult-b/rot.png",
+      "bytes": 10079,
+      "sha256": "0a7305074d5158315993d3750c96dcb8c4b9a39f4561ff7d30526364ec75a7fd"
+    },
+    {
+      "name": "chars/binns/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/binns/rot.png",
+      "bytes": 14055,
+      "sha256": "49532f306c7b22e5a645eae31db269d65b52e9360ce72c109a04b7e144f4e8d9"
+    },
+    {
+      "name": "chars/crabbe/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/crabbe/rot.png",
+      "bytes": 7519,
+      "sha256": "fab40bc1191dd1546ae6d200ab8e2b37c69d53990adf6dc60df5f4a534a67523"
+    },
+    {
+      "name": "chars/dumbledore/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/dumbledore/rot.png",
+      "bytes": 7857,
+      "sha256": "b72e04e6217bb89ca4d98897d552e1912d7533b1718b5da0469aab5923cb2dc7"
+    },
+    {
+      "name": "chars/fang/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/fang/rot.png",
+      "bytes": 10537,
+      "sha256": "7fc8bc7f31b244b82d854a7d2eabcaee0bed211b7ae1b805369c8977cbca3e4c"
+    },
+    {
+      "name": "chars/filch/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/filch/rot.png",
+      "bytes": 11595,
+      "sha256": "060e4bb1478b9beac17955a4e7356348937aa39f66286b148f8c839171543732"
+    },
+    {
+      "name": "chars/flitwick/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/flitwick/rot.png",
+      "bytes": 7409,
+      "sha256": "a1eaca15109ff915af9e8c4abd7e69c32f647fb388dd9045ad0d1cd1262a0b54"
+    },
+    {
+      "name": "chars/fred/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/fred/rot.png",
+      "bytes": 6253,
+      "sha256": "dcaaa3e71d37973791759486c4ee78a49fea05ac4354f6c232969fe088b7d04a"
+    },
+    {
+      "name": "chars/george/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/george/rot.png",
+      "bytes": 6253,
+      "sha256": "dcaaa3e71d37973791759486c4ee78a49fea05ac4354f6c232969fe088b7d04a"
+    },
+    {
+      "name": "chars/ginny/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/ginny/rot.png",
+      "bytes": 6999,
+      "sha256": "272ac1ff645ac22d1337868e917677984bf8430cffd0fe9f308377bac82c4f94"
+    },
+    {
+      "name": "chars/goyle/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/goyle/rot.png",
+      "bytes": 9862,
+      "sha256": "89d1428ba05c67528e2853e54d02dcfe3c4715ccf68d077b17b74bdadc2bb328"
+    },
+    {
+      "name": "chars/hagrid/rot.json",
+      "bytes": 359,
+      "sha256": "d2256acbe9cbe3f8b6aa4b1d7f233f52077184fbd5e2cd3391f21210e0ab126c"
+    },
+    {
+      "name": "chars/hagrid/rot.png",
+      "bytes": 44981,
+      "sha256": "abc0823a9e1ef2b34dbcf0a3a60370f9e3cbbef7aec58a50bba8fa9541d37c1d"
+    },
+    {
       "name": "chars/harry/cast.json",
-      "bytes": 382,
-      "sha256": "0389576e080f5653c57aa03fe2597a4f48ba9717526facd70816ad4232f977a4"
+      "bytes": 300,
+      "sha256": "f3c62c2bab2914d3d4ee46231741cfc1d31f07d730bb148ad902e0db5c3b1ef7"
     },
     {
       "name": "chars/harry/cast.png",
-      "bytes": 27931,
-      "sha256": "30dd92d7a9d9418a4ae91d359edc1372cea59ff9eb9e222a6b606b4a4c58038d"
+      "bytes": 29504,
+      "sha256": "85f81e1d52d080ddf4ae570f0ba9609286ed2618a7bff2ace054a6b3d565a9a5"
+    },
+    {
+      "name": "chars/harry/dodge.json",
+      "bytes": 256,
+      "sha256": "4456dff888e4d36e466b58d7cb4a49ede00175fc2937c466c1ddf91c3dd23321"
+    },
+    {
+      "name": "chars/harry/dodge.png",
+      "bytes": 27741,
+      "sha256": "48f65fe86f4d43a4fc4724b32cec3975c2460bf71415fd04dcb9134410c34266"
+    },
+    {
+      "name": "chars/harry/hit.json",
+      "bytes": 255,
+      "sha256": "3420e20ee4ce39e2ba98938c4db4f5d843f86301e13f6df3c3b12c0603ba6449"
+    },
+    {
+      "name": "chars/harry/hit.png",
+      "bytes": 28336,
+      "sha256": "80be485f6859c2cc6470473c38c92af1ee027a5fc3382bfbef8a7b67dccf74fb"
     },
     {
       "name": "chars/harry/idle.json",
@@ -42,6 +192,276 @@
       "sha256": "678f841033426da6679ee5802d3827aa526a824b359e6a4bb1749abc1dd19f34"
     },
     {
+      "name": "chars/hermione/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/hermione/rot.png",
+      "bytes": 5857,
+      "sha256": "1514282a0c7ff68658eec26ed47200329df5c1182b9e46791d8e8830cbf142b9"
+    },
+    {
+      "name": "chars/hermione/walk.json",
+      "bytes": 296,
+      "sha256": "de7a88a8bc6092a0f25d830c2c75b3f8ed1aa400c17cac4611e985940ef63422"
+    },
+    {
+      "name": "chars/hermione/walk.png",
+      "bytes": 24678,
+      "sha256": "665bcb8fd503f3b7f019406607aca9f2f9bbb7321061cae7f4bc70a9d4648099"
+    },
+    {
+      "name": "chars/hooch/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/hooch/rot.png",
+      "bytes": 11738,
+      "sha256": "d9686c28a380649119a4623086ea4dbc469bc13e37b02fa4b8c501e467c06d71"
+    },
+    {
+      "name": "chars/lee/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/lee/rot.png",
+      "bytes": 11178,
+      "sha256": "a980ed214513bf4310bb300fe723a36dbf52aaad7b73c0807df5a1d88a6b90c7"
+    },
+    {
+      "name": "chars/malfoy/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/malfoy/rot.png",
+      "bytes": 8663,
+      "sha256": "a9aa0613e533fc4738c9941dec7ffc72c5e74fcb271f076d6639af66cbb31797"
+    },
+    {
+      "name": "chars/malfoy/walk.json",
+      "bytes": 296,
+      "sha256": "3cd8702349829302f694fbbb27a8e9a210dac296ddb13d657591e8dc7e43fd77"
+    },
+    {
+      "name": "chars/malfoy/walk.png",
+      "bytes": 36756,
+      "sha256": "c5f5d07ac6335072d29b810efec0ff5b703b7ca23b10feb5b7c2ad70dce05522"
+    },
+    {
+      "name": "chars/mcgonagall/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/mcgonagall/rot.png",
+      "bytes": 10300,
+      "sha256": "e4ebf2280a64741328b7bb408a3a8042bf94c76d4187fab916e98b12b581402a"
+    },
+    {
+      "name": "chars/mrs-norris/rot.json",
+      "bytes": 359,
+      "sha256": "7a30a5d050d6634e681d38bf191b34d708900a2fa4943ac15bf063568ee138c3"
+    },
+    {
+      "name": "chars/mrs-norris/rot.png",
+      "bytes": 12958,
+      "sha256": "419fd36da66a226e0335949787eb84f24dccfc1ff2c177218482afdf7651bd02"
+    },
+    {
+      "name": "chars/mrs-weasley/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/mrs-weasley/rot.png",
+      "bytes": 15980,
+      "sha256": "3f16e13cb5c5cb2d1b02a4a21670c244ae0d3373771886e83537f3de0e9183c6"
+    },
+    {
+      "name": "chars/neville/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/neville/rot.png",
+      "bytes": 7606,
+      "sha256": "0fa9f031408698d21316a775692bdade9725e691eedc7297e740074b7d890768"
+    },
+    {
+      "name": "chars/neville/walk.json",
+      "bytes": 296,
+      "sha256": "909b61140151cff53279eb3cb2cda000640ce33b3e7c24d65a6b63657630c497"
+    },
+    {
+      "name": "chars/neville/walk.png",
+      "bytes": 33279,
+      "sha256": "f1664202ae9f9c95658a8bc7f512ef27acd523a0e5537059d89a64271f228308"
+    },
+    {
+      "name": "chars/nick/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/nick/rot.png",
+      "bytes": 14314,
+      "sha256": "428eb269b1e34c9bc1919e536c381806e5f02ef56658eee058ed0b8cc8165aaa"
+    },
+    {
+      "name": "chars/peeves/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/peeves/rot.png",
+      "bytes": 14650,
+      "sha256": "5cd24beffe6f2bf5269c61cd5a1f460bd5c4da1a4ade3368b34c0b4001054e7a"
+    },
+    {
+      "name": "chars/percy/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/percy/rot.png",
+      "bytes": 6214,
+      "sha256": "053988c858717e4a4f386de7a9fa08ff733596fc01fa7b6d3f738185117cf053"
+    },
+    {
+      "name": "chars/quirrell/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/quirrell/rot.png",
+      "bytes": 10826,
+      "sha256": "b04b1904ad69fa8a5da21b22c6c85fda40183fa0c50428bb41be30f0361bb4a8"
+    },
+    {
+      "name": "chars/ron/idle.json",
+      "bytes": 293,
+      "sha256": "33db5a8ecd2a92bfbb0524dc510ffdc9f62fa8541735a44b7d82cfb7851c11d2"
+    },
+    {
+      "name": "chars/ron/idle.png",
+      "bytes": 14707,
+      "sha256": "b1f4d032905b2a794e58660ea9c361cf5c90c47bf8adda2ebeeea83315558d52"
+    },
+    {
+      "name": "chars/ron/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/ron/rot.png",
+      "bytes": 5384,
+      "sha256": "ee92d7588cf6eb5f620871d1b403edfc7a409e90e715e22850e068b820789d7d"
+    },
+    {
+      "name": "chars/ron/walk.json",
+      "bytes": 296,
+      "sha256": "2f04dbfda35b954aecfdda7fcaca7a6cd5bdb79acb7997ee28b06d001633e610"
+    },
+    {
+      "name": "chars/ron/walk.png",
+      "bytes": 26204,
+      "sha256": "afa1a6ab5495a4614939b4b4f1ad4ed3878cf01640604e4202945ac34e9cd6c1"
+    },
+    {
+      "name": "chars/snape/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/snape/rot.png",
+      "bytes": 9812,
+      "sha256": "a6f6b2aae7f0bd80ea70ac3c4153c71c71a94ee93d53b237e37dc47311c58c0a"
+    },
+    {
+      "name": "chars/sprout/rot.json",
+      "bytes": 359,
+      "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
+    },
+    {
+      "name": "chars/sprout/rot.png",
+      "bytes": 15699,
+      "sha256": "909c44607c471dce272cd15e1026e9d77e46b5121ea968d6b40108f359592f71"
+    },
+    {
+      "name": "chars/student-a/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/student-a/rot.png",
+      "bytes": 7047,
+      "sha256": "fedf84a33c1c2d0ec1620fbb0cebbeea5c8343b095dbb06d7f5eb1149fc4db7f"
+    },
+    {
+      "name": "chars/student-b/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/student-b/rot.png",
+      "bytes": 7069,
+      "sha256": "9d84bca4fe921d71cfd4fb641c65c9e99515ce09e7f12bb63fb537befdf9648c"
+    },
+    {
+      "name": "chars/student-c/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/student-c/rot.png",
+      "bytes": 4743,
+      "sha256": "6eb5828d4a55fe64a99606dcf7a7363bd5e41ea8f03a8554dd61154a00dfdab3"
+    },
+    {
+      "name": "chars/student-d/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/student-d/rot.png",
+      "bytes": 5981,
+      "sha256": "8aa772ecc80fde8b7adb6fa3585fb5016d2d20d0bf6f58e9f0e75ed0fcf6d841"
+    },
+    {
+      "name": "chars/troll/rot.json",
+      "bytes": 362,
+      "sha256": "bd1e56f209dc3666ae627ac5cfc9bc2d5c168695ea73c3fd549feaf629b5cb8f"
+    },
+    {
+      "name": "chars/troll/rot.png",
+      "bytes": 48594,
+      "sha256": "57e6310a9fdf416e8c2a7cb2f9be28644fec233eed0660a585bc1d61baaa6f10"
+    },
+    {
+      "name": "chars/trolley-witch/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/trolley-witch/rot.png",
+      "bytes": 8805,
+      "sha256": "60f0fe3183ddba53d0a2557ac4fe82f3aacabeafd00544ff817fbcc212b8e1a1"
+    },
+    {
+      "name": "chars/wood/rot.json",
+      "bytes": 359,
+      "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
+    },
+    {
+      "name": "chars/wood/rot.png",
+      "bytes": 12536,
+      "sha256": "20dcbc7606faf8d01466903446daeff8eddc7fe659b4be283f75e705905c7853"
+    },
+    {
       "name": "m0-env-a.png",
       "bytes": 34229,
       "sha256": "d750fdad97d64d98f3935f49f662e9e83daa2c5fa44fecd870cd9ebef07adc40"
@@ -65,14 +485,291 @@
       "name": "m0-harry-portrait-anime-surprised.png",
       "bytes": 113425,
       "sha256": "3ce3a0ce1d4fa80d87c340e227d2925589a15775c414dd7bc858593097559e65"
+    },
+    {
+      "name": "rooms/chamber.png",
+      "bytes": 38289,
+      "sha256": "4323ad56a73bb185f41b5eba04810294082bf62cb5f5268890e8570dc28aca99"
+    },
+    {
+      "name": "rooms/class-charms.png",
+      "bytes": 33171,
+      "sha256": "58348a9618064f2c4f48f2eb7ce73fd537584f016a15f18661fed6f964232900"
+    },
+    {
+      "name": "rooms/class-defence.png",
+      "bytes": 37857,
+      "sha256": "0278b6057ffdf974667f5e806865afdbf8bf7ae8ff6497bec753e13aa9c0d9ca"
+    },
+    {
+      "name": "rooms/class-potions.png",
+      "bytes": 39579,
+      "sha256": "74b33aec67c73a9fbb66046277588f233a5205bf12978daf9d14f3f04824e31d"
+    },
+    {
+      "name": "rooms/class-transfiguration.png",
+      "bytes": 36540,
+      "sha256": "bff7d2a20b7f48c09534b32da08ae7ae00a065665b2b4dbd0e7a561770312b03"
+    },
+    {
+      "name": "rooms/common-room.png",
+      "bytes": 39354,
+      "sha256": "1c0ba48f85b1b619bb02c19c37040353cc3af12388d25207cddb1793d8db09ab"
+    },
+    {
+      "name": "rooms/compartment.png",
+      "bytes": 22631,
+      "sha256": "116c5ff89c176d303ea1966cf9f43129d4306e96d0e0798a3f0b857fb53cd685"
+    },
+    {
+      "name": "rooms/dormitory.png",
+      "bytes": 40423,
+      "sha256": "69c51b16ccf6df2fe8edabf9d168ebc0e83127187ca1d84bb07fe7b9b7d47b60"
+    },
+    {
+      "name": "rooms/dungeon-corridor.png",
+      "bytes": 30650,
+      "sha256": "8ec5a2292fa5dabbda0a613496f6624d9667a6e94c19f0db887b2b262bca3812"
+    },
+    {
+      "name": "rooms/entrance-hall.png",
+      "bytes": 152519,
+      "sha256": "269df08282adbfd6d3f1ab5255f2c62b4e0d902471ce53e6b775e9203f065d9e"
+    },
+    {
+      "name": "rooms/fluffy-room.png",
+      "bytes": 33722,
+      "sha256": "9e5a04ca1074781a7909047d6ae16aba5fe31011680c31ae89d3a9f6e3227d11"
+    },
+    {
+      "name": "rooms/flying-lawn.png",
+      "bytes": 143313,
+      "sha256": "8661389245e26919d37787a5d605b7d48b9b9b367819ae266ec022516564a059"
+    },
+    {
+      "name": "rooms/girls-bathroom.png",
+      "bytes": 38078,
+      "sha256": "8efe3b066f1cf6de5f8c39f73789d132e58337da9fa21fc879b6277495459092"
+    },
+    {
+      "name": "rooms/great-hall.png",
+      "bytes": 139868,
+      "sha256": "5b98e31d4bf2eed4fd0e2d87f659b99d2e5c2442469e8b4ef0229b55d2f45af3"
+    },
+    {
+      "name": "rooms/greenhouse.png",
+      "bytes": 49648,
+      "sha256": "b3eeace00cba5d39755751946bef4eafd17477c5d06e6dde76cb3738ac828d3c"
+    },
+    {
+      "name": "rooms/grounds.png",
+      "bytes": 170123,
+      "sha256": "0196e469da7111ca8b1864e0ef0c9b7f10a3adc680fbff639b0eebe789380dec"
+    },
+    {
+      "name": "rooms/hagrid-hut.png",
+      "bytes": 42751,
+      "sha256": "aafac0ed4e5480a920ff6460ad2137d4349a65b43377a97360774dc11b010af3"
+    },
+    {
+      "name": "rooms/hogsmeade-station.png",
+      "bytes": 38925,
+      "sha256": "6495d910c143e2fe3ef69a13d7ab819b5ff12a61def0f7d1cb909ef69217ab47"
+    },
+    {
+      "name": "rooms/kings-cross.png",
+      "bytes": 147898,
+      "sha256": "b7eb120bfba3090f12a404f90cc5ee944b3eb8c57dd2c47778658568e2ad42e5"
+    },
+    {
+      "name": "rooms/library.png",
+      "bytes": 142133,
+      "sha256": "e871e9a58d526485ee8b2e227f7cf752a9440feb51f455381cfacb67b5036442"
+    },
+    {
+      "name": "rooms/platform.png",
+      "bytes": 136846,
+      "sha256": "d3407db5422f7dd25afb50394911a8b9ca0b633a737c208e18d1f05c24a39199"
+    },
+    {
+      "name": "rooms/stair-hall.png",
+      "bytes": 168383,
+      "sha256": "97d4e961e4226a2ca47cf7b9110216a669171d33c4c7ffc2e1b8ff7b9373eeb6"
+    },
+    {
+      "name": "rooms/staircase.png",
+      "bytes": 37565,
+      "sha256": "5aece220b844c7c3555502474a1ecf1d50588da17e21fe3d395ec6613b4e1e0c"
+    },
+    {
+      "name": "rooms/third-floor-corridor.png",
+      "bytes": 29799,
+      "sha256": "d3b6400e4166dba7e9ac31bb4ae8831dbd7c28d7e96a542bf3c0378eb662d437"
+    },
+    {
+      "name": "rooms/train-corridor.png",
+      "bytes": 19165,
+      "sha256": "82fd9198be0f15630ae73b9ed914e000228b8fd2752b3cd57839bc3c9a534fdb"
+    },
+    {
+      "name": "rooms/trophy-room.png",
+      "bytes": 40870,
+      "sha256": "e72e84fc56a9eba7837a8b1ea65379f94d21214a63305e9344b0f9ac47063a06"
+    },
+    {
+      "name": "stills/still-01.png",
+      "bytes": 53262,
+      "sha256": "2f8e839da8f750a477f798867d0bebc97c01f85615c41e74771988bfb9a1d868"
+    },
+    {
+      "name": "stills/still-02.png",
+      "bytes": 57254,
+      "sha256": "cf25c922efd593ca8dd9b6bf840cb4a9577431340f81c8453601088c5cc2574e"
+    },
+    {
+      "name": "stills/still-03.png",
+      "bytes": 71089,
+      "sha256": "373e4ce84e6d373d7de05bdeea3a94e22a6a8d4de1d3367725352310729e800c"
+    },
+    {
+      "name": "stills/still-04.png",
+      "bytes": 67049,
+      "sha256": "abc613f1a4ae5f21e0a5d6b98ea9293783ea9d70b3735450f7b697d6ee7f9bff"
+    },
+    {
+      "name": "stills/still-05.png",
+      "bytes": 91726,
+      "sha256": "be521648272cc8ccaac87ad0c1714526fe4993cf54cf6f815c79db2ee025f492"
+    },
+    {
+      "name": "stills/still-06.png",
+      "bytes": 69167,
+      "sha256": "3d01cad10d6da0be835d343c7759b59cd7d01f9dd9aa6938bec7a7f61d588bdc"
+    },
+    {
+      "name": "stills/still-castle.png",
+      "bytes": 62349,
+      "sha256": "465e1e8074e0f02eac40c9ee52d5b83257c1befea6afb1589c249af0c98e20e8"
     }
   ],
   "sheets": {
+    "adult-a": [
+      "rot"
+    ],
+    "adult-b": [
+      "rot"
+    ],
+    "binns": [
+      "rot"
+    ],
+    "crabbe": [
+      "rot"
+    ],
+    "dumbledore": [
+      "rot"
+    ],
+    "fang": [
+      "rot"
+    ],
+    "filch": [
+      "rot"
+    ],
+    "flitwick": [
+      "rot"
+    ],
+    "fred": [
+      "rot"
+    ],
+    "george": [
+      "rot"
+    ],
+    "ginny": [
+      "rot"
+    ],
+    "goyle": [
+      "rot"
+    ],
+    "hagrid": [
+      "rot"
+    ],
     "harry": [
       "cast",
+      "dodge",
+      "hit",
       "idle",
       "run",
       "walk"
+    ],
+    "hermione": [
+      "rot",
+      "walk"
+    ],
+    "hooch": [
+      "rot"
+    ],
+    "lee": [
+      "rot"
+    ],
+    "malfoy": [
+      "rot",
+      "walk"
+    ],
+    "mcgonagall": [
+      "rot"
+    ],
+    "mrs-norris": [
+      "rot"
+    ],
+    "mrs-weasley": [
+      "rot"
+    ],
+    "neville": [
+      "rot",
+      "walk"
+    ],
+    "nick": [
+      "rot"
+    ],
+    "peeves": [
+      "rot"
+    ],
+    "percy": [
+      "rot"
+    ],
+    "quirrell": [
+      "rot"
+    ],
+    "ron": [
+      "idle",
+      "rot",
+      "walk"
+    ],
+    "snape": [
+      "rot"
+    ],
+    "sprout": [
+      "rot"
+    ],
+    "student-a": [
+      "rot"
+    ],
+    "student-b": [
+      "rot"
+    ],
+    "student-c": [
+      "rot"
+    ],
+    "student-d": [
+      "rot"
+    ],
+    "troll": [
+      "rot"
+    ],
+    "trolley-witch": [
+      "rot"
+    ],
+    "wood": [
+      "rot"
     ]
   }
 }
