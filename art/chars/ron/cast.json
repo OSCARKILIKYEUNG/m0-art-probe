@@ -1,0 +1,20 @@
+{
+ "cell": [
+  68,
+  68
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 6,
+ "fps": 10,
+ "feet_y": 56,
+ "source": "PixelLab v3 custom: raise a wand and flick it forward; character fd08e882, group 5518d697"
+}

@@ -42,6 +42,16 @@
       "sha256": "fab40bc1191dd1546ae6d200ab8e2b37c69d53990adf6dc60df5f4a534a67523"
     },
     {
+      "name": "chars/crabbe/walk.json",
+      "bytes": 279,
+      "sha256": "8db6ba00ed03012cd0dc02206086dad23ab55eea0d955d5b195d2af6397047fa"
+    },
+    {
+      "name": "chars/crabbe/walk.png",
+      "bytes": 32578,
+      "sha256": "9aa47257b25bd97e3f4e3e4a90c8b8655bf1bc35dadc29cfbef7dc6998fc5b78"
+    },
+    {
       "name": "chars/dumbledore/rot.json",
       "bytes": 359,
       "sha256": "0d717c6420198d4848bc6b8db0adb53c56583eb97f330119b349112037d71a87"
@@ -50,6 +60,16 @@
       "name": "chars/dumbledore/rot.png",
       "bytes": 7857,
       "sha256": "b72e04e6217bb89ca4d98897d552e1912d7533b1718b5da0469aab5923cb2dc7"
+    },
+    {
+      "name": "chars/dumbledore/walk.json",
+      "bytes": 279,
+      "sha256": "84470fcd3b2c892ce4e1977fe2ac485d11b3af252c99db253347b6d73c864ed2"
+    },
+    {
+      "name": "chars/dumbledore/walk.png",
+      "bytes": 38736,
+      "sha256": "5d9b17479f7da0a24b890ac49e1d62d118609d27b71c5fbfafe41597c46a2df1"
     },
     {
       "name": "chars/fang/rot.json",
@@ -132,6 +152,16 @@
       "sha256": "89d1428ba05c67528e2853e54d02dcfe3c4715ccf68d077b17b74bdadc2bb328"
     },
     {
+      "name": "chars/goyle/walk.json",
+      "bytes": 279,
+      "sha256": "3a583704ac2240c48f3507fe6dc71d714946e0370151e0282a8468432594bfe5"
+    },
+    {
+      "name": "chars/goyle/walk.png",
+      "bytes": 38944,
+      "sha256": "82544bdbddee26ac01b4ab2d2f442a17141eeaf5edf91c02fc3f1af4548a1fc3"
+    },
+    {
       "name": "chars/hagrid/rot.json",
       "bytes": 359,
       "sha256": "d2256acbe9cbe3f8b6aa4b1d7f233f52077184fbd5e2cd3391f21210e0ab126c"
@@ -140,6 +170,16 @@
       "name": "chars/hagrid/rot.png",
       "bytes": 44981,
       "sha256": "abc0823a9e1ef2b34dbcf0a3a60370f9e3cbbef7aec58a50bba8fa9541d37c1d"
+    },
+    {
+      "name": "chars/hagrid/walk.json",
+      "bytes": 298,
+      "sha256": "2fd118d0e2c4e9557abd57be408749512bb128e6e2804b7d73e6c0961d10232f"
+    },
+    {
+      "name": "chars/hagrid/walk.png",
+      "bytes": 165707,
+      "sha256": "d8f1364d4aa62159da57fd84cc8e70c431d2859d4ba1b8416b07e93ba3715588"
     },
     {
       "name": "chars/harry/cast.json",
@@ -292,6 +332,16 @@
       "sha256": "419fd36da66a226e0335949787eb84f24dccfc1ff2c177218482afdf7651bd02"
     },
     {
+      "name": "chars/mrs-norris/walk.json",
+      "bytes": 296,
+      "sha256": "460bf28dcaceb2ddfc945ae6c613948223ac0647789e9919e7c1a7964edfa56b"
+    },
+    {
+      "name": "chars/mrs-norris/walk.png",
+      "bytes": 62664,
+      "sha256": "588f31a737bab4de4ce5bb79711a0bf50689c67939e9b1a79bfd35f373f9ecc1"
+    },
+    {
       "name": "chars/mrs-weasley/rot.json",
       "bytes": 359,
       "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
@@ -352,6 +402,16 @@
       "sha256": "053988c858717e4a4f386de7a9fa08ff733596fc01fa7b6d3f738185117cf053"
     },
     {
+      "name": "chars/percy/walk.json",
+      "bytes": 307,
+      "sha256": "0660d38157d0d534155558a8d5b4626b7ad59a97daf7080db1a78fe847a16bce"
+    },
+    {
+      "name": "chars/percy/walk.png",
+      "bytes": 29427,
+      "sha256": "0d5be59c2118d40f86c91e5d9eb2278a912f3bc759bbd8af9b2e4c4d19cc6827"
+    },
+    {
       "name": "chars/quirrell/rot.json",
       "bytes": 359,
       "sha256": "7d7ceacb6f5b19a48ac43d3254f7bfc02499415026ebe70605c170ed4a3b1ca3"
@@ -360,6 +420,26 @@
       "name": "chars/quirrell/rot.png",
       "bytes": 10826,
       "sha256": "b04b1904ad69fa8a5da21b22c6c85fda40183fa0c50428bb41be30f0361bb4a8"
+    },
+    {
+      "name": "chars/quirrell/walk.json",
+      "bytes": 307,
+      "sha256": "848891ebfe9f2eb69ecf68a199f8a4943b7303e00c612df68caee0770241e6be"
+    },
+    {
+      "name": "chars/quirrell/walk.png",
+      "bytes": 40282,
+      "sha256": "8297b9110fe32c06096193bfdb661297c18f29c601d5f3b736957dd62a03a753"
+    },
+    {
+      "name": "chars/ron/cast.json",
+      "bytes": 312,
+      "sha256": "d92fc94deb5db5e82384737346f0f2833ed23b3ad36cedda7ddf136401e17f22"
+    },
+    {
+      "name": "chars/ron/cast.png",
+      "bytes": 29605,
+      "sha256": "7e4128d6f115a444394b8153f3b6466eb832ddbf8e49145bb2232eb01dd28ccf"
     },
     {
       "name": "chars/ron/idle.json",
@@ -400,6 +480,16 @@
       "name": "chars/snape/rot.png",
       "bytes": 9812,
       "sha256": "a6f6b2aae7f0bd80ea70ac3c4153c71c71a94ee93d53b237e37dc47311c58c0a"
+    },
+    {
+      "name": "chars/snape/walk.json",
+      "bytes": 307,
+      "sha256": "b7b4a67b4407820bc542029672853c835e22439423840bb86691667156ff4c65"
+    },
+    {
+      "name": "chars/snape/walk.png",
+      "bytes": 34355,
+      "sha256": "eeb9e730c5c8cb32cdabb58ac8074673f27e2c9aa0c2a36aead0144e364d3aa4"
     },
     {
       "name": "chars/sprout/rot.json",
@@ -502,6 +592,16 @@
       "sha256": "20dcbc7606faf8d01466903446daeff8eddc7fe659b4be283f75e705905c7853"
     },
     {
+      "name": "chars/wood/walk.json",
+      "bytes": 279,
+      "sha256": "6a06a26d56e3ab729010effd57c05694df74e774116c97bf86465f7414d4d1f5"
+    },
+    {
+      "name": "chars/wood/walk.png",
+      "bytes": 57484,
+      "sha256": "b4db14782e88580261796728b8a48fa028d9615b78adaeed89cdb69235c2c64a"
+    },
+    {
       "name": "m0-env-a.png",
       "bytes": 34229,
       "sha256": "d750fdad97d64d98f3935f49f662e9e83daa2c5fa44fecd870cd9ebef07adc40"
@@ -560,6 +660,11 @@
       "name": "rooms/compartment.png",
       "bytes": 22631,
       "sha256": "116c5ff89c176d303ea1966cf9f43129d4306e96d0e0798a3f0b857fb53cd685"
+    },
+    {
+      "name": "rooms/courtyard.png",
+      "bytes": 70354,
+      "sha256": "e04849387681c2e224757f37368bdbb12e30764d817d13c659212fb7cb0c6fc6"
     },
     {
       "name": "rooms/dormitory.png",
@@ -630,6 +735,16 @@
       "name": "rooms/platform.png",
       "bytes": 136846,
       "sha256": "d3407db5422f7dd25afb50394911a8b9ca0b633a737c208e18d1f05c24a39199"
+    },
+    {
+      "name": "rooms/quidditch-pitch.png",
+      "bytes": 95908,
+      "sha256": "54b6bc63562f49c17b72e8653844da7fb272ff2209cb8604742e62c476f2e3ab"
+    },
+    {
+      "name": "rooms/staff-room.png",
+      "bytes": 39174,
+      "sha256": "faba1c71c2348900daaea28e4452ab60a0498c0919aa1113d391f43aecd9671d"
     },
     {
       "name": "rooms/stair-hall.png",
@@ -708,10 +823,12 @@
       "rot"
     ],
     "crabbe": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "dumbledore": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "fang": [
       "rot"
@@ -733,10 +850,12 @@
       "rot"
     ],
     "goyle": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "hagrid": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "harry": [
       "cast",
@@ -765,7 +884,8 @@
       "walk"
     ],
     "mrs-norris": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "mrs-weasley": [
       "rot"
@@ -781,18 +901,22 @@
       "rot"
     ],
     "percy": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "quirrell": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "ron": [
+      "cast",
       "idle",
       "rot",
       "walk"
     ],
     "snape": [
-      "rot"
+      "rot",
+      "walk"
     ],
     "sprout": [
       "rot"
@@ -818,7 +942,8 @@
       "rot"
     ],
     "wood": [
-      "rot"
+      "rot",
+      "walk"
     ]
   }
 }

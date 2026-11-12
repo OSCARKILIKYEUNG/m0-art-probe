@@ -1,0 +1,20 @@
+{
+ "cell": [
+  96,
+  96
+ ],
+ "rows": [
+  "south",
+  "south-west",
+  "west",
+  "north-west",
+  "north",
+  "north-east",
+  "east",
+  "south-east"
+ ],
+ "frames": 8,
+ "fps": 8,
+ "feet_y": 75,
+ "source": "PixelLab skeleton-v3 cat walk-8-frames, character b31b358f, group 9028b442"
+}
