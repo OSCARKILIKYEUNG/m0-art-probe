@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>戰鬥試玩</title>
+<style>
+  :root { --bg: #15121c; --card: #241d2c; --ink: #f1e6cf; --muted: #b9a98b; --gold: #d4a44a; --line: #4a3d58; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  main { max-width: 860px; margin: 0 auto; display: grid; gap: 14px; }
+  h1 { font-size: 1.35rem; margin: 0; color: var(--gold); }
+  p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 0.95rem; }
+  .fights { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  a.fight {
+    display: grid; gap: 4px; padding: 16px; border-radius: 12px; text-decoration: none; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); min-height: 96px;
+  }
+  a.fight:active { border-color: var(--gold); }
+  .name { font-size: 1.1rem; font-weight: 600; }
+  .sub { font-size: 0.9rem; color: var(--muted); }
+  .story { color: var(--gold); }
+  ul { margin: 0; padding-left: 1.2em; color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>戰鬥試玩（三場）</h1>
+  <p>撳一場直接入戰鬥。打完會出結果卡，撳一下繼續。呢度玩唔會改到你故事嘅存檔。</p>
+  <div class="fights">
+    <a class="fight" href="./?encounter=f03"><span class="name">Defence 課：假人練習</span><span class="sub">Dummy course · 學 Sparks、Dodge、Deflect</span></a>
+    <a class="fight" href="./?encounter=f04"><span class="name">同 Seamus 對練</span><span class="sub">Pair drill · 先中三下贏</span></a>
+    <a class="fight" href="./?encounter=f05"><span class="name">地牢搗蛋鬼 Peeves</span><span class="sub">The dungeon pest · 打唔親佢，要捱到佢悶</span></a>
+    <a class="fight" href="./"><span class="name story">由故事開頭玩</span><span class="sub">King's Cross 到上火車</span></a>
+  </div>
+  <ul>
+    <li>左手拖搖杆走位。</li>
+    <li>右下 Cast：撳一下發 Sparks，按住連發，第三發最大力。</li>
+    <li>Dodge：閃避，紅色範圍亮起時用；啱啱好嗰下閃會出「Perfect!」。</li>
+    <li>飛過嚟嘅嘢有白圈時撳 Deflect（或者 Cast），可以打走佢。</li>
+  </ul>
+</main>
+</body>
+</html>
