@@ -1,0 +1,730 @@
+{
+ "dumbledore-v2-idle": {
+  "cell": [
+   92,
+   92
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 77,
+  "file": "dumbledore-v2-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   368,
+   736
+  ],
+  "top": 15
+ },
+ "dumbledore-v2-walk": {
+  "cell": [
+   96,
+   96
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 80,
+  "file": "dumbledore-v2-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   768,
+   768
+  ],
+  "top": 16
+ },
+ "harry-robes-idle": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 65,
+  "file": "harry-robes-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   320,
+   640
+  ],
+  "top": 16
+ },
+ "harry-robes-walk": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 66,
+  "file": "harry-robes-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   640,
+   640
+  ],
+  "top": 14
+ },
+ "hermione-idle": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 65,
+  "file": "hermione-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   320,
+   640
+  ],
+  "top": 15
+ },
+ "hermione-walk": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 67,
+  "file": "hermione-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   640,
+   640
+  ],
+  "top": 14
+ },
+ "mcgonagall-v2-idle": {
+  "cell": [
+   96,
+   96
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 81,
+  "file": "mcgonagall-v2-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   384,
+   768
+  ],
+  "top": 15
+ },
+ "mcgonagall-v2-walk": {
+  "cell": [
+   96,
+   96
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 82,
+  "file": "mcgonagall-v2-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   768,
+   768
+  ],
+  "top": 14
+ },
+ "ron-idle": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 65,
+  "file": "ron-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   320,
+   640
+  ],
+  "top": 16
+ },
+ "ron-walk": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 66,
+  "file": "ron-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   640,
+   640
+  ],
+  "top": 14
+ },
+ "snape-v2-idle": {
+  "cell": [
+   92,
+   92
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 77,
+  "file": "snape-v2-idle.png",
+  "fps": 4,
+  "frames": 4,
+  "layout": "rows",
+  "size": [
+   368,
+   736
+  ],
+  "top": 15
+ },
+ "snape-v2-walk": {
+  "cell": [
+   96,
+   96
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 80,
+  "file": "snape-v2-walk.png",
+  "fps": 10,
+  "frames": 8,
+  "layout": "rows",
+  "size": [
+   768,
+   768
+  ],
+  "top": 17
+ },
+ "student-boy-1-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 68,
+  "file": "student-boy-1-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 14
+ },
+ "student-boy-1-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 60,
+  "file": "student-boy-1-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 6
+ },
+ "student-boy-2-sit-clap": {
+  "cell": [
+   76,
+   76
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 64,
+  "file": "student-boy-2-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   380,
+   608
+  ],
+  "top": 13
+ },
+ "student-boy-2-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 58,
+  "file": "student-boy-2-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 7
+ },
+ "student-boy-3-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 68,
+  "file": "student-boy-3-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 14
+ },
+ "student-boy-3-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 60,
+  "file": "student-boy-3-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 6
+ },
+ "student-boy-4-sit-clap": {
+  "cell": [
+   76,
+   76
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 64,
+  "file": "student-boy-4-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   380,
+   608
+  ],
+  "top": 13
+ },
+ "student-boy-4-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 58,
+  "file": "student-boy-4-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 7
+ },
+ "student-girl-1-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 68,
+  "file": "student-girl-1-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 15
+ },
+ "student-girl-1-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 60,
+  "file": "student-girl-1-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 7
+ },
+ "student-girl-2-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 67,
+  "file": "student-girl-2-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 14
+ },
+ "student-girl-2-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 59,
+  "file": "student-girl-2-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 6
+ },
+ "student-girl-3-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 68,
+  "file": "student-girl-3-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 15
+ },
+ "student-girl-3-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 60,
+  "file": "student-girl-3-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 7
+ },
+ "student-girl-4-sit-clap": {
+  "cell": [
+   80,
+   80
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 68,
+  "file": "student-girl-4-sit-clap.png",
+  "fps": 8,
+  "frames": 5,
+  "layout": "rows",
+  "size": [
+   400,
+   640
+  ],
+  "top": 12
+ },
+ "student-girl-4-sit-rot": {
+  "cell": [
+   64,
+   64
+  ],
+  "dirs": [
+   "south",
+   "south-west",
+   "west",
+   "north-west",
+   "north",
+   "north-east",
+   "east",
+   "south-east"
+  ],
+  "feet_line": 60,
+  "file": "student-girl-4-sit-rot.png",
+  "fps": 1,
+  "frames": 1,
+  "layout": "columns",
+  "size": [
+   512,
+   64
+  ],
+  "top": 4
+ }
+}

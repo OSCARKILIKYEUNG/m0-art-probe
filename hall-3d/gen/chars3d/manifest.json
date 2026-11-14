@@ -1,0 +1,122 @@
+{
+ "dumbledore": {
+  "meshClip": "idle",
+  "bindHeight": 1.95,
+  "clips": {
+   "idle": {
+    "file": "dumbledore/dumbledore-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   }
+  },
+  "hipsTravel": {
+   "idle": {
+    "x": 2.6677,
+    "y": 3.8266,
+    "z": 1.9021
+   }
+  },
+  "clipNames": {
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "dumbledore-idle.glb": "508eeacd0f56012a"
+  }
+ },
+ "harry": {
+  "meshClip": "walk",
+  "bindHeight": 1.45,
+  "clips": {
+   "walk": {
+    "file": "harry/harry-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "harry/harry-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 24.2652,
+    "pose": {
+     "maxRotDeg": 15,
+     "maxTransM": 3.1812,
+     "missingJoints": 0
+    }
+   },
+   "run": {
+    "file": "harry/harry-run-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 23.0024,
+    "pose": {
+     "maxRotDeg": 17.335,
+     "maxTransM": 2.5164,
+     "missingJoints": 0
+    }
+   }
+  },
+  "hipsTravel": {
+   "walk": {
+    "x": 6.2213,
+    "y": 2.2041,
+    "z": 0.683
+   },
+   "idle": {
+    "x": 1.707,
+    "y": 2.5825,
+    "z": 1.6477
+   },
+   "run": {
+    "x": 1.0394,
+    "y": 2.1784,
+    "z": 1.0934
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "run": "Armature|RunFast|baselayer"
+  },
+  "sourceSha": {
+   "harry-idle.glb": "5a14444185f03b53",
+   "harry-run.glb": "aeac1b7df50cac56",
+   "harry-walk.glb": "b7ca25a3b804689d"
+  }
+ },
+ "mcgonagall": {
+  "meshClip": "idle",
+  "bindHeight": 1.8,
+  "clips": {
+   "idle": {
+    "file": "mcgonagall/mcgonagall-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   }
+  },
+  "hipsTravel": {
+   "idle": {
+    "x": 2.4417,
+    "y": 3.45,
+    "z": 1.892
+   }
+  },
+  "clipNames": {
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "mcgonagall-idle.glb": "9c63c9b089f26237"
+  }
+ }
+}
