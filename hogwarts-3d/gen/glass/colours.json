@@ -10,6 +10,11 @@
    0.3658,
    0.5346
   ],
+  "hogwarts": [
+   0.615,
+   0.4468,
+   0.1849
+  ],
   "lion": [
    0.458,
    0.2514,
@@ -25,6 +30,7 @@
   "lion",
   "eagle",
   "badger",
-  "serpent"
+  "serpent",
+  "hogwarts"
  ]
 }
