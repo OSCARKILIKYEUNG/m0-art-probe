@@ -1,0 +1,1984 @@
+{
+ "crabbe": {
+  "meshClip": "walk",
+  "bindHeight": 1.52,
+  "clips": {
+   "walk": {
+    "file": "crabbe/crabbe-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "crabbe/crabbe-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 17.2133,
+    "pose": {
+     "maxRotDeg": 16.841,
+     "maxTransM": 2.8824,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "crabbe/crabbe-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 18.4596,
+    "pose": {
+     "maxRotDeg": 17.637,
+     "maxTransM": 2.571,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.648,
+    "filled": 1474829
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.648,
+    "filled": 1474829
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.648,
+    "filled": 1474829
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.648,
+    "filled": 1474829
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 5.9855,
+    "y": 2.0729,
+    "z": 0.51
+   },
+   "idle": {
+    "x": 1.5403,
+    "y": 2.3857,
+    "z": 1.833
+   },
+   "sit": {
+    "x": 1.1688,
+    "y": 0.7575,
+    "z": 1.4784
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "crabbe-idle.glb": "8b0ab8bd369ed647",
+   "crabbe-sit.glb": "754a7c9f76890728",
+   "crabbe-walk.glb": "1a94923c90e20e55"
+  }
+ },
+ "dean": {
+  "meshClip": "walk",
+  "bindHeight": 1.5,
+  "clips": {
+   "walk": {
+    "file": "dean/dean-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "dean/dean-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 29.0675,
+    "pose": {
+     "maxRotDeg": 24.794,
+     "maxTransM": 1.6867,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "dean/dean-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 29.2322,
+    "pose": {
+     "maxRotDeg": 25.022,
+     "maxTransM": 1.8826,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.642,
+    "filled": 1503504
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.642,
+    "filled": 1503504
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.642,
+    "filled": 1503504
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.642,
+    "filled": 1503504
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.6336,
+    "y": 2.3532,
+    "z": 0.7536
+   },
+   "idle": {
+    "x": 1.8299,
+    "y": 2.8181,
+    "z": 2.0161
+   },
+   "sit": {
+    "x": 1.2903,
+    "y": 0.9584,
+    "z": 2.1544
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "dean-idle.glb": "936a8f3e048b600d",
+   "dean-sit.glb": "6113213941239cbb",
+   "dean-walk.glb": "6ddf0a33363e803d"
+  }
+ },
+ "dumbledore": {
+  "meshClip": "idle",
+  "bindHeight": 1.95,
+  "clips": {
+   "idle": {
+    "file": "dumbledore/dumbledore-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.604,
+    "filled": 1661240
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.604,
+    "filled": 1661240
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.604,
+    "filled": 1661240
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.604,
+    "filled": 1661240
+   }
+  ],
+  "hipsTravel": {
+   "idle": {
+    "x": 2.6677,
+    "y": 3.8266,
+    "z": 1.9021
+   }
+  },
+  "clipNames": {
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "dumbledore-idle.glb": "508eeacd0f56012a"
+  }
+ },
+ "fat-friar": {
+  "meshClip": "walk",
+  "bindHeight": 1.65,
+  "clips": {
+   "walk": {
+    "file": "fat-friar/fat-friar-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "fat-friar/fat-friar-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 39.6886,
+    "pose": {
+     "maxRotDeg": 25.958,
+     "maxTransM": 6.1774,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.63,
+    "filled": 1553157
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.63,
+    "filled": 1553157
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.63,
+    "filled": 1553157
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.63,
+    "filled": 1553157
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 7.398,
+    "y": 2.657,
+    "z": 0.7398
+   },
+   "idle": {
+    "x": 2.1321,
+    "y": 3.1062,
+    "z": 1.822
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "fat-friar-idle.glb": "b71a4a29eb27ca2f",
+   "fat-friar-walk.glb": "499b6b3b9edb6e64"
+  }
+ },
+ "flitwick": {
+  "meshClip": "walk",
+  "bindHeight": 1,
+  "clips": {
+   "walk": {
+    "file": "flitwick/flitwick-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "flitwick/flitwick-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 199.9568,
+    "pose": {
+     "maxRotDeg": 150.615,
+     "maxTransM": 25.034,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "flitwick/flitwick-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 199.9568,
+    "pose": {
+     "maxRotDeg": 150.64,
+     "maxTransM": 24.7376,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.665,
+    "filled": 1403227
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.665,
+    "filled": 1403227
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.665,
+    "filled": 1403227
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.665,
+    "filled": 1403227
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 3.2124,
+    "y": 1.2498,
+    "z": 0.2254
+   },
+   "idle": {
+    "x": 3.1612,
+    "y": 1.4124,
+    "z": 1.5801
+   },
+   "sit": {
+    "x": 0.9961,
+    "y": 0.9704,
+    "z": 1.1839
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "flitwick-idle.glb": "2531fb42dbdb13c6",
+   "flitwick-sit.glb": "795a52cbf3ff9f42",
+   "flitwick-walk.glb": "a53f5958093d220d"
+  }
+ },
+ "fred": {
+  "meshClip": "walk",
+  "bindHeight": 1.72,
+  "clips": {
+   "walk": {
+    "file": "fred/fred-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "fred/fred-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 28.8313,
+    "pose": {
+     "maxRotDeg": 23.806,
+     "maxTransM": 2.3607,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "fred/fred-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 32.9052,
+    "pose": {
+     "maxRotDeg": 28.67,
+     "maxTransM": 2.3599,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.614,
+    "filled": 1617827
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.614,
+    "filled": 1617827
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.614,
+    "filled": 1617827
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.614,
+    "filled": 1617827
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 7.5426,
+    "y": 2.7033,
+    "z": 0.8769
+   },
+   "idle": {
+    "x": 2.115,
+    "y": 3.1237,
+    "z": 1.7891
+   },
+   "sit": {
+    "x": 1.4241,
+    "y": 1.1463,
+    "z": 2.3454
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "fred-idle.glb": "fbcfcebbfd429f4b",
+   "fred-sit.glb": "21a5fd9a8c22fab8",
+   "fred-walk.glb": "cd2bf241b2b268a2"
+  }
+ },
+ "george": {
+  "meshClip": "walk",
+  "bindHeight": 1.72,
+  "clips": {
+   "walk": {
+    "file": "george/george-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "george/george-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 13.2566,
+    "pose": {
+     "maxRotDeg": 8.618,
+     "maxTransM": 2.4537,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "george/george-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 23.8215,
+    "pose": {
+     "maxRotDeg": 22.626,
+     "maxTransM": 3.1019,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.624,
+    "filled": 1577423
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.624,
+    "filled": 1577423
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.624,
+    "filled": 1577423
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.624,
+    "filled": 1577423
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 7.6226,
+    "y": 2.7227,
+    "z": 0.9162
+   },
+   "idle": {
+    "x": 2.0599,
+    "y": 3.1721,
+    "z": 1.8991
+   },
+   "sit": {
+    "x": 1.4015,
+    "y": 1.2274,
+    "z": 2.4404
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "george-idle.glb": "5b620b73bfc56e96",
+   "george-sit.glb": "43dfda2b39f7b781",
+   "george-walk.glb": "6c683e9bc17989ad"
+  }
+ },
+ "goyle": {
+  "meshClip": "walk",
+  "bindHeight": 1.55,
+  "clips": {
+   "walk": {
+    "file": "goyle/goyle-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "goyle/goyle-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 20.819,
+    "pose": {
+     "maxRotDeg": 14.357,
+     "maxTransM": 2.0219,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "goyle/goyle-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 21.7351,
+    "pose": {
+     "maxRotDeg": 14.612,
+     "maxTransM": 1.4778,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.636,
+    "filled": 1525678
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.636,
+    "filled": 1525678
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.636,
+    "filled": 1525678
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.636,
+    "filled": 1525678
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.8664,
+    "y": 2.4878,
+    "z": 0.7556
+   },
+   "idle": {
+    "x": 2.1112,
+    "y": 2.8875,
+    "z": 1.4459
+   },
+   "sit": {
+    "x": 1.3214,
+    "y": 1.2766,
+    "z": 2.1113
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "goyle-idle.glb": "75dd0c7600338277",
+   "goyle-sit.glb": "f7f7ac768a37b8db",
+   "goyle-walk.glb": "190de019bb1ad53f"
+  }
+ },
+ "hagrid": {
+  "meshClip": "walk",
+  "bindHeight": 2.8,
+  "clips": {
+   "walk": {
+    "file": "hagrid/hagrid-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "hagrid/hagrid-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 41.7091,
+    "pose": {
+     "maxRotDeg": 40.349,
+     "maxTransM": 12.4457,
+     "missingJoints": 0
+    }
+   },
+   "lantern": {
+    "file": "hagrid/hagrid-lantern-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 41.6724,
+    "pose": {
+     "maxRotDeg": 40.684,
+     "maxTransM": 10.9458,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.635,
+    "filled": 1531512
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.635,
+    "filled": 1531512
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.635,
+    "filled": 1531512
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.635,
+    "filled": 1531512
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 11.9002,
+    "y": 4.4856,
+    "z": 1.4791
+   },
+   "idle": {
+    "x": 4.3446,
+    "y": 5.3728,
+    "z": 2.9425
+   },
+   "lantern": {
+    "x": 9.9735,
+    "y": 7.912,
+    "z": 12.9759
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "lantern": "Armature|Torch_Look_Around|baselayer"
+  },
+  "sourceSha": {
+   "hagrid-idle.glb": "ae06070ac01912d6",
+   "hagrid-lantern.glb": "48a0ebb12056839b",
+   "hagrid-walk.glb": "c305812f2784afe0"
+  }
+ },
+ "harry": {
+  "meshClip": "walk",
+  "bindHeight": 1.45,
+  "clips": {
+   "walk": {
+    "file": "harry/harry-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "harry/harry-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 24.2652,
+    "pose": {
+     "maxRotDeg": 15,
+     "maxTransM": 3.1812,
+     "missingJoints": 0
+    }
+   },
+   "run": {
+    "file": "harry/harry-run-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 23.0024,
+    "pose": {
+     "maxRotDeg": 17.335,
+     "maxTransM": 2.5164,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "harry/harry-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 19.0043,
+    "pose": {
+     "maxRotDeg": 12.879,
+     "maxTransM": 2.678,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.634,
+    "filled": 1533774
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.634,
+    "filled": 1533774
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.634,
+    "filled": 1533774
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.634,
+    "filled": 1533774
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.2213,
+    "y": 2.2041,
+    "z": 0.683
+   },
+   "idle": {
+    "x": 1.707,
+    "y": 2.5825,
+    "z": 1.6477
+   },
+   "run": {
+    "x": 1.0394,
+    "y": 2.1784,
+    "z": 1.0934
+   },
+   "sit": {
+    "x": 1.19,
+    "y": 0.9341,
+    "z": 1.9117
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "run": "Armature|RunFast|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "harry-idle.glb": "4c879cdf359b138a",
+   "harry-run.glb": "426bb6fa9a0a9b9e",
+   "harry-sit.glb": "41d93f97a5957f79",
+   "harry-walk.glb": "21ef696998958cfb"
+  }
+ },
+ "hermione": {
+  "meshClip": "walk",
+  "bindHeight": 1.42,
+  "clips": {
+   "walk": {
+    "file": "hermione/hermione-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "hermione/hermione-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 19.8694,
+    "pose": {
+     "maxRotDeg": 16.108,
+     "maxTransM": 1.4733,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "hermione/hermione-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 19.8694,
+    "pose": {
+     "maxRotDeg": 17.149,
+     "maxTransM": 1.4171,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.6008,
+    "y": 2.3652,
+    "z": 0.84
+   },
+   "idle": {
+    "x": 1.8055,
+    "y": 2.794,
+    "z": 1.9449
+   },
+   "sit": {
+    "x": 0.9036,
+    "y": 0.7386,
+    "z": 2.8382
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_F|baselayer"
+  },
+  "sourceSha": {
+   "hermione-idle.glb": "36ad2886e2756b08",
+   "hermione-sit.glb": "b3162e55ce895659",
+   "hermione-walk.glb": "cac15ba4923bfdaf"
+  }
+ },
+ "malfoy": {
+  "meshClip": "walk",
+  "bindHeight": 1.45,
+  "clips": {
+   "walk": {
+    "file": "malfoy/malfoy-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle-g2": {
+    "file": "malfoy/malfoy-idle-g2-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 24.6567,
+    "pose": {
+     "maxRotDeg": 23.174,
+     "maxTransM": 2.8707,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "malfoy/malfoy-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 25.5016,
+    "pose": {
+     "maxRotDeg": 22.019,
+     "maxTransM": 3.1679,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "malfoy/malfoy-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 29.3853,
+    "pose": {
+     "maxRotDeg": 22.702,
+     "maxTransM": 3.1654,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.626,
+    "filled": 1566898
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.626,
+    "filled": 1566898
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.626,
+    "filled": 1566898
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.626,
+    "filled": 1566898
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.5113,
+    "y": 2.3172,
+    "z": 0.759
+   },
+   "idle-g2": {
+    "x": 1.759,
+    "y": 2.6936,
+    "z": 1.8311
+   },
+   "idle": {
+    "x": 1.7682,
+    "y": 2.6941,
+    "z": 1.726
+   },
+   "sit": {
+    "x": 1.1999,
+    "y": 1.051,
+    "z": 1.9939
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle-g2": "Armature|Idle|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "malfoy-idle-g2.glb": "eaeb2f158a94f95e",
+   "malfoy-idle.glb": "eb136ecccfb1bd1d",
+   "malfoy-sit.glb": "9931eccd9cd8ded1",
+   "malfoy-walk.glb": "b68d6e0c30652532"
+  }
+ },
+ "mcgonagall": {
+  "meshClip": "idle",
+  "bindHeight": 1.8,
+  "clips": {
+   "idle": {
+    "file": "mcgonagall/mcgonagall-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.555,
+    "filled": 1867118
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.555,
+    "filled": 1867118
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.555,
+    "filled": 1867118
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.555,
+    "filled": 1867118
+   }
+  ],
+  "hipsTravel": {
+   "idle": {
+    "x": 2.4417,
+    "y": 3.45,
+    "z": 1.892
+   }
+  },
+  "clipNames": {
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "mcgonagall-idle.glb": "9c63c9b089f26237"
+  }
+ },
+ "nearly-headless-nick": {
+  "meshClip": "walk",
+  "bindHeight": 1.78,
+  "clips": {
+   "walk": {
+    "file": "nearly-headless-nick/nearly-headless-nick-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "nearly-headless-nick/nearly-headless-nick-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 16.499,
+    "pose": {
+     "maxRotDeg": 12.07,
+     "maxTransM": 5.1219,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.607,
+    "filled": 1647268
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.607,
+    "filled": 1647268
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.607,
+    "filled": 1647268
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.607,
+    "filled": 1647268
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 7.6577,
+    "y": 2.6928,
+    "z": 0.8036
+   },
+   "idle": {
+    "x": 2.2651,
+    "y": 3.0757,
+    "z": 2.3777
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer"
+  },
+  "sourceSha": {
+   "nearly-headless-nick-idle.glb": "993fa981aba29e86",
+   "nearly-headless-nick-walk.glb": "829c63e868200c8f"
+  }
+ },
+ "neville": {
+  "meshClip": "walk",
+  "bindHeight": 1.4,
+  "clips": {
+   "walk": {
+    "file": "neville/neville-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "neville/neville-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 13.0467,
+    "pose": {
+     "maxRotDeg": 8.853,
+     "maxTransM": 1.2054,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "neville/neville-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 13.8958,
+    "pose": {
+     "maxRotDeg": 8.872,
+     "maxTransM": 0.9017,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.64,
+    "filled": 1509023
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.64,
+    "filled": 1509023
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.64,
+    "filled": 1509023
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.64,
+    "filled": 1509023
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.1368,
+    "y": 2.1875,
+    "z": 0.7033
+   },
+   "idle": {
+    "x": 1.6983,
+    "y": 2.5611,
+    "z": 1.5777
+   },
+   "sit": {
+    "x": 1.1682,
+    "y": 0.9618,
+    "z": 1.987
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "neville-idle.glb": "0e757d4b68289713",
+   "neville-sit.glb": "be02d9be8fd04e0c",
+   "neville-walk.glb": "cc9c5e238d92a155"
+  }
+ },
+ "peeves": {
+  "meshClip": "walk",
+  "bindHeight": 1.2,
+  "clips": {
+   "walk": {
+    "file": "peeves/peeves-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "peeves/peeves-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 22.4278,
+    "pose": {
+     "maxRotDeg": 21.017,
+     "maxTransM": 1.6109,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.677,
+    "filled": 1355387
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.677,
+    "filled": 1355387
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.677,
+    "filled": 1355387
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.677,
+    "filled": 1355387
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 4.1692,
+    "y": 1.4653,
+    "z": 0.4391
+   },
+   "idle": {
+    "x": 0.7461,
+    "y": 0.987,
+    "z": 0.6319
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Swim_Idle|baselayer"
+  },
+  "sourceSha": {
+   "peeves-idle.glb": "ddf04cf98f21714b",
+   "peeves-walk.glb": "79c4a9e4dfae14c2"
+  }
+ },
+ "percy": {
+  "meshClip": "walk",
+  "bindHeight": 1.78,
+  "clips": {
+   "walk": {
+    "file": "percy/percy-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "percy/percy-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 34.1569,
+    "pose": {
+     "maxRotDeg": 36.307,
+     "maxTransM": 4.6566,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "percy/percy-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 37.9235,
+    "pose": {
+     "maxRotDeg": 38.727,
+     "maxTransM": 5.5106,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.653,
+    "filled": 1453646
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.653,
+    "filled": 1453646
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.653,
+    "filled": 1453646
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.653,
+    "filled": 1453646
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 8.2714,
+    "y": 2.9313,
+    "z": 0.9631
+   },
+   "idle": {
+    "x": 2.2133,
+    "y": 3.3863,
+    "z": 2.1734
+   },
+   "sit": {
+    "x": 1.513,
+    "y": 1.2375,
+    "z": 2.5122
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "percy-idle.glb": "c9cd39cb3e8df226",
+   "percy-sit.glb": "8685a9ef4fbd433a",
+   "percy-walk.glb": "f6152de843d1993e"
+  }
+ },
+ "quirrell": {
+  "meshClip": "walk",
+  "bindHeight": 1.75,
+  "clips": {
+   "walk": {
+    "file": "quirrell/quirrell-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "quirrell/quirrell-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 5.1417,
+    "pose": {
+     "maxRotDeg": 4.355,
+     "maxTransM": 1.628,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "quirrell/quirrell-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 18.5218,
+    "pose": {
+     "maxRotDeg": 13.537,
+     "maxTransM": 1.6801,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.615,
+    "filled": 1614955
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.615,
+    "filled": 1614955
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.615,
+    "filled": 1614955
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.615,
+    "filled": 1614955
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 7.9518,
+    "y": 2.8414,
+    "z": 0.9724
+   },
+   "idle": {
+    "x": 2.1725,
+    "y": 3.3481,
+    "z": 2.1684
+   },
+   "sit": {
+    "x": 1.5278,
+    "y": 1.2171,
+    "z": 2.8608
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "quirrell-idle.glb": "b5cd0e586c40876c",
+   "quirrell-sit.glb": "6b342322a0b449a5",
+   "quirrell-walk.glb": "30cd39781457d611"
+  }
+ },
+ "ron": {
+  "meshClip": "walk",
+  "bindHeight": 1.52,
+  "clips": {
+   "walk": {
+    "file": "ron/ron-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "ron/ron-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 22.8011,
+    "pose": {
+     "maxRotDeg": 18.772,
+     "maxTransM": 3.9566,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "ron/ron-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 22.7991,
+    "pose": {
+     "maxRotDeg": 20.794,
+     "maxTransM": 4.8029,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.654,
+    "filled": 1449714
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.654,
+    "filled": 1449714
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.654,
+    "filled": 1449714
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.654,
+    "filled": 1449714
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.5536,
+    "y": 2.313,
+    "z": 0.7258
+   },
+   "idle": {
+    "x": 1.8932,
+    "y": 2.6451,
+    "z": 2.1218
+   },
+   "sit": {
+    "x": 1.2814,
+    "y": 0.9001,
+    "z": 2.0346
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "ron-idle.glb": "6491992d33d13eb1",
+   "ron-sit.glb": "b07fd1d18aca5158",
+   "ron-walk.glb": "1935596e617f2b72"
+  }
+ },
+ "seamus": {
+  "meshClip": "walk",
+  "bindHeight": 1.45,
+  "clips": {
+   "walk": {
+    "file": "seamus/seamus-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "seamus/seamus-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 28.766,
+    "pose": {
+     "maxRotDeg": 27.13,
+     "maxTransM": 2.2998,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "seamus/seamus-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 31.3004,
+    "pose": {
+     "maxRotDeg": 39.484,
+     "maxTransM": 3.0553,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.3188,
+    "y": 2.2433,
+    "z": 0.7092
+   },
+   "idle": {
+    "x": 1.7197,
+    "y": 2.5744,
+    "z": 1.595
+   },
+   "sit": {
+    "x": 1.2462,
+    "y": 0.8539,
+    "z": 1.9862
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "seamus-idle.glb": "7492a0eb9d004c8f",
+   "seamus-sit.glb": "159ab0492ca3eb3a",
+   "seamus-walk.glb": "f7a8971de6a62790"
+  }
+ },
+ "snape": {
+  "meshClip": "walk",
+  "bindHeight": 1.85,
+  "clips": {
+   "walk": {
+    "file": "snape/snape-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "snape/snape-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 23.4024,
+    "pose": {
+     "maxRotDeg": 20.239,
+     "maxTransM": 3.9686,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "snape/snape-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 26.3933,
+    "pose": {
+     "maxRotDeg": 23.114,
+     "maxTransM": 3.8799,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.547,
+    "filled": 1899319
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.547,
+    "filled": 1899319
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.547,
+    "filled": 1899319
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.547,
+    "filled": 1899319
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 8.653,
+    "y": 3.0977,
+    "z": 1.0907
+   },
+   "idle": {
+    "x": 2.3617,
+    "y": 3.6574,
+    "z": 2.3561
+   },
+   "sit": {
+    "x": 1.6223,
+    "y": 1.2735,
+    "z": 3.0045
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "snape-idle.glb": "012f861d7dec02b2",
+   "snape-sit.glb": "d2b9811e944b8b75",
+   "snape-walk.glb": "2506ca786ab407e0"
+  }
+ },
+ "first-year-boy": {
+  "meshClip": "walk",
+  "bindHeight": 1.45,
+  "clips": {
+   "walk": {
+    "file": "first-year-boy/first-year-boy-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "seamus/seamus-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 28.766,
+    "pose": {
+     "maxRotDeg": 27.13,
+     "maxTransM": 2.2998,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "seamus/seamus-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 31.3004,
+    "pose": {
+     "maxRotDeg": 39.484,
+     "maxTransM": 3.0553,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.628,
+    "filled": 1560241
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.3188,
+    "y": 2.2433,
+    "z": 0.7092
+   },
+   "idle": {
+    "x": 1.7197,
+    "y": 2.5744,
+    "z": 1.595
+   },
+   "sit": {
+    "x": 1.2462,
+    "y": 0.8539,
+    "z": 1.9862
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_M|baselayer"
+  },
+  "sourceSha": {
+   "seamus-idle.glb": "7492a0eb9d004c8f",
+   "seamus-sit.glb": "159ab0492ca3eb3a",
+   "seamus-walk.glb": "f7a8971de6a62790"
+  },
+  "variantOf": "seamus"
+ },
+ "first-year-girl": {
+  "meshClip": "walk",
+  "bindHeight": 1.42,
+  "clips": {
+   "walk": {
+    "file": "first-year-girl/first-year-girl-mesh.glb",
+    "restMatches": true,
+    "pose": {
+     "maxRotDeg": 0,
+     "maxTransM": 0,
+     "missingJoints": 0
+    }
+   },
+   "idle": {
+    "file": "hermione/hermione-idle-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 19.8694,
+    "pose": {
+     "maxRotDeg": 16.108,
+     "maxTransM": 1.4733,
+     "missingJoints": 0
+    }
+   },
+   "sit": {
+    "file": "hermione/hermione-sit-anim.glb",
+    "restMatches": false,
+    "retargeted": true,
+    "bindDiff": 19.8694,
+    "pose": {
+     "maxRotDeg": 17.149,
+     "maxTransM": 1.4171,
+     "missingJoints": 0
+    }
+   }
+  },
+  "padded": [
+   {
+    "texture": "Image_0",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "normal",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "Image_1",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   },
+   {
+    "texture": "Image_3",
+    "size": "2048x2048",
+    "islands": 0.621,
+    "filled": 1589665
+   }
+  ],
+  "hipsTravel": {
+   "walk": {
+    "x": 6.6008,
+    "y": 2.3652,
+    "z": 0.84
+   },
+   "idle": {
+    "x": 1.8055,
+    "y": 2.794,
+    "z": 1.9449
+   },
+   "sit": {
+    "x": 0.9036,
+    "y": 0.7386,
+    "z": 2.8382
+   }
+  },
+  "clipNames": {
+   "walk": "Armature|Casual_Walk|baselayer",
+   "idle": "Armature|Idle|baselayer",
+   "sit": "Armature|Chair_Sit_Idle_F|baselayer"
+  },
+  "sourceSha": {
+   "hermione-idle.glb": "36ad2886e2756b08",
+   "hermione-sit.glb": "b3162e55ce895659",
+   "hermione-walk.glb": "cac15ba4923bfdaf"
+  },
+  "variantOf": "hermione"
+ }
+}
