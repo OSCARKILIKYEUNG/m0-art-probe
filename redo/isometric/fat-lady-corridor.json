@@ -1,0 +1,274 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "fat-lady-corridor/base.png",
+  "layers": [
+    {
+      "id": "post-0",
+      "file": "fat-lady-corridor/post-0.png",
+      "x": 90,
+      "y": 191,
+      "depth": 218.5
+    },
+    {
+      "id": "rail-0",
+      "file": "fat-lady-corridor/rail-0.png",
+      "x": 97,
+      "y": 199,
+      "depth": 223
+    },
+    {
+      "id": "rail-22",
+      "file": "fat-lady-corridor/rail-22.png",
+      "x": 119,
+      "y": 210,
+      "depth": 234
+    },
+    {
+      "id": "rail-44",
+      "file": "fat-lady-corridor/rail-44.png",
+      "x": 141,
+      "y": 221,
+      "depth": 244
+    },
+    {
+      "id": "post-62",
+      "file": "fat-lady-corridor/post-62.png",
+      "x": 152,
+      "y": 222,
+      "depth": 249.5
+    },
+    {
+      "id": "rail-62",
+      "file": "fat-lady-corridor/rail-62.png",
+      "x": 159,
+      "y": 230,
+      "depth": 254
+    },
+    {
+      "id": "rail-84",
+      "file": "fat-lady-corridor/rail-84.png",
+      "x": 181,
+      "y": 241,
+      "depth": 265
+    },
+    {
+      "id": "rail-106",
+      "file": "fat-lady-corridor/rail-106.png",
+      "x": 203,
+      "y": 252,
+      "depth": 276
+    },
+    {
+      "id": "rail-128",
+      "file": "fat-lady-corridor/rail-128.png",
+      "x": 225,
+      "y": 263,
+      "depth": 287
+    },
+    {
+      "id": "rail-150",
+      "file": "fat-lady-corridor/rail-150.png",
+      "x": 247,
+      "y": 274,
+      "depth": 293.5
+    },
+    {
+      "id": "post-154",
+      "file": "fat-lady-corridor/post-154.png",
+      "x": 244,
+      "y": 268,
+      "depth": 295.5
+    },
+    {
+      "id": "rail-154",
+      "file": "fat-lady-corridor/rail-154.png",
+      "x": 251,
+      "y": 276,
+      "depth": 300
+    },
+    {
+      "id": "rail-176",
+      "file": "fat-lady-corridor/rail-176.png",
+      "x": 273,
+      "y": 287,
+      "depth": 311
+    },
+    {
+      "id": "rail-198",
+      "file": "fat-lady-corridor/rail-198.png",
+      "x": 295,
+      "y": 298,
+      "depth": 322
+    },
+    {
+      "id": "rail-220",
+      "file": "fat-lady-corridor/rail-220.png",
+      "x": 317,
+      "y": 309,
+      "depth": 332.5
+    },
+    {
+      "id": "post-240",
+      "file": "fat-lady-corridor/post-240.png",
+      "x": 330,
+      "y": 311,
+      "depth": 338.5
+    },
+    {
+      "id": "rail-240",
+      "file": "fat-lady-corridor/rail-240.png",
+      "x": 337,
+      "y": 319,
+      "depth": 343
+    },
+    {
+      "id": "rail-262",
+      "file": "fat-lady-corridor/rail-262.png",
+      "x": 359,
+      "y": 330,
+      "depth": 354
+    },
+    {
+      "id": "rail-284",
+      "file": "fat-lady-corridor/rail-284.png",
+      "x": 381,
+      "y": 341,
+      "depth": 365
+    },
+    {
+      "id": "armour",
+      "file": "fat-lady-corridor/armour.png",
+      "x": 522,
+      "y": 312,
+      "depth": 366
+    },
+    {
+      "id": "rail-306",
+      "file": "fat-lady-corridor/rail-306.png",
+      "x": 403,
+      "y": 352,
+      "depth": 375.5
+    },
+    {
+      "id": "post-326",
+      "file": "fat-lady-corridor/post-326.png",
+      "x": 416,
+      "y": 354,
+      "depth": 381.5
+    },
+    {
+      "id": "rail-326",
+      "file": "fat-lady-corridor/rail-326.png",
+      "x": 423,
+      "y": 362,
+      "depth": 386
+    },
+    {
+      "id": "rail-348",
+      "file": "fat-lady-corridor/rail-348.png",
+      "x": 445,
+      "y": 373,
+      "depth": 397
+    },
+    {
+      "id": "rail-370",
+      "file": "fat-lady-corridor/rail-370.png",
+      "x": 467,
+      "y": 384,
+      "depth": 408
+    },
+    {
+      "id": "rail-392",
+      "file": "fat-lady-corridor/rail-392.png",
+      "x": 489,
+      "y": 395,
+      "depth": 419
+    },
+    {
+      "id": "rail-414",
+      "file": "fat-lady-corridor/rail-414.png",
+      "x": 511,
+      "y": 406,
+      "depth": 425
+    },
+    {
+      "id": "post-416",
+      "file": "fat-lady-corridor/post-416.png",
+      "x": 506,
+      "y": 399,
+      "depth": 426.5
+    },
+    {
+      "id": "rail-416",
+      "file": "fat-lady-corridor/rail-416.png",
+      "x": 513,
+      "y": 407,
+      "depth": 431
+    },
+    {
+      "id": "rail-438",
+      "file": "fat-lady-corridor/rail-438.png",
+      "x": 535,
+      "y": 418,
+      "depth": 442
+    },
+    {
+      "id": "rail-460",
+      "file": "fat-lady-corridor/rail-460.png",
+      "x": 557,
+      "y": 429,
+      "depth": 453
+    },
+    {
+      "id": "rail-482",
+      "file": "fat-lady-corridor/rail-482.png",
+      "x": 579,
+      "y": 440,
+      "depth": 464
+    },
+    {
+      "id": "rail-504",
+      "file": "fat-lady-corridor/rail-504.png",
+      "x": 601,
+      "y": 451,
+      "depth": 471.5
+    },
+    {
+      "id": "post-512",
+      "file": "fat-lady-corridor/post-512.png",
+      "x": 602,
+      "y": 447,
+      "depth": 474.5
+    }
+  ],
+  "lights": [
+    {
+      "x": 364,
+      "y": 241,
+      "radius": 32,
+      "color": "#ffb474",
+      "intensity": 0.36,
+      "flicker": true
+    },
+    {
+      "x": 477,
+      "y": 297.5,
+      "radius": 32,
+      "color": "#ffb474",
+      "intensity": 0.36,
+      "flicker": true
+    }
+  ],
+  "portraitDoor": {
+    "file": "fat-lady-corridor/portrait-swing.png",
+    "frames": 17,
+    "columns": 5,
+    "rows": 4,
+    "frameWidth": 156,
+    "frameHeight": 154,
+    "x": 308,
+    "y": 181,
+    "depth": 314.75
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "grand-staircase/base.png",
+  "layers": [
+    {
+      "id": "concourse-post-32",
+      "file": "grand-staircase/concourse-post-32.png",
+      "x": 118,
+      "y": 212,
+      "depth": 235
+    },
+    {
+      "id": "upper-west-return",
+      "file": "grand-staircase/upper-west-return.png",
+      "x": 233,
+      "y": 156,
+      "depth": 237.25
+    },
+    {
+      "id": "concourse-32-0",
+      "file": "grand-staircase/concourse-32-0.png",
+      "x": 123,
+      "y": 219,
+      "depth": 242.5
+    },
+    {
+      "id": "concourse-32-1",
+      "file": "grand-staircase/concourse-32-1.png",
+      "x": 153,
+      "y": 234,
+      "depth": 257.5
+    },
+    {
+      "id": "concourse-32-2",
+      "file": "grand-staircase/concourse-32-2.png",
+      "x": 183,
+      "y": 249,
+      "depth": 272.5
+    },
+    {
+      "id": "concourse-32-3",
+      "file": "grand-staircase/concourse-32-3.png",
+      "x": 213,
+      "y": 264,
+      "depth": 287.5
+    },
+    {
+      "id": "concourse-32-4",
+      "file": "grand-staircase/concourse-32-4.png",
+      "x": 243,
+      "y": 279,
+      "depth": 302.5
+    },
+    {
+      "id": "concourse-32-5",
+      "file": "grand-staircase/concourse-32-5.png",
+      "x": 273,
+      "y": 294,
+      "depth": 317.5
+    },
+    {
+      "id": "concourse-32-6",
+      "file": "grand-staircase/concourse-32-6.png",
+      "x": 303,
+      "y": 309,
+      "depth": 328
+    },
+    {
+      "id": "concourse-post-224",
+      "file": "grand-staircase/concourse-post-224.png",
+      "x": 310,
+      "y": 308,
+      "depth": 331
+    },
+    {
+      "id": "entry-post-224-255",
+      "file": "grand-staircase/entry-post-224-255.png",
+      "x": 302,
+      "y": 313,
+      "depth": 335.5
+    },
+    {
+      "id": "entry-224-247",
+      "file": "grand-staircase/entry-224-247.png",
+      "x": 290,
+      "y": 315,
+      "depth": 337.5
+    },
+    {
+      "id": "entry-224-271",
+      "file": "grand-staircase/entry-224-271.png",
+      "x": 265,
+      "y": 327,
+      "depth": 349.75
+    },
+    {
+      "id": "entry-post-224-286",
+      "file": "grand-staircase/entry-post-224-286.png",
+      "x": 271,
+      "y": 328,
+      "depth": 351
+    },
+    {
+      "id": "entry-224-296",
+      "file": "grand-staircase/entry-224-296.png",
+      "x": 240,
+      "y": 340,
+      "depth": 362.25
+    },
+    {
+      "id": "entry-post-224-314",
+      "file": "grand-staircase/entry-post-224-314.png",
+      "x": 243,
+      "y": 342,
+      "depth": 365
+    },
+    {
+      "id": "concourse-post-304",
+      "file": "grand-staircase/concourse-post-304.png",
+      "x": 390,
+      "y": 348,
+      "depth": 371
+    },
+    {
+      "id": "entry-post-304-255",
+      "file": "grand-staircase/entry-post-304-255.png",
+      "x": 382,
+      "y": 353,
+      "depth": 375.5
+    },
+    {
+      "id": "entry-304-247",
+      "file": "grand-staircase/entry-304-247.png",
+      "x": 370,
+      "y": 355,
+      "depth": 377.5
+    },
+    {
+      "id": "concourse-304-0",
+      "file": "grand-staircase/concourse-304-0.png",
+      "x": 395,
+      "y": 355,
+      "depth": 378.5
+    },
+    {
+      "id": "entry-304-271",
+      "file": "grand-staircase/entry-304-271.png",
+      "x": 345,
+      "y": 367,
+      "depth": 389.75
+    },
+    {
+      "id": "entry-post-304-286",
+      "file": "grand-staircase/entry-post-304-286.png",
+      "x": 351,
+      "y": 368,
+      "depth": 391
+    },
+    {
+      "id": "concourse-304-1",
+      "file": "grand-staircase/concourse-304-1.png",
+      "x": 425,
+      "y": 370,
+      "depth": 393.5
+    },
+    {
+      "id": "upper-east-return",
+      "file": "grand-staircase/upper-east-return.png",
+      "x": 548,
+      "y": 313,
+      "depth": 394.75
+    },
+    {
+      "id": "entry-304-296",
+      "file": "grand-staircase/entry-304-296.png",
+      "x": 320,
+      "y": 380,
+      "depth": 402.25
+    },
+    {
+      "id": "entry-post-304-314",
+      "file": "grand-staircase/entry-post-304-314.png",
+      "x": 323,
+      "y": 382,
+      "depth": 405
+    },
+    {
+      "id": "concourse-304-2",
+      "file": "grand-staircase/concourse-304-2.png",
+      "x": 455,
+      "y": 385,
+      "depth": 408.5
+    },
+    {
+      "id": "concourse-304-3",
+      "file": "grand-staircase/concourse-304-3.png",
+      "x": 485,
+      "y": 400,
+      "depth": 423.5
+    },
+    {
+      "id": "concourse-304-4",
+      "file": "grand-staircase/concourse-304-4.png",
+      "x": 515,
+      "y": 415,
+      "depth": 438.5
+    },
+    {
+      "id": "concourse-304-5",
+      "file": "grand-staircase/concourse-304-5.png",
+      "x": 545,
+      "y": 430,
+      "depth": 452.5
+    },
+    {
+      "id": "concourse-post-480",
+      "file": "grand-staircase/concourse-post-480.png",
+      "x": 566,
+      "y": 436,
+      "depth": 459
+    }
+  ],
+  "lights": [
+    {
+      "x": 306,
+      "y": 119,
+      "radius": 22,
+      "color": "#efab68",
+      "intensity": 0.39,
+      "flicker": true
+    },
+    {
+      "x": 629,
+      "y": 281,
+      "radius": 22,
+      "color": "#efab68",
+      "intensity": 0.39,
+      "flicker": true
+    },
+    {
+      "x": 205,
+      "y": 210,
+      "radius": 22,
+      "color": "#efab68",
+      "intensity": 0.4,
+      "flicker": true
+    },
+    {
+      "x": 605,
+      "y": 410,
+      "radius": 22,
+      "color": "#efab68",
+      "intensity": 0.4,
+      "flicker": true
+    }
+  ],
+  "animations": [
+    {
+      "id": "scholar-turn",
+      "file": "grand-staircase/scholar-turn.png",
+      "x": 252,
+      "y": 45,
+      "depth": 1,
+      "frameWidth": 26,
+      "frameHeight": 52,
+      "frames": 12,
+      "frameRate": 2.2,
+      "startFrame": 0
+    },
+    {
+      "id": "lamp-0",
+      "file": "grand-staircase/lantern-light.png",
+      "x": 303,
+      "y": 113,
+      "depth": 1,
+      "frameWidth": 7,
+      "frameHeight": 9,
+      "frames": 4,
+      "frameRate": 6,
+      "startFrame": 0
+    },
+    {
+      "id": "lamp-1",
+      "file": "grand-staircase/lantern-light.png",
+      "x": 626,
+      "y": 275,
+      "depth": 1,
+      "frameWidth": 7,
+      "frameHeight": 9,
+      "frames": 4,
+      "frameRate": 6,
+      "startFrame": 1
+    },
+    {
+      "id": "lamp-2",
+      "file": "grand-staircase/lantern-light.png",
+      "x": 202,
+      "y": 204,
+      "depth": 1,
+      "frameWidth": 7,
+      "frameHeight": 9,
+      "frames": 4,
+      "frameRate": 6,
+      "startFrame": 2
+    },
+    {
+      "id": "lamp-3",
+      "file": "grand-staircase/lantern-light.png",
+      "x": 602,
+      "y": 404,
+      "depth": 1,
+      "frameWidth": 7,
+      "frameHeight": 9,
+      "frames": 4,
+      "frameRate": 6,
+      "startFrame": 3
+    }
+  ],
+  "movingFlight": {
+    "frames": 49,
+    "columns": 7,
+    "rows": 7,
+    "x": 298,
+    "y": 151,
+    "frameWidth": 290,
+    "frameHeight": 203,
+    "deckFile": "grand-staircase/flight-deck.png",
+    "frontFile": "grand-staircase/flight-front.png"
+  }
+}

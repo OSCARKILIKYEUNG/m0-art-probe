@@ -1,0 +1,116 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "common-room/base.png",
+  "layers": [
+    {
+      "id": "portrait-passage-jamb",
+      "file": "common-room/portrait-passage-jamb.png",
+      "x": 173,
+      "y": 177,
+      "depth": 208.5
+    },
+    {
+      "id": "round-table-west",
+      "file": "common-room/round-table-west.png",
+      "x": 268,
+      "y": 191,
+      "depth": 231.135
+    },
+    {
+      "id": "study-table",
+      "file": "common-room/study-table.png",
+      "x": 166,
+      "y": 227,
+      "depth": 270.3
+    },
+    {
+      "id": "wing-chair-west",
+      "file": "common-room/wing-chair-west.png",
+      "x": 341,
+      "y": 224,
+      "depth": 274.3
+    },
+    {
+      "id": "tea-table",
+      "file": "common-room/tea-table.png",
+      "x": 400,
+      "y": 285,
+      "depth": 310.48
+    },
+    {
+      "id": "worn-sofa",
+      "file": "common-room/worn-sofa.png",
+      "x": 307,
+      "y": 275,
+      "depth": 335.3
+    },
+    {
+      "id": "wing-chair-east",
+      "file": "common-room/wing-chair-east.png",
+      "x": 485,
+      "y": 297,
+      "depth": 343.3
+    },
+    {
+      "id": "timetable",
+      "file": "common-room/timetable.png",
+      "x": 552,
+      "y": 307,
+      "depth": 367.98
+    },
+    {
+      "id": "low-library",
+      "file": "common-room/low-library.png",
+      "x": 416,
+      "y": 365,
+      "depth": 410.975
+    },
+    {
+      "id": "east-reading-table",
+      "file": "common-room/east-reading-table.png",
+      "x": 509,
+      "y": 381,
+      "depth": 416.3
+    },
+    {
+      "id": "dormitory-stair-jamb",
+      "file": "common-room/dormitory-stair-jamb.png",
+      "x": 621,
+      "y": 401,
+      "depth": 432.5
+    }
+  ],
+  "lights": [
+    {
+      "x": 497,
+      "y": 261.5,
+      "radius": 48,
+      "color": "#f7a353",
+      "intensity": 0.3,
+      "flicker": true
+    },
+    {
+      "x": 287.4,
+      "y": 196.7,
+      "radius": 17,
+      "color": "#ffdca3",
+      "intensity": 0.16,
+      "flicker": false
+    }
+  ],
+  "animations": [
+    {
+      "id": "hearth-fire",
+      "file": "common-room/hearth-fire.png",
+      "x": 471,
+      "y": 241,
+      "depth": 1,
+      "frameWidth": 49,
+      "frameHeight": 43,
+      "frames": 12,
+      "frameRate": 8,
+      "startFrame": 0
+    }
+  ]
+}

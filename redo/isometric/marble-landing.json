@@ -1,0 +1,133 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "marble-landing/base.png",
+  "layers": [
+    {
+      "id": "newel-24",
+      "file": "marble-landing/newel-24.png",
+      "x": 119,
+      "y": 202,
+      "depth": 228
+    },
+    {
+      "id": "rail-24-0",
+      "file": "marble-landing/rail-24-0.png",
+      "x": 126,
+      "y": 208,
+      "depth": 233.83333333333334
+    },
+    {
+      "id": "rail-24-1",
+      "file": "marble-landing/rail-24-1.png",
+      "x": 157,
+      "y": 223,
+      "depth": 249.5
+    },
+    {
+      "id": "rail-24-2",
+      "file": "marble-landing/rail-24-2.png",
+      "x": 188,
+      "y": 239,
+      "depth": 265.16666666666663
+    },
+    {
+      "id": "newel-118",
+      "file": "marble-landing/newel-118.png",
+      "x": 213,
+      "y": 249,
+      "depth": 275
+    },
+    {
+      "id": "rail-24-3",
+      "file": "marble-landing/rail-24-3.png",
+      "x": 220,
+      "y": 255,
+      "depth": 280.8333333333333
+    },
+    {
+      "id": "rail-24-4",
+      "file": "marble-landing/rail-24-4.png",
+      "x": 251,
+      "y": 270,
+      "depth": 296.5
+    },
+    {
+      "id": "rail-24-5",
+      "file": "marble-landing/rail-24-5.png",
+      "x": 282,
+      "y": 286,
+      "depth": 312.16666666666663
+    },
+    {
+      "id": "newel-212",
+      "file": "marble-landing/newel-212.png",
+      "x": 303,
+      "y": 292,
+      "depth": 322
+    },
+    {
+      "id": "newel-300",
+      "file": "marble-landing/newel-300.png",
+      "x": 391,
+      "y": 336,
+      "depth": 366
+    },
+    {
+      "id": "rail-300-0",
+      "file": "marble-landing/rail-300-0.png",
+      "x": 402,
+      "y": 346,
+      "depth": 371.8333333333333
+    },
+    {
+      "id": "rail-300-1",
+      "file": "marble-landing/rail-300-1.png",
+      "x": 433,
+      "y": 361,
+      "depth": 387.5
+    },
+    {
+      "id": "rail-300-2",
+      "file": "marble-landing/rail-300-2.png",
+      "x": 464,
+      "y": 377,
+      "depth": 403.1666666666667
+    },
+    {
+      "id": "newel-394",
+      "file": "marble-landing/newel-394.png",
+      "x": 489,
+      "y": 387,
+      "depth": 413
+    },
+    {
+      "id": "rail-300-3",
+      "file": "marble-landing/rail-300-3.png",
+      "x": 496,
+      "y": 393,
+      "depth": 418.8333333333333
+    },
+    {
+      "id": "rail-300-4",
+      "file": "marble-landing/rail-300-4.png",
+      "x": 527,
+      "y": 408,
+      "depth": 434.5
+    },
+    {
+      "id": "rail-300-5",
+      "file": "marble-landing/rail-300-5.png",
+      "x": 558,
+      "y": 424,
+      "depth": 450.16666666666663
+    },
+    {
+      "id": "newel-488",
+      "file": "marble-landing/newel-488.png",
+      "x": 583,
+      "y": 434,
+      "depth": 460
+    }
+  ]
+}

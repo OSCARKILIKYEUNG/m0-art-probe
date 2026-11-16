@@ -1,7 +1,7 @@
 {
   "name": "HP RPG",
   "short_name": "HP RPG",
-  "description": "Private play build. Not published.",
+  "description": "Explore Hogwarts in an isometric pixel RPG.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

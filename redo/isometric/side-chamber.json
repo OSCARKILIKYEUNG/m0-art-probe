@@ -1,0 +1,259 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "side-chamber/base.png",
+  "layers": [
+    {
+      "id": "side-chamber-264",
+      "file": "side-chamber/depth-264.png",
+      "x": 188,
+      "y": 244,
+      "depth": 264
+    },
+    {
+      "id": "side-chamber-268",
+      "file": "side-chamber/depth-268.png",
+      "x": 196,
+      "y": 248,
+      "depth": 268
+    },
+    {
+      "id": "side-chamber-272",
+      "file": "side-chamber/depth-272.png",
+      "x": 204,
+      "y": 253,
+      "depth": 272
+    },
+    {
+      "id": "side-chamber-276",
+      "file": "side-chamber/depth-276.png",
+      "x": 212,
+      "y": 270,
+      "depth": 276
+    },
+    {
+      "id": "side-chamber-280",
+      "file": "side-chamber/depth-280.png",
+      "x": 220,
+      "y": 259,
+      "depth": 280
+    },
+    {
+      "id": "side-chamber-284",
+      "file": "side-chamber/depth-284.png",
+      "x": 228,
+      "y": 265,
+      "depth": 284
+    },
+    {
+      "id": "side-chamber-288",
+      "file": "side-chamber/depth-288.png",
+      "x": 236,
+      "y": 282,
+      "depth": 288
+    },
+    {
+      "id": "side-chamber-292",
+      "file": "side-chamber/depth-292.png",
+      "x": 244,
+      "y": 271,
+      "depth": 292
+    },
+    {
+      "id": "side-chamber-296",
+      "file": "side-chamber/depth-296.png",
+      "x": 252,
+      "y": 277,
+      "depth": 296
+    },
+    {
+      "id": "side-chamber-300",
+      "file": "side-chamber/depth-300.png",
+      "x": 260,
+      "y": 294,
+      "depth": 300
+    },
+    {
+      "id": "side-chamber-304",
+      "file": "side-chamber/depth-304.png",
+      "x": 268,
+      "y": 283,
+      "depth": 304
+    },
+    {
+      "id": "side-chamber-308",
+      "file": "side-chamber/depth-308.png",
+      "x": 276,
+      "y": 289,
+      "depth": 308
+    },
+    {
+      "id": "side-chamber-312",
+      "file": "side-chamber/depth-312.png",
+      "x": 284,
+      "y": 306,
+      "depth": 312
+    },
+    {
+      "id": "side-chamber-316",
+      "file": "side-chamber/depth-316.png",
+      "x": 292,
+      "y": 310,
+      "depth": 316
+    },
+    {
+      "id": "side-chamber-320",
+      "file": "side-chamber/depth-320.png",
+      "x": 300,
+      "y": 314,
+      "depth": 320
+    },
+    {
+      "id": "side-chamber-324",
+      "file": "side-chamber/depth-324.png",
+      "x": 308,
+      "y": 318,
+      "depth": 324
+    },
+    {
+      "id": "side-chamber-328",
+      "file": "side-chamber/depth-328.png",
+      "x": 316,
+      "y": 322,
+      "depth": 328
+    },
+    {
+      "id": "side-chamber-332",
+      "file": "side-chamber/depth-332.png",
+      "x": 324,
+      "y": 306,
+      "depth": 332
+    },
+    {
+      "id": "side-chamber-360",
+      "file": "side-chamber/depth-360.png",
+      "x": 379,
+      "y": 329,
+      "depth": 360
+    },
+    {
+      "id": "side-chamber-364",
+      "file": "side-chamber/depth-364.png",
+      "x": 388,
+      "y": 357,
+      "depth": 364
+    },
+    {
+      "id": "side-chamber-368",
+      "file": "side-chamber/depth-368.png",
+      "x": 396,
+      "y": 362,
+      "depth": 368
+    },
+    {
+      "id": "side-chamber-372",
+      "file": "side-chamber/depth-372.png",
+      "x": 404,
+      "y": 366,
+      "depth": 372
+    },
+    {
+      "id": "side-chamber-376",
+      "file": "side-chamber/depth-376.png",
+      "x": 412,
+      "y": 343,
+      "depth": 376
+    },
+    {
+      "id": "side-chamber-380",
+      "file": "side-chamber/depth-380.png",
+      "x": 420,
+      "y": 335,
+      "depth": 380
+    },
+    {
+      "id": "side-chamber-384",
+      "file": "side-chamber/depth-384.png",
+      "x": 428,
+      "y": 333,
+      "depth": 384
+    },
+    {
+      "id": "side-chamber-388",
+      "file": "side-chamber/depth-388.png",
+      "x": 436,
+      "y": 333,
+      "depth": 388
+    },
+    {
+      "id": "side-chamber-392",
+      "file": "side-chamber/depth-392.png",
+      "x": 444,
+      "y": 341,
+      "depth": 392
+    },
+    {
+      "id": "side-chamber-396",
+      "file": "side-chamber/depth-396.png",
+      "x": 452,
+      "y": 352,
+      "depth": 396
+    },
+    {
+      "id": "side-chamber-400",
+      "file": "side-chamber/depth-400.png",
+      "x": 460,
+      "y": 369,
+      "depth": 400
+    },
+    {
+      "id": "side-chamber-404",
+      "file": "side-chamber/depth-404.png",
+      "x": 468,
+      "y": 398,
+      "depth": 404
+    },
+    {
+      "id": "side-chamber-408",
+      "file": "side-chamber/depth-408.png",
+      "x": 476,
+      "y": 398,
+      "depth": 408
+    },
+    {
+      "id": "side-chamber-412",
+      "file": "side-chamber/depth-412.png",
+      "x": 484,
+      "y": 403,
+      "depth": 412
+    },
+    {
+      "id": "side-chamber-416",
+      "file": "side-chamber/depth-416.png",
+      "x": 492,
+      "y": 408,
+      "depth": 416
+    },
+    {
+      "id": "side-chamber-420",
+      "file": "side-chamber/depth-420.png",
+      "x": 500,
+      "y": 413,
+      "depth": 420
+    },
+    {
+      "id": "side-chamber-424",
+      "file": "side-chamber/depth-424.png",
+      "x": 508,
+      "y": 418,
+      "depth": 424
+    },
+    {
+      "id": "side-chamber-428",
+      "file": "side-chamber/depth-428.png",
+      "x": 516,
+      "y": 418,
+      "depth": 428
+    }
+  ]
+}

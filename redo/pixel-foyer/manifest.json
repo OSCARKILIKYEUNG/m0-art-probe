@@ -1,0 +1,14 @@
+{
+  "entrance": {
+    "hash": "b259be31eecabf22",
+    "bytes": 387113
+  },
+  "east-jamb": {
+    "hash": "0fa65c4aac2d84f6",
+    "bytes": 4592
+  },
+  "west-jamb": {
+    "hash": "8293b54b29a01879",
+    "bytes": 2599
+  }
+}
