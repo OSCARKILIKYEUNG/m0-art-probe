@@ -1,0 +1,340 @@
+{
+  "width": 852,
+  "height": 522,
+  "backdrop": "dormitory-morning/base.png",
+  "layers": [
+    {
+      "id": "side-table-neville",
+      "file": "dormitory-morning/side-table-neville.png",
+      "x": 248,
+      "y": 190,
+      "depth": 211.75
+    },
+    {
+      "id": "neville-head-right",
+      "file": "dormitory-morning/neville-head-right.png",
+      "x": 218,
+      "y": 159,
+      "depth": 214.7
+    },
+    {
+      "id": "side-table-dean",
+      "file": "dormitory-morning/side-table-dean.png",
+      "x": 339,
+      "y": 197,
+      "depth": 216
+    },
+    {
+      "id": "dean-head-left",
+      "file": "dormitory-morning/dean-head-left.png",
+      "x": 371,
+      "y": 161,
+      "depth": 216.7
+    },
+    {
+      "id": "neville-head",
+      "file": "dormitory-morning/neville-head.png",
+      "x": 187,
+      "y": 190,
+      "depth": 223.95
+    },
+    {
+      "id": "dean-head",
+      "file": "dormitory-morning/dean-head.png",
+      "x": 385,
+      "y": 192,
+      "depth": 226.7
+    },
+    {
+      "id": "neville-head-left",
+      "file": "dormitory-morning/neville-head-left.png",
+      "x": 184,
+      "y": 175,
+      "depth": 231.4
+    },
+    {
+      "id": "dean-head-right",
+      "file": "dormitory-morning/dean-head-right.png",
+      "x": 405,
+      "y": 179,
+      "depth": 234.89999999999998
+    },
+    {
+      "id": "neville-quilt",
+      "file": "dormitory-morning/neville-quilt.png",
+      "x": 187,
+      "y": 201,
+      "depth": 238.25
+    },
+    {
+      "id": "neville-canopy",
+      "file": "dormitory-morning/neville-canopy.png",
+      "x": 184,
+      "y": 159,
+      "depth": 239.25
+    },
+    {
+      "id": "dean-quilt",
+      "file": "dormitory-morning/dean-quilt.png",
+      "x": 332,
+      "y": 203,
+      "depth": 239.5
+    },
+    {
+      "id": "dean-canopy",
+      "file": "dormitory-morning/dean-canopy.png",
+      "x": 329,
+      "y": 161,
+      "depth": 240.5
+    },
+    {
+      "id": "dean-foot-left",
+      "file": "dormitory-morning/dean-foot-left.png",
+      "x": 329,
+      "y": 188,
+      "depth": 244.10000000000002
+    },
+    {
+      "id": "neville-foot-right",
+      "file": "dormitory-morning/neville-foot-right.png",
+      "x": 268,
+      "y": 189,
+      "depth": 245.10000000000002
+    },
+    {
+      "id": "harry-head-left",
+      "file": "dormitory-morning/harry-head-left.png",
+      "x": 467,
+      "y": 204,
+      "depth": 260.2
+    },
+    {
+      "id": "neville-foot-left",
+      "file": "dormitory-morning/neville-foot-left.png",
+      "x": 236,
+      "y": 206,
+      "depth": 261.8
+    },
+    {
+      "id": "dean-foot-right",
+      "file": "dormitory-morning/dean-foot-right.png",
+      "x": 366,
+      "y": 206,
+      "depth": 262.3
+    },
+    {
+      "id": "dean-trunk",
+      "file": "dormitory-morning/dean-trunk.png",
+      "x": 337,
+      "y": 238,
+      "depth": 266.9
+    },
+    {
+      "id": "harry-head",
+      "file": "dormitory-morning/harry-head.png",
+      "x": 482,
+      "y": 235,
+      "depth": 270.45
+    },
+    {
+      "id": "neville-trunk",
+      "file": "dormitory-morning/neville-trunk.png",
+      "x": 234,
+      "y": 246,
+      "depth": 271.09000000000003
+    },
+    {
+      "id": "harry-head-right",
+      "file": "dormitory-morning/harry-head-right.png",
+      "x": 503,
+      "y": 223,
+      "depth": 278.9
+    },
+    {
+      "id": "harry-quilt",
+      "file": "dormitory-morning/harry-quilt.png",
+      "x": 436,
+      "y": 246,
+      "depth": 281.5
+    },
+    {
+      "id": "harry-canopy",
+      "file": "dormitory-morning/harry-canopy.png",
+      "x": 433,
+      "y": 205,
+      "depth": 282.5
+    },
+    {
+      "id": "harry-foot-left",
+      "file": "dormitory-morning/harry-foot-left.png",
+      "x": 433,
+      "y": 228,
+      "depth": 284.1
+    },
+    {
+      "id": "side-table-harry",
+      "file": "dormitory-morning/side-table-harry.png",
+      "x": 506,
+      "y": 272,
+      "depth": 293.75
+    },
+    {
+      "id": "harry-foot-right",
+      "file": "dormitory-morning/harry-foot-right.png",
+      "x": 471,
+      "y": 247,
+      "depth": 302.8
+    },
+    {
+      "id": "harry-trunk",
+      "file": "dormitory-morning/harry-trunk.png",
+      "x": 447,
+      "y": 283,
+      "depth": 304.86
+    },
+    {
+      "id": "ron-head-left",
+      "file": "dormitory-morning/ron-head-left.png",
+      "x": 555,
+      "y": 252,
+      "depth": 308.2
+    },
+    {
+      "id": "ron-head",
+      "file": "dormitory-morning/ron-head.png",
+      "x": 570,
+      "y": 283,
+      "depth": 318.45
+    },
+    {
+      "id": "ron-head-right",
+      "file": "dormitory-morning/ron-head-right.png",
+      "x": 591,
+      "y": 271,
+      "depth": 326.9
+    },
+    {
+      "id": "ron-quilt",
+      "file": "dormitory-morning/ron-quilt.png",
+      "x": 517,
+      "y": 294,
+      "depth": 331.25
+    },
+    {
+      "id": "ron-canopy",
+      "file": "dormitory-morning/ron-canopy.png",
+      "x": 514,
+      "y": 253,
+      "depth": 332.25
+    },
+    {
+      "id": "godin-stove",
+      "file": "dormitory-morning/godin-stove.png",
+      "x": 365,
+      "y": 269,
+      "depth": 333
+    },
+    {
+      "id": "ron-foot-left",
+      "file": "dormitory-morning/ron-foot-left.png",
+      "x": 514,
+      "y": 280,
+      "depth": 335.6
+    },
+    {
+      "id": "side-table-ron",
+      "file": "dormitory-morning/side-table-ron.png",
+      "x": 588,
+      "y": 324,
+      "depth": 343.5
+    },
+    {
+      "id": "ron-trunk",
+      "file": "dormitory-morning/ron-trunk.png",
+      "x": 494,
+      "y": 316,
+      "depth": 343.53000000000003
+    },
+    {
+      "id": "ron-foot-right",
+      "file": "dormitory-morning/ron-foot-right.png",
+      "x": 552,
+      "y": 298,
+      "depth": 354.3
+    },
+    {
+      "id": "seamus-foot-left",
+      "file": "dormitory-morning/seamus-foot-left.png",
+      "x": 553,
+      "y": 326,
+      "depth": 382.20000000000005
+    },
+    {
+      "id": "side-table-seamus",
+      "file": "dormitory-morning/side-table-seamus.png",
+      "x": 614,
+      "y": 373,
+      "depth": 394.75
+    },
+    {
+      "id": "seamus-foot-right",
+      "file": "dormitory-morning/seamus-foot-right.png",
+      "x": 519,
+      "y": 343,
+      "depth": 398.9
+    },
+    {
+      "id": "seamus-trunk",
+      "file": "dormitory-morning/seamus-trunk.png",
+      "x": 493,
+      "y": 375,
+      "depth": 400.29999999999995
+    },
+    {
+      "id": "seamus-quilt",
+      "file": "dormitory-morning/seamus-quilt.png",
+      "x": 522,
+      "y": 367,
+      "depth": 405.25
+    },
+    {
+      "id": "seamus-canopy",
+      "file": "dormitory-morning/seamus-canopy.png",
+      "x": 519,
+      "y": 327,
+      "depth": 406.25
+    },
+    {
+      "id": "seamus-head-left",
+      "file": "dormitory-morning/seamus-head-left.png",
+      "x": 596,
+      "y": 354,
+      "depth": 411.6
+    },
+    {
+      "id": "seamus-head",
+      "file": "dormitory-morning/seamus-head.png",
+      "x": 579,
+      "y": 386,
+      "depth": 419.05
+    },
+    {
+      "id": "seamus-head-right",
+      "file": "dormitory-morning/seamus-head-right.png",
+      "x": 564,
+      "y": 370,
+      "depth": 428.29999999999995
+    }
+  ],
+  "lights": [
+    {
+      "x": 377,
+      "y": 325.5,
+      "radius": 18,
+      "color": "#e8a36c",
+      "intensity": 0.1,
+      "flicker": true
+    }
+  ],
+  "actorContactShadow": true
+}

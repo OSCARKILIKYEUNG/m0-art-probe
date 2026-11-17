@@ -13,15 +13,15 @@
     {
       "id": "armour-west",
       "file": "entrance-hall/armour-west.png",
-      "x": 542,
-      "y": 204,
+      "x": 537,
+      "y": 192,
       "depth": 260
     },
     {
       "id": "plinth-nw",
       "file": "entrance-hall/plinth-nw.png",
       "x": 396,
-      "y": 188,
+      "y": 185,
       "depth": 278
     },
     {
@@ -42,7 +42,7 @@
       "id": "plinth-sw",
       "file": "entrance-hall/plinth-sw.png",
       "x": 268,
-      "y": 252,
+      "y": 249,
       "depth": 342
     },
     {
@@ -74,18 +74,18 @@
       "depth": 406
     },
     {
+      "id": "armour-east",
+      "file": "entrance-hall/armour-east.png",
+      "x": 861,
+      "y": 356,
+      "depth": 424
+    },
+    {
       "id": "front-cut-west-6",
       "file": "entrance-hall/front-cut-west-6.png",
       "x": 361,
       "y": 405,
       "depth": 424
-    },
-    {
-      "id": "armour-east",
-      "file": "entrance-hall/armour-east.png",
-      "x": 873,
-      "y": 369,
-      "depth": 425
     },
     {
       "id": "front-cut-west-7",
@@ -119,7 +119,7 @@
       "id": "plinth-ne",
       "file": "entrance-hall/plinth-ne.png",
       "x": 816,
-      "y": 398,
+      "y": 395,
       "depth": 488
     },
     {
@@ -196,7 +196,7 @@
       "id": "plinth-se",
       "file": "entrance-hall/plinth-se.png",
       "x": 688,
-      "y": 462,
+      "y": 459,
       "depth": 552
     },
     {
@@ -205,6 +205,13 @@
       "x": 850,
       "y": 510,
       "depth": 562.5
+    },
+    {
+      "id": "hall-passage-glass",
+      "file": "entrance-hall/hall-passage-glass.png",
+      "x": 927,
+      "y": 492,
+      "depth": 564.5
     },
     {
       "id": "front-cut-east-4",
@@ -267,6 +274,30 @@
       "flicker": true
     },
     {
+      "x": 928,
+      "y": 529,
+      "radius": 15,
+      "color": "#ffc878",
+      "intensity": 0.28,
+      "flicker": true
+    },
+    {
+      "x": 938,
+      "y": 533,
+      "radius": 15,
+      "color": "#ffc878",
+      "intensity": 0.28,
+      "flicker": true
+    },
+    {
+      "x": 964,
+      "y": 548,
+      "radius": 15,
+      "color": "#ffc878",
+      "intensity": 0.28,
+      "flicker": true
+    },
+    {
       "x": 317,
       "y": 176,
       "radius": 30,
@@ -301,33 +332,33 @@
     {
       "x": 412,
       "y": 192,
-      "radius": 29,
-      "color": "#ffb777",
-      "intensity": 0.33,
+      "radius": 35,
+      "color": "#ffb36f",
+      "intensity": 0.43,
       "flicker": true
     },
     {
       "x": 284,
       "y": 256,
-      "radius": 29,
-      "color": "#ffb777",
-      "intensity": 0.33,
+      "radius": 35,
+      "color": "#ffb36f",
+      "intensity": 0.43,
       "flicker": true
     },
     {
       "x": 832,
       "y": 402,
-      "radius": 29,
-      "color": "#ffb777",
-      "intensity": 0.33,
+      "radius": 35,
+      "color": "#ffb36f",
+      "intensity": 0.43,
       "flicker": true
     },
     {
       "x": 704,
       "y": 466,
-      "radius": 29,
-      "color": "#ffb777",
-      "intensity": 0.33,
+      "radius": 35,
+      "color": "#ffb36f",
+      "intensity": 0.43,
       "flicker": true
     }
   ],
@@ -380,5 +411,6 @@
       "frameRate": 8,
       "startFrame": 3
     }
-  ]
+  ],
+  "actorContactShadow": true
 }
