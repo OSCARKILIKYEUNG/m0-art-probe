@@ -38,8 +38,8 @@
     {
       "id": "west-near-jamb",
       "file": "entrance-hall/west-near-jamb.png",
-      "x": 242,
-      "y": 203,
+      "x": 245,
+      "y": 204,
       "depth": 254
     },
     {
@@ -60,15 +60,15 @@
     {
       "id": "front-cut-west-0",
       "file": "entrance-hall/front-cut-west-0.png",
-      "x": 145,
-      "y": 297,
+      "x": 144,
+      "y": 296,
       "depth": 316
     },
     {
       "id": "front-cut-west-1",
       "file": "entrance-hall/front-cut-west-1.png",
-      "x": 181,
-      "y": 315,
+      "x": 180,
+      "y": 314,
       "depth": 334
     },
     {
@@ -81,29 +81,29 @@
     {
       "id": "front-cut-west-2",
       "file": "entrance-hall/front-cut-west-2.png",
-      "x": 217,
-      "y": 333,
+      "x": 216,
+      "y": 332,
       "depth": 352
     },
     {
       "id": "front-cut-west-3",
       "file": "entrance-hall/front-cut-west-3.png",
-      "x": 253,
-      "y": 351,
+      "x": 252,
+      "y": 350,
       "depth": 370
     },
     {
       "id": "front-cut-west-4",
       "file": "entrance-hall/front-cut-west-4.png",
-      "x": 289,
-      "y": 369,
+      "x": 288,
+      "y": 368,
       "depth": 388
     },
     {
       "id": "front-cut-west-5",
       "file": "entrance-hall/front-cut-west-5.png",
-      "x": 325,
-      "y": 387,
+      "x": 324,
+      "y": 386,
       "depth": 406
     },
     {
@@ -117,36 +117,36 @@
     {
       "id": "front-cut-west-6",
       "file": "entrance-hall/front-cut-west-6.png",
-      "x": 361,
-      "y": 405,
+      "x": 360,
+      "y": 404,
       "depth": 424
     },
     {
       "id": "front-cut-west-7",
       "file": "entrance-hall/front-cut-west-7.png",
-      "x": 397,
-      "y": 423,
+      "x": 396,
+      "y": 422,
       "depth": 434
     },
     {
       "id": "courtyard-gate-west",
       "file": "entrance-hall/courtyard-gate-west.png",
-      "x": 392,
-      "y": 406,
+      "x": 395,
+      "y": 404,
       "depth": 434
     },
     {
       "id": "courtyard-return-west",
       "file": "entrance-hall/courtyard-return-west.png",
-      "x": 377,
-      "y": 419,
+      "x": 375,
+      "y": 420,
       "depth": 439
     },
     {
       "id": "courtyard-gate-east",
       "file": "entrance-hall/courtyard-gate-east.png",
-      "x": 496,
-      "y": 458,
+      "x": 499,
+      "y": 456,
       "depth": 486
     },
     {
@@ -159,71 +159,71 @@
     {
       "id": "courtyard-return-east",
       "file": "entrance-hall/courtyard-return-east.png",
-      "x": 481,
-      "y": 471,
+      "x": 479,
+      "y": 472,
       "depth": 491
     },
     {
       "id": "east-cut-north-0",
       "file": "entrance-hall/east-cut-north-0.png",
-      "x": 972,
-      "y": 477,
+      "x": 971,
+      "y": 476,
       "depth": 496
     },
     {
       "id": "front-cut-east-0",
       "file": "entrance-hall/front-cut-east-0.png",
-      "x": 505,
-      "y": 477,
+      "x": 504,
+      "y": 476,
       "depth": 496
     },
     {
       "id": "east-cut-north-1",
       "file": "entrance-hall/east-cut-north-1.png",
-      "x": 936,
-      "y": 495,
+      "x": 935,
+      "y": 494,
       "depth": 514
     },
     {
       "id": "front-cut-east-1",
       "file": "entrance-hall/front-cut-east-1.png",
-      "x": 541,
-      "y": 495,
+      "x": 540,
+      "y": 494,
       "depth": 514
     },
     {
       "id": "east-cut-north-2",
       "file": "entrance-hall/east-cut-north-2.png",
-      "x": 904,
-      "y": 513,
+      "x": 903,
+      "y": 512,
       "depth": 531
     },
     {
       "id": "front-cut-east-2",
       "file": "entrance-hall/front-cut-east-2.png",
-      "x": 577,
-      "y": 513,
+      "x": 576,
+      "y": 512,
       "depth": 532
     },
     {
       "id": "great-hall-far-respond",
       "file": "entrance-hall/great-hall-far-respond.png",
-      "x": 898,
-      "y": 486,
+      "x": 901,
+      "y": 459,
       "depth": 538.5
     },
     {
       "id": "front-cut-east-3",
       "file": "entrance-hall/front-cut-east-3.png",
-      "x": 613,
-      "y": 531,
+      "x": 612,
+      "y": 530,
       "depth": 550
     },
     {
       "id": "great-hall-threshold",
       "file": "entrance-hall/great-hall-threshold.png",
-      "x": 852,
-      "y": 467,
+      "x": 848,
+      "y": 456,
       "depth": 550
     },
     {
@@ -236,8 +236,8 @@
     {
       "id": "great-hall-near-respond",
       "file": "entrance-hall/great-hall-near-respond.png",
-      "x": 850,
-      "y": 510,
+      "x": 837,
+      "y": 486,
       "depth": 562.5
     },
     {
@@ -250,43 +250,43 @@
     {
       "id": "front-cut-east-4",
       "file": "entrance-hall/front-cut-east-4.png",
-      "x": 649,
-      "y": 549,
+      "x": 648,
+      "y": 548,
       "depth": 568
     },
     {
       "id": "east-cut-south-0",
       "file": "entrance-hall/east-cut-south-0.png",
-      "x": 820,
-      "y": 553,
+      "x": 819,
+      "y": 552,
       "depth": 572
     },
     {
       "id": "front-cut-east-5",
       "file": "entrance-hall/front-cut-east-5.png",
-      "x": 685,
-      "y": 567,
+      "x": 684,
+      "y": 566,
       "depth": 586
     },
     {
       "id": "east-cut-south-1",
       "file": "entrance-hall/east-cut-south-1.png",
-      "x": 784,
-      "y": 571,
+      "x": 783,
+      "y": 570,
       "depth": 590
     },
     {
       "id": "front-cut-east-6",
       "file": "entrance-hall/front-cut-east-6.png",
-      "x": 721,
-      "y": 585,
+      "x": 720,
+      "y": 584,
       "depth": 604
     },
     {
       "id": "east-cut-south-2",
       "file": "entrance-hall/east-cut-south-2.png",
-      "x": 756,
-      "y": 589,
+      "x": 755,
+      "y": 588,
       "depth": 606
     }
   ],
