@@ -4,6 +4,38 @@
   "backdrop": "entrance-hall/base.png",
   "layers": [
     {
+      "id": "hourglass-gryffindor",
+      "file": "entrance-hall/hourglass-gryffindor.png",
+      "x": 449,
+      "y": 146,
+      "depth": 213.5,
+      "pixelRatio": 2
+    },
+    {
+      "id": "hourglass-slytherin",
+      "file": "entrance-hall/hourglass-slytherin.png",
+      "x": 473,
+      "y": 158,
+      "depth": 225.5,
+      "pixelRatio": 2
+    },
+    {
+      "id": "hourglass-ravenclaw",
+      "file": "entrance-hall/hourglass-ravenclaw.png",
+      "x": 497,
+      "y": 170,
+      "depth": 237.5,
+      "pixelRatio": 2
+    },
+    {
+      "id": "hourglass-hufflepuff",
+      "file": "entrance-hall/hourglass-hufflepuff.png",
+      "x": 521,
+      "y": 182,
+      "depth": 249.5,
+      "pixelRatio": 2
+    },
+    {
       "id": "west-near-jamb",
       "file": "entrance-hall/west-near-jamb.png",
       "x": 242,
@@ -15,7 +47,8 @@
       "file": "entrance-hall/armour-west.png",
       "x": 537,
       "y": 192,
-      "depth": 260
+      "depth": 260,
+      "pixelRatio": 2
     },
     {
       "id": "plinth-nw",
@@ -78,7 +111,8 @@
       "file": "entrance-hall/armour-east.png",
       "x": 861,
       "y": 356,
-      "depth": 424
+      "depth": 424,
+      "pixelRatio": 2
     },
     {
       "id": "front-cut-west-6",
