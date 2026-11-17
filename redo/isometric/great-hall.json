@@ -1,525 +1,1026 @@
 {
-  "width": 852,
-  "height": 522,
+  "width": 1964,
+  "height": 1078,
   "backdrop": "great-hall/base.png",
   "layers": [
     {
       "id": "great-hall-192",
       "file": "great-hall/depth-192.png",
-      "x": 355,
+      "x": 1447,
       "y": 151,
       "depth": 192
     },
     {
-      "id": "great-hall-196",
-      "file": "great-hall/depth-196.png",
-      "x": 335,
-      "y": 161,
-      "depth": 196
-    },
-    {
       "id": "great-hall-200",
       "file": "great-hall/depth-200.png",
-      "x": 240,
+      "x": 1339,
       "y": 167,
       "depth": 200
     },
     {
-      "id": "great-hall-204",
-      "file": "great-hall/depth-204.png",
-      "x": 227,
-      "y": 178,
-      "depth": 204
-    },
-    {
       "id": "great-hall-208",
       "file": "great-hall/depth-208.png",
-      "x": 253,
+      "x": 1326,
       "y": 173,
       "depth": 208
     },
     {
-      "id": "great-hall-212",
-      "file": "great-hall/depth-212.png",
-      "x": 214,
-      "y": 179,
-      "depth": 212
-    },
-    {
       "id": "great-hall-216",
       "file": "great-hall/depth-216.png",
-      "x": 245,
-      "y": 173,
+      "x": 1313,
+      "y": 161,
       "depth": 216
-    },
-    {
-      "id": "great-hall-220",
-      "file": "great-hall/depth-220.png",
-      "x": 201,
-      "y": 185,
-      "depth": 220
     },
     {
       "id": "great-hall-224",
       "file": "great-hall/depth-224.png",
-      "x": 188,
-      "y": 191,
+      "x": 1300,
+      "y": 139,
       "depth": 224
-    },
-    {
-      "id": "great-hall-228",
-      "file": "great-hall/depth-228.png",
-      "x": 207,
-      "y": 200,
-      "depth": 228
     },
     {
       "id": "great-hall-232",
       "file": "great-hall/depth-232.png",
-      "x": 175,
-      "y": 197,
+      "x": 1276,
+      "y": 185,
       "depth": 232
-    },
-    {
-      "id": "great-hall-236",
-      "file": "great-hall/depth-236.png",
-      "x": 193,
-      "y": 196,
-      "depth": 236
     },
     {
       "id": "great-hall-240",
       "file": "great-hall/depth-240.png",
-      "x": 162,
-      "y": 212,
+      "x": 1261,
+      "y": 157,
       "depth": 240
-    },
-    {
-      "id": "great-hall-244",
-      "file": "great-hall/depth-244.png",
-      "x": 149,
-      "y": 209,
-      "depth": 244
     },
     {
       "id": "great-hall-248",
       "file": "great-hall/depth-248.png",
-      "x": 165,
-      "y": 215,
+      "x": 1248,
+      "y": 201,
       "depth": 248
-    },
-    {
-      "id": "great-hall-252",
-      "file": "great-hall/depth-252.png",
-      "x": 136,
-      "y": 224,
-      "depth": 252
     },
     {
       "id": "great-hall-256",
       "file": "great-hall/depth-256.png",
-      "x": 123,
+      "x": 1235,
       "y": 221,
       "depth": 256
     },
     {
-      "id": "great-hall-260",
-      "file": "great-hall/depth-260.png",
-      "x": 64,
-      "y": 227,
-      "depth": 260
-    },
-    {
       "id": "great-hall-264",
       "file": "great-hall/depth-264.png",
-      "x": 117,
+      "x": 1222,
       "y": 202,
       "depth": 264
     },
     {
-      "id": "great-hall-268",
-      "file": "great-hall/depth-268.png",
-      "x": 76,
-      "y": 233,
-      "depth": 268
-    },
-    {
       "id": "great-hall-272",
       "file": "great-hall/depth-272.png",
-      "x": 88,
-      "y": 239,
+      "x": 1196,
+      "y": 176,
       "depth": 272
-    },
-    {
-      "id": "great-hall-276",
-      "file": "great-hall/depth-276.png",
-      "x": 136,
-      "y": 248,
-      "depth": 276
     },
     {
       "id": "great-hall-280",
       "file": "great-hall/depth-280.png",
-      "x": 100,
+      "x": 1183,
       "y": 245,
       "depth": 280
     },
     {
-      "id": "great-hall-284",
-      "file": "great-hall/depth-284.png",
-      "x": 112,
-      "y": 251,
-      "depth": 284
-    },
-    {
       "id": "great-hall-288",
       "file": "great-hall/depth-288.png",
-      "x": 167,
-      "y": 247,
+      "x": 1170,
+      "y": 192,
       "depth": 288
-    },
-    {
-      "id": "great-hall-292",
-      "file": "great-hall/depth-292.png",
-      "x": 124,
-      "y": 257,
-      "depth": 292
     },
     {
       "id": "great-hall-296",
       "file": "great-hall/depth-296.png",
-      "x": 136,
-      "y": 263,
+      "x": 1157,
+      "y": 191,
       "depth": 296
-    },
-    {
-      "id": "great-hall-300",
-      "file": "great-hall/depth-300.png",
-      "x": 257,
-      "y": 272,
-      "depth": 300
     },
     {
       "id": "great-hall-304",
       "file": "great-hall/depth-304.png",
-      "x": 148,
-      "y": 269,
+      "x": 1131,
+      "y": 195,
       "depth": 304
-    },
-    {
-      "id": "great-hall-308",
-      "file": "great-hall/depth-308.png",
-      "x": 160,
-      "y": 275,
-      "depth": 308
     },
     {
       "id": "great-hall-312",
       "file": "great-hall/depth-312.png",
-      "x": 231,
-      "y": 272,
+      "x": 1118,
+      "y": 260,
       "depth": 312
-    },
-    {
-      "id": "great-hall-316",
-      "file": "great-hall/depth-316.png",
-      "x": 172,
-      "y": 281,
-      "depth": 316
     },
     {
       "id": "great-hall-320",
       "file": "great-hall/depth-320.png",
-      "x": 184,
-      "y": 287,
+      "x": 1105,
+      "y": 269,
       "depth": 320
-    },
-    {
-      "id": "great-hall-324",
-      "file": "great-hall/depth-324.png",
-      "x": 265,
-      "y": 296,
-      "depth": 324
     },
     {
       "id": "great-hall-328",
       "file": "great-hall/depth-328.png",
-      "x": 196,
-      "y": 293,
+      "x": 1085,
+      "y": 225,
       "depth": 328
-    },
-    {
-      "id": "great-hall-332",
-      "file": "great-hall/depth-332.png",
-      "x": 208,
-      "y": 299,
-      "depth": 332
     },
     {
       "id": "great-hall-336",
       "file": "great-hall/depth-336.png",
-      "x": 265,
-      "y": 294,
+      "x": 1079,
+      "y": 285,
       "depth": 336
-    },
-    {
-      "id": "great-hall-340",
-      "file": "great-hall/depth-340.png",
-      "x": 220,
-      "y": 305,
-      "depth": 340
     },
     {
       "id": "great-hall-344",
       "file": "great-hall/depth-344.png",
-      "x": 232,
-      "y": 311,
+      "x": 1053,
+      "y": 257,
       "depth": 344
-    },
-    {
-      "id": "great-hall-348",
-      "file": "great-hall/depth-348.png",
-      "x": 285,
-      "y": 320,
-      "depth": 348
     },
     {
       "id": "great-hall-352",
       "file": "great-hall/depth-352.png",
-      "x": 244,
-      "y": 324,
+      "x": 1040,
+      "y": 256,
       "depth": 352
-    },
-    {
-      "id": "great-hall-356",
-      "file": "great-hall/depth-356.png",
-      "x": 256,
-      "y": 328,
-      "depth": 356
     },
     {
       "id": "great-hall-360",
       "file": "great-hall/depth-360.png",
-      "x": 264,
-      "y": 332,
+      "x": 1020,
+      "y": 313,
       "depth": 360
-    },
-    {
-      "id": "great-hall-364",
-      "file": "great-hall/depth-364.png",
-      "x": 364,
-      "y": 336,
-      "depth": 364
     },
     {
       "id": "great-hall-368",
       "file": "great-hall/depth-368.png",
-      "x": 379,
-      "y": 340,
+      "x": 1014,
+      "y": 264,
       "depth": 368
-    },
-    {
-      "id": "great-hall-372",
-      "file": "great-hall/depth-372.png",
-      "x": 351,
-      "y": 292,
-      "depth": 372
     },
     {
       "id": "great-hall-376",
       "file": "great-hall/depth-376.png",
-      "x": 345,
-      "y": 296,
+      "x": 988,
+      "y": 289,
       "depth": 376
-    },
-    {
-      "id": "great-hall-380",
-      "file": "great-hall/depth-380.png",
-      "x": 355,
-      "y": 299,
-      "depth": 380
     },
     {
       "id": "great-hall-384",
       "file": "great-hall/depth-384.png",
-      "x": 312,
-      "y": 302,
+      "x": 975,
+      "y": 305,
       "depth": 384
-    },
-    {
-      "id": "great-hall-388",
-      "file": "great-hall/depth-388.png",
-      "x": 364,
-      "y": 306,
-      "depth": 388
     },
     {
       "id": "great-hall-392",
       "file": "great-hall/depth-392.png",
-      "x": 328,
-      "y": 313,
+      "x": 960,
+      "y": 296,
       "depth": 392
-    },
-    {
-      "id": "great-hall-396",
-      "file": "great-hall/depth-396.png",
-      "x": 385,
-      "y": 316,
-      "depth": 396
     },
     {
       "id": "great-hall-400",
       "file": "great-hall/depth-400.png",
-      "x": 340,
-      "y": 320,
+      "x": 949,
+      "y": 349,
       "depth": 400
-    },
-    {
-      "id": "great-hall-404",
-      "file": "great-hall/depth-404.png",
-      "x": 352,
-      "y": 324,
-      "depth": 404
     },
     {
       "id": "great-hall-408",
       "file": "great-hall/depth-408.png",
-      "x": 405,
-      "y": 380,
+      "x": 923,
+      "y": 303,
       "depth": 408
-    },
-    {
-      "id": "great-hall-412",
-      "file": "great-hall/depth-412.png",
-      "x": 364,
-      "y": 384,
-      "depth": 412
     },
     {
       "id": "great-hall-416",
       "file": "great-hall/depth-416.png",
-      "x": 376,
-      "y": 388,
+      "x": 910,
+      "y": 364,
       "depth": 416
-    },
-    {
-      "id": "great-hall-420",
-      "file": "great-hall/depth-420.png",
-      "x": 483,
-      "y": 392,
-      "depth": 420
     },
     {
       "id": "great-hall-424",
       "file": "great-hall/depth-424.png",
-      "x": 388,
-      "y": 396,
+      "x": 897,
+      "y": 321,
       "depth": 424
-    },
-    {
-      "id": "great-hall-428",
-      "file": "great-hall/depth-428.png",
-      "x": 400,
-      "y": 400,
-      "depth": 428
     },
     {
       "id": "great-hall-432",
       "file": "great-hall/depth-432.png",
-      "x": 459,
-      "y": 404,
+      "x": 884,
+      "y": 332,
       "depth": 432
-    },
-    {
-      "id": "great-hall-436",
-      "file": "great-hall/depth-436.png",
-      "x": 412,
-      "y": 354,
-      "depth": 436
     },
     {
       "id": "great-hall-440",
       "file": "great-hall/depth-440.png",
-      "x": 424,
-      "y": 358,
+      "x": 864,
+      "y": 337,
       "depth": 440
-    },
-    {
-      "id": "great-hall-444",
-      "file": "great-hall/depth-444.png",
-      "x": 468,
-      "y": 365,
-      "depth": 444
     },
     {
       "id": "great-hall-448",
       "file": "great-hall/depth-448.png",
-      "x": 436,
-      "y": 368,
+      "x": 845,
+      "y": 351,
       "depth": 448
-    },
-    {
-      "id": "great-hall-452",
-      "file": "great-hall/depth-452.png",
-      "x": 448,
-      "y": 372,
-      "depth": 452
     },
     {
       "id": "great-hall-456",
       "file": "great-hall/depth-456.png",
-      "x": 519,
-      "y": 376,
+      "x": 832,
+      "y": 408,
       "depth": 456
-    },
-    {
-      "id": "great-hall-460",
-      "file": "great-hall/depth-460.png",
-      "x": 460,
-      "y": 379,
-      "depth": 460
     },
     {
       "id": "great-hall-464",
       "file": "great-hall/depth-464.png",
-      "x": 472,
-      "y": 382,
+      "x": 819,
+      "y": 383,
       "depth": 464
-    },
-    {
-      "id": "great-hall-468",
-      "file": "great-hall/depth-468.png",
-      "x": 552,
-      "y": 386,
-      "depth": 468
     },
     {
       "id": "great-hall-472",
       "file": "great-hall/depth-472.png",
-      "x": 484,
-      "y": 456,
+      "x": 794,
+      "y": 372,
       "depth": 472
-    },
-    {
-      "id": "great-hall-476",
-      "file": "great-hall/depth-476.png",
-      "x": 496,
-      "y": 473,
-      "depth": 476
     },
     {
       "id": "great-hall-480",
       "file": "great-hall/depth-480.png",
-      "x": 528,
-      "y": 462,
+      "x": 780,
+      "y": 376,
       "depth": 480
     },
     {
-      "id": "great-hall-484",
-      "file": "great-hall/depth-484.png",
-      "x": 508,
-      "y": 468,
-      "depth": 484
+      "id": "east-window-288",
+      "file": "great-hall/east-window-288.png",
+      "x": 1613,
+      "y": 382,
+      "depth": 482.0,
+      "revealBehind": {
+        "x": 484,
+        "y": 288
+      }
+    },
+    {
+      "id": "great-hall-488",
+      "file": "great-hall/depth-488.png",
+      "x": 764,
+      "y": 410,
+      "depth": 488
+    },
+    {
+      "id": "great-hall-496",
+      "file": "great-hall/depth-496.png",
+      "x": 754,
+      "y": 397,
+      "depth": 496
+    },
+    {
+      "id": "great-hall-504",
+      "file": "great-hall/depth-504.png",
+      "x": 736,
+      "y": 410,
+      "depth": 504
+    },
+    {
+      "id": "great-hall-512",
+      "file": "great-hall/depth-512.png",
+      "x": 715,
+      "y": 461,
+      "depth": 512
+    },
+    {
+      "id": "great-hall-520",
+      "file": "great-hall/depth-520.png",
+      "x": 702,
+      "y": 422,
+      "depth": 520
+    },
+    {
+      "id": "great-hall-528",
+      "file": "great-hall/depth-528.png",
+      "x": 689,
+      "y": 477,
+      "depth": 528
+    },
+    {
+      "id": "great-hall-536",
+      "file": "great-hall/depth-536.png",
+      "x": 673,
+      "y": 445,
+      "depth": 536
+    },
+    {
+      "id": "great-hall-544",
+      "file": "great-hall/depth-544.png",
+      "x": 663,
+      "y": 446,
+      "depth": 544
+    },
+    {
+      "id": "great-hall-552",
+      "file": "great-hall/depth-552.png",
+      "x": 635,
+      "y": 447,
+      "depth": 552
+    },
+    {
+      "id": "east-window-430",
+      "file": "great-hall/east-window-430.png",
+      "x": 1471,
+      "y": 454,
+      "depth": 553.0,
+      "revealBehind": {
+        "x": 484,
+        "y": 430
+      }
+    },
+    {
+      "id": "great-hall-560",
+      "file": "great-hall/depth-560.png",
+      "x": 624,
+      "y": 460,
+      "depth": 560
+    },
+    {
+      "id": "great-hall-568",
+      "file": "great-hall/depth-568.png",
+      "x": 608,
+      "y": 482,
+      "depth": 568
+    },
+    {
+      "id": "great-hall-576",
+      "file": "great-hall/depth-576.png",
+      "x": 597,
+      "y": 492,
+      "depth": 576
+    },
+    {
+      "id": "great-hall-584",
+      "file": "great-hall/depth-584.png",
+      "x": 572,
+      "y": 496,
+      "depth": 584
+    },
+    {
+      "id": "great-hall-592",
+      "file": "great-hall/depth-592.png",
+      "x": 559,
+      "y": 507,
+      "depth": 592
+    },
+    {
+      "id": "great-hall-600",
+      "file": "great-hall/depth-600.png",
+      "x": 538,
+      "y": 505,
+      "depth": 600
+    },
+    {
+      "id": "great-hall-608",
+      "file": "great-hall/depth-608.png",
+      "x": 533,
+      "y": 559,
+      "depth": 608
+    },
+    {
+      "id": "great-hall-616",
+      "file": "great-hall/depth-616.png",
+      "x": 507,
+      "y": 532,
+      "depth": 616
+    },
+    {
+      "id": "great-hall-624",
+      "file": "great-hall/depth-624.png",
+      "x": 494,
+      "y": 529,
+      "depth": 624
+    },
+    {
+      "id": "east-window-583",
+      "file": "great-hall/east-window-583.png",
+      "x": 1318,
+      "y": 530,
+      "depth": 629.5,
+      "revealBehind": {
+        "x": 484,
+        "y": 583
+      }
+    },
+    {
+      "id": "great-hall-632",
+      "file": "great-hall/depth-632.png",
+      "x": 480,
+      "y": 585,
+      "depth": 632
+    },
+    {
+      "id": "great-hall-640",
+      "file": "great-hall/depth-640.png",
+      "x": 468,
+      "y": 547,
+      "depth": 640
+    },
+    {
+      "id": "great-hall-648",
+      "file": "great-hall/depth-648.png",
+      "x": 448,
+      "y": 602,
+      "depth": 648
+    },
+    {
+      "id": "great-hall-656",
+      "file": "great-hall/depth-656.png",
+      "x": 429,
+      "y": 564,
+      "depth": 656
+    },
+    {
+      "id": "great-hall-664",
+      "file": "great-hall/depth-664.png",
+      "x": 416,
+      "y": 555,
+      "depth": 664
+    },
+    {
+      "id": "great-hall-672",
+      "file": "great-hall/depth-672.png",
+      "x": 403,
+      "y": 572,
+      "depth": 672
+    },
+    {
+      "id": "east-window-683",
+      "file": "great-hall/east-window-683.png",
+      "x": 1218,
+      "y": 580,
+      "depth": 679.5,
+      "revealBehind": {
+        "x": 484,
+        "y": 683
+      }
+    },
+    {
+      "id": "great-hall-680",
+      "file": "great-hall/depth-680.png",
+      "x": 379,
+      "y": 584,
+      "depth": 680
+    },
+    {
+      "id": "great-hall-688",
+      "file": "great-hall/depth-688.png",
+      "x": 364,
+      "y": 591,
+      "depth": 688
+    },
+    {
+      "id": "great-hall-696",
+      "file": "great-hall/depth-696.png",
+      "x": 351,
+      "y": 601,
+      "depth": 696
+    },
+    {
+      "id": "great-hall-704",
+      "file": "great-hall/depth-704.png",
+      "x": 338,
+      "y": 653,
+      "depth": 704
+    },
+    {
+      "id": "great-hall-712",
+      "file": "great-hall/depth-712.png",
+      "x": 325,
+      "y": 620,
+      "depth": 712
+    },
+    {
+      "id": "great-hall-720",
+      "file": "great-hall/depth-720.png",
+      "x": 299,
+      "y": 623,
+      "depth": 720
+    },
+    {
+      "id": "great-hall-728",
+      "file": "great-hall/depth-728.png",
+      "x": 282,
+      "y": 642,
+      "depth": 728
+    },
+    {
+      "id": "east-window-783",
+      "file": "great-hall/east-window-783.png",
+      "x": 1118,
+      "y": 630,
+      "depth": 729.5,
+      "revealBehind": {
+        "x": 484,
+        "y": 783
+      }
+    },
+    {
+      "id": "great-hall-736",
+      "file": "great-hall/depth-736.png",
+      "x": 273,
+      "y": 652,
+      "depth": 736
+    },
+    {
+      "id": "great-hall-744",
+      "file": "great-hall/depth-744.png",
+      "x": 252,
+      "y": 654,
+      "depth": 744
+    },
+    {
+      "id": "great-hall-752",
+      "file": "great-hall/depth-752.png",
+      "x": 247,
+      "y": 651,
+      "depth": 752
+    },
+    {
+      "id": "great-hall-760",
+      "file": "great-hall/depth-760.png",
+      "x": 221,
+      "y": 671,
+      "depth": 760
+    },
+    {
+      "id": "great-hall-768",
+      "file": "great-hall/depth-768.png",
+      "x": 208,
+      "y": 662,
+      "depth": 768
+    },
+    {
+      "id": "great-hall-776",
+      "file": "great-hall/depth-776.png",
+      "x": 195,
+      "y": 682,
+      "depth": 776
+    },
+    {
+      "id": "east-window-883",
+      "file": "great-hall/east-window-883.png",
+      "x": 1018,
+      "y": 680,
+      "depth": 779.5,
+      "revealBehind": {
+        "x": 484,
+        "y": 883
+      }
+    },
+    {
+      "id": "great-hall-784",
+      "file": "great-hall/depth-784.png",
+      "x": 182,
+      "y": 698,
+      "depth": 784
+    },
+    {
+      "id": "great-hall-792",
+      "file": "great-hall/depth-792.png",
+      "x": 155,
+      "y": 703,
+      "depth": 792
+    },
+    {
+      "id": "great-hall-800",
+      "file": "great-hall/depth-800.png",
+      "x": 143,
+      "y": 719,
+      "depth": 800
+    },
+    {
+      "id": "great-hall-808",
+      "file": "great-hall/depth-808.png",
+      "x": 123,
+      "y": 706,
+      "depth": 808
+    },
+    {
+      "id": "great-hall-816",
+      "file": "great-hall/depth-816.png",
+      "x": 64,
+      "y": 765,
+      "depth": 816
+    },
+    {
+      "id": "great-hall-824",
+      "file": "great-hall/depth-824.png",
+      "x": 82,
+      "y": 746,
+      "depth": 824
+    },
+    {
+      "id": "great-hall-832",
+      "file": "great-hall/depth-832.png",
+      "x": 100,
+      "y": 781,
+      "depth": 832
+    },
+    {
+      "id": "great-hall-840",
+      "file": "great-hall/depth-840.png",
+      "x": 118,
+      "y": 737,
+      "depth": 840
+    },
+    {
+      "id": "great-hall-848",
+      "file": "great-hall/depth-848.png",
+      "x": 162,
+      "y": 738,
+      "depth": 848
+    },
+    {
+      "id": "great-hall-856",
+      "file": "great-hall/depth-856.png",
+      "x": 136,
+      "y": 758,
+      "depth": 856
+    },
+    {
+      "id": "great-hall-864",
+      "file": "great-hall/depth-864.png",
+      "x": 154,
+      "y": 815,
+      "depth": 864
+    },
+    {
+      "id": "east-window-1054",
+      "file": "great-hall/east-window-1054.png",
+      "x": 847,
+      "y": 766,
+      "depth": 865.0,
+      "revealBehind": {
+        "x": 484,
+        "y": 1054
+      }
+    },
+    {
+      "id": "great-hall-872",
+      "file": "great-hall/depth-872.png",
+      "x": 172,
+      "y": 792,
+      "depth": 872
+    },
+    {
+      "id": "great-hall-880",
+      "file": "great-hall/depth-880.png",
+      "x": 190,
+      "y": 830,
+      "depth": 880
+    },
+    {
+      "id": "great-hall-888",
+      "file": "great-hall/depth-888.png",
+      "x": 208,
+      "y": 801,
+      "depth": 888
+    },
+    {
+      "id": "great-hall-896",
+      "file": "great-hall/depth-896.png",
+      "x": 226,
+      "y": 800,
+      "depth": 896
+    },
+    {
+      "id": "great-hall-904",
+      "file": "great-hall/depth-904.png",
+      "x": 244,
+      "y": 857,
+      "depth": 904
+    },
+    {
+      "id": "great-hall-912",
+      "file": "great-hall/depth-912.png",
+      "x": 257,
+      "y": 812,
+      "depth": 912
+    },
+    {
+      "id": "great-hall-920",
+      "file": "great-hall/depth-920.png",
+      "x": 352,
+      "y": 831,
+      "depth": 920
+    },
+    {
+      "id": "great-hall-928",
+      "file": "great-hall/depth-928.png",
+      "x": 345,
+      "y": 832,
+      "depth": 928
+    },
+    {
+      "id": "main-entrance-arch",
+      "file": "great-hall/main-entrance-arch.png",
+      "x": 241,
+      "y": 847,
+      "depth": 929.5,
+      "revealBehind": {
+        "x": 256,
+        "y": 1411
+      }
+    },
+    {
+      "id": "great-hall-936",
+      "file": "great-hall/depth-936.png",
+      "x": 314,
+      "y": 886,
+      "depth": 936
+    },
+    {
+      "id": "great-hall-944",
+      "file": "great-hall/depth-944.png",
+      "x": 316,
+      "y": 895,
+      "depth": 944
+    },
+    {
+      "id": "great-hall-952",
+      "file": "great-hall/depth-952.png",
+      "x": 334,
+      "y": 862,
+      "depth": 952
+    },
+    {
+      "id": "great-hall-960",
+      "file": "great-hall/depth-960.png",
+      "x": 352,
+      "y": 909,
+      "depth": 960
+    },
+    {
+      "id": "east-window-1246",
+      "file": "great-hall/east-window-1246.png",
+      "x": 655,
+      "y": 862,
+      "depth": 961.0,
+      "revealBehind": {
+        "x": 484,
+        "y": 1246
+      }
+    },
+    {
+      "id": "great-hall-968",
+      "file": "great-hall/depth-968.png",
+      "x": 370,
+      "y": 945,
+      "depth": 968
+    },
+    {
+      "id": "great-hall-976",
+      "file": "great-hall/depth-976.png",
+      "x": 388,
+      "y": 928,
+      "depth": 976
+    },
+    {
+      "id": "great-hall-984",
+      "file": "great-hall/depth-984.png",
+      "x": 406,
+      "y": 889,
+      "depth": 984
+    },
+    {
+      "id": "great-hall-992",
+      "file": "great-hall/depth-992.png",
+      "x": 459,
+      "y": 943,
+      "depth": 992
+    },
+    {
+      "id": "great-hall-1000",
+      "file": "great-hall/depth-1000.png",
+      "x": 424,
+      "y": 970,
+      "depth": 1000
+    },
+    {
+      "id": "great-hall-1008",
+      "file": "great-hall/depth-1008.png",
+      "x": 442,
+      "y": 958,
+      "depth": 1008
+    },
+    {
+      "id": "great-hall-1016",
+      "file": "great-hall/depth-1016.png",
+      "x": 460,
+      "y": 993,
+      "depth": 1016
+    },
+    {
+      "id": "great-hall-1024",
+      "file": "great-hall/depth-1024.png",
+      "x": 478,
+      "y": 1018,
+      "depth": 1024
+    },
+    {
+      "id": "great-hall-1032",
+      "file": "great-hall/depth-1032.png",
+      "x": 496,
+      "y": 1018,
+      "depth": 1032
+    },
+    {
+      "id": "great-hall-1040",
+      "file": "great-hall/depth-1040.png",
+      "x": 514,
+      "y": 1032,
+      "depth": 1040
+    }
+  ],
+  "actorContactShadow": true,
+  "lights": [
+    {
+      "x": 1372,
+      "y": 112,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 1306,
+      "y": 145,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 1141,
+      "y": 228,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 994,
+      "y": 301,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 867,
+      "y": 364,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 767,
+      "y": 414,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 667,
+      "y": 464,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 532,
+      "y": 532,
+      "radius": 23,
+      "color": "#ffbc76",
+      "intensity": 0.54,
+      "flicker": true
+    },
+    {
+      "x": 335,
+      "y": 666,
+      "radius": 53,
+      "color": "#ffbc76",
+      "intensity": 0.78,
+      "flicker": true
+    },
+    {
+      "x": 1360,
+      "y": 148,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 889,
+      "y": 392,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 397,
+      "y": 622,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 1405,
+      "y": 204,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 941,
+      "y": 456,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 461,
+      "y": 712,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 1480,
+      "y": 305,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 1013,
+      "y": 562,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 521,
+      "y": 802,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 1522,
+      "y": 383,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 1061,
+      "y": 632,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
+    },
+    {
+      "x": 564,
+      "y": 871,
+      "radius": 17,
+      "color": "#ffbc76",
+      "intensity": 0.27,
+      "flicker": true
     }
   ]
 }
