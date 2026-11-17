@@ -1,0 +1,2271 @@
+{
+  "width": 852,
+  "height": 914,
+  "backdrop": "grand-tower/base.png",
+  "layers": [
+    {
+      "id": "ground-west-vestibule",
+      "file": "grand-tower/ground-west-vestibule.png",
+      "x": 140,
+      "y": 608,
+      "depth": 202,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-passage-0",
+      "file": "grand-tower/ground-passage-0.png",
+      "x": 157,
+      "y": 544,
+      "depth": 226.5,
+      "level": 0,
+      "kind": "wall"
+    },
+    {
+      "id": "ground-concourse-rail-0-13",
+      "file": "grand-tower/ground-concourse-rail-0-13.png",
+      "x": 201,
+      "y": 625,
+      "depth": 290,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-concourse-rail-2-57",
+      "file": "grand-tower/ground-concourse-rail-2-57.png",
+      "x": 179,
+      "y": 636,
+      "depth": 297,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-bearing-approach",
+      "file": "grand-tower/ground-bearing-approach.png",
+      "x": 347,
+      "y": 707,
+      "depth": 299.5,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-turntable",
+      "file": "grand-tower/ground-turntable.png",
+      "x": 358,
+      "y": 695,
+      "depth": 301,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-concourse",
+      "file": "grand-tower/ground-concourse.png",
+      "x": 126,
+      "y": 616,
+      "depth": 309.5,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-south-entry",
+      "file": "grand-tower/ground-south-entry.png",
+      "x": 232,
+      "y": 719,
+      "depth": 338.5,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-fire-bowl-0",
+      "file": "grand-tower/ground-fire-bowl-0.png",
+      "x": 264,
+      "y": 699,
+      "depth": 344,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-crest",
+      "file": "grand-tower/ground-crest.png",
+      "x": 263,
+      "y": 733,
+      "depth": 346,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-south-entry-rail-3-25",
+      "file": "grand-tower/ground-south-entry-rail-3-25.png",
+      "x": 253,
+      "y": 704,
+      "depth": 346.58333333333337,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-concourse-rail-0-54",
+      "file": "grand-tower/ground-concourse-rail-0-54.png",
+      "x": 385,
+      "y": 717,
+      "depth": 384,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-south-entry-rail-1-8",
+      "file": "grand-tower/ground-south-entry-rail-1-8.png",
+      "x": 333,
+      "y": 744,
+      "depth": 386.58333333333337,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-fire-bowl-1",
+      "file": "grand-tower/ground-fire-bowl-1.png",
+      "x": 364,
+      "y": 749,
+      "depth": 394,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-east-vestibule",
+      "file": "grand-tower/ground-east-vestibule.png",
+      "x": 540,
+      "y": 808,
+      "depth": 402,
+      "level": 0,
+      "kind": "floor"
+    },
+    {
+      "id": "ground-concourse-rail-2-0",
+      "file": "grand-tower/ground-concourse-rail-2-0.png",
+      "x": 395,
+      "y": 744,
+      "depth": 415,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-east-vestibule-rail-0-0",
+      "file": "grand-tower/ground-east-vestibule-rail-0-0.png",
+      "x": 561,
+      "y": 789,
+      "depth": 418,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-east-vestibule-rail-3-33",
+      "file": "grand-tower/ground-east-vestibule-rail-3-33.png",
+      "x": 545,
+      "y": 789,
+      "depth": 420,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-passage-1",
+      "file": "grand-tower/ground-passage-1.png",
+      "x": 557,
+      "y": 744,
+      "depth": 426.5,
+      "level": 0,
+      "kind": "wall"
+    },
+    {
+      "id": "ground-east-vestibule-rail-0-83",
+      "file": "grand-tower/ground-east-vestibule-rail-0-83.png",
+      "x": 601,
+      "y": 809,
+      "depth": 438,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-east-vestibule-rail-1-0",
+      "file": "grand-tower/ground-east-vestibule-rail-1-0.png",
+      "x": 585,
+      "y": 813,
+      "depth": 446,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "ground-concourse-rail-1-0",
+      "file": "grand-tower/ground-concourse-rail-1-0.png",
+      "x": 571,
+      "y": 821,
+      "depth": 453.5,
+      "level": 0,
+      "kind": "prop"
+    },
+    {
+      "id": "first-west-return",
+      "file": "grand-tower/first-west-return.png",
+      "x": 292,
+      "y": 523,
+      "depth": 1196.75,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-dock-a",
+      "file": "grand-tower/first-dock-a.png",
+      "x": 236,
+      "y": 534,
+      "depth": 1221.5833333333333,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-west-return-rail-1-33",
+      "file": "grand-tower/first-west-return-rail-1-33.png",
+      "x": 332,
+      "y": 526,
+      "depth": 1236,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-dock-a-rail-1-0",
+      "file": "grand-tower/first-dock-a-rail-1-0.png",
+      "x": 332,
+      "y": 535,
+      "depth": 1247.1875,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-dock-a-rail-3-20",
+      "file": "grand-tower/first-dock-a-rail-3-20.png",
+      "x": 241,
+      "y": 549,
+      "depth": 1263.1,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-cloister",
+      "file": "grand-tower/first-cloister.png",
+      "x": 320,
+      "y": 518,
+      "depth": 1264.25,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-dock-a-rail-4-0",
+      "file": "grand-tower/first-dock-a-rail-4-0.png",
+      "x": 272,
+      "y": 560,
+      "depth": 1268.673076923075,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-cloister-rail-2-9",
+      "file": "grand-tower/first-cloister-rail-2-9.png",
+      "x": 349,
+      "y": 527,
+      "depth": 1302.5,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-east-return",
+      "file": "grand-tower/first-east-return.png",
+      "x": 598,
+      "y": 676,
+      "depth": 1350,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-dock-b",
+      "file": "grand-tower/first-dock-b.png",
+      "x": 551,
+      "y": 679,
+      "depth": 1362.4166666666665,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-dock-b-rail-1-0",
+      "file": "grand-tower/first-dock-b-rail-1-0.png",
+      "x": 583,
+      "y": 660,
+      "depth": 1372.8125,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-east-return-rail-3-33",
+      "file": "grand-tower/first-east-return-rail-3-33.png",
+      "x": 609,
+      "y": 664,
+      "depth": 1373.75,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-cloister-rail-1-0",
+      "file": "grand-tower/first-cloister-rail-1-0.png",
+      "x": 655,
+      "y": 668,
+      "depth": 1380.75,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-bearing-approach",
+      "file": "grand-tower/first-bearing-approach.png",
+      "x": 522,
+      "y": 714,
+      "depth": 1385.5,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-east-return-rail-1-0",
+      "file": "grand-tower/first-east-return-rail-1-0.png",
+      "x": 642,
+      "y": 673,
+      "depth": 1386.8333333333333,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-turntable",
+      "file": "grand-tower/first-turntable.png",
+      "x": 490,
+      "y": 709,
+      "depth": 1395,
+      "level": 1,
+      "kind": "floor"
+    },
+    {
+      "id": "first-dock-b-rail-1-88",
+      "file": "grand-tower/first-dock-b-rail-1-88.png",
+      "x": 637,
+      "y": 688,
+      "depth": 1396.0625,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-dock-b-rail-4-67",
+      "file": "grand-tower/first-dock-b-rail-4-67.png",
+      "x": 552,
+      "y": 688,
+      "depth": 1396.3910256410418,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-dock-b-rail-2-0",
+      "file": "grand-tower/first-dock-b-rail-2-0.png",
+      "x": 585,
+      "y": 691,
+      "depth": 1413,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "first-dock-b-rail-3-0",
+      "file": "grand-tower/first-dock-b-rail-3-0.png",
+      "x": 570,
+      "y": 714,
+      "depth": 1424.3,
+      "level": 1,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-porch",
+      "file": "grand-tower/second-teaching-porch.png",
+      "x": 206,
+      "y": 513,
+      "depth": 2268.5,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-north-walk-rail-3-0",
+      "file": "grand-tower/second-north-walk-rail-3-0.png",
+      "x": 312,
+      "y": 478,
+      "depth": 2270,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-north-walk",
+      "file": "grand-tower/second-north-walk.png",
+      "x": 315,
+      "y": 497,
+      "depth": 2270.25,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-portrait-wall",
+      "file": "grand-tower/second-portrait-wall.png",
+      "x": 202,
+      "y": 451,
+      "depth": 2276,
+      "level": 2,
+      "kind": "wall"
+    },
+    {
+      "id": "second-outer-gallery",
+      "file": "grand-tower/second-outer-gallery.png",
+      "x": 185,
+      "y": 499,
+      "depth": 2279,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-outer-gallery-rail-3-63",
+      "file": "grand-tower/second-outer-gallery-rail-3-63.png",
+      "x": 275,
+      "y": 480,
+      "depth": 2280.5394736842104,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-porch-rail-3-80",
+      "file": "grand-tower/second-teaching-porch-rail-3-80.png",
+      "x": 234,
+      "y": 494,
+      "depth": 2282.45,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-porch-rail-0-0",
+      "file": "grand-tower/second-teaching-porch-rail-0-0.png",
+      "x": 242,
+      "y": 494,
+      "depth": 2287.3333333333335,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-gallery-door",
+      "file": "grand-tower/second-teaching-gallery-door.png",
+      "x": 203,
+      "y": 459,
+      "depth": 2290.25,
+      "level": 2,
+      "kind": "wall"
+    },
+    {
+      "id": "second-bearing-approach",
+      "file": "grand-tower/second-bearing-approach.png",
+      "x": 266,
+      "y": 541,
+      "depth": 2291.75,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-north-walk-rail-0-0",
+      "file": "grand-tower/second-north-walk-rail-0-0.png",
+      "x": 334,
+      "y": 478,
+      "depth": 2294.8529411764707,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-porch-rail-3-0",
+      "file": "grand-tower/second-teaching-porch-rail-3-0.png",
+      "x": 203,
+      "y": 510,
+      "depth": 2298.05,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-outer-gallery-rail-1-11",
+      "file": "grand-tower/second-outer-gallery-rail-1-11.png",
+      "x": 296,
+      "y": 503,
+      "depth": 2300.842105263158,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-teaching-porch-rail-2-33",
+      "file": "grand-tower/second-teaching-porch-rail-2-33.png",
+      "x": 203,
+      "y": 513,
+      "depth": 2306.8333333333335,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-a",
+      "file": "grand-tower/second-dock-a.png",
+      "x": 407,
+      "y": 555,
+      "depth": 2310.923076923077,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-turntable",
+      "file": "grand-tower/second-turntable.png",
+      "x": 274,
+      "y": 545,
+      "depth": 2311,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-north-walk-rail-2-12",
+      "file": "grand-tower/second-north-walk-rail-2-12.png",
+      "x": 343,
+      "y": 504,
+      "depth": 2311.544117647059,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-a-rail-1-86",
+      "file": "grand-tower/second-dock-a-rail-1-86.png",
+      "x": 459,
+      "y": 536,
+      "depth": 2324.3076923076924,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-outer-gallery-rail-3-0",
+      "file": "grand-tower/second-outer-gallery-rail-3-0.png",
+      "x": 182,
+      "y": 527,
+      "depth": 2326.9605263157896,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-a-rail-1-0",
+      "file": "grand-tower/second-dock-a-rail-1-0.png",
+      "x": 406,
+      "y": 545,
+      "depth": 2334.4615384615386,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-a-rail-2-0",
+      "file": "grand-tower/second-dock-a-rail-2-0.png",
+      "x": 466,
+      "y": 538,
+      "depth": 2334.955128205128,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-outer-gallery-rail-1-58",
+      "file": "grand-tower/second-outer-gallery-rail-1-58.png",
+      "x": 227,
+      "y": 538,
+      "depth": 2335.657894736842,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-south-walk-rail-3-0",
+      "file": "grand-tower/second-south-walk-rail-3-0.png",
+      "x": 175,
+      "y": 546,
+      "depth": 2338.25,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-south-walk",
+      "file": "grand-tower/second-south-walk.png",
+      "x": 178,
+      "y": 565,
+      "depth": 2338.5,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-dock-a-rail-0-17",
+      "file": "grand-tower/second-dock-a-rail-0-17.png",
+      "x": 404,
+      "y": 550,
+      "depth": 2346.5320512820513,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-south-walk-rail-0-24",
+      "file": "grand-tower/second-south-walk-rail-0-24.png",
+      "x": 229,
+      "y": 561,
+      "depth": 2368.5441176470586,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-b",
+      "file": "grand-tower/second-dock-b.png",
+      "x": 295,
+      "y": 612,
+      "depth": 2368.6153846153848,
+      "level": 2,
+      "kind": "floor"
+    },
+    {
+      "id": "second-south-walk-rail-2-6",
+      "file": "grand-tower/second-south-walk-rail-2-6.png",
+      "x": 175,
+      "y": 557,
+      "depth": 2374.3529411764707,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-b-rail-1-67",
+      "file": "grand-tower/second-dock-b-rail-1-67.png",
+      "x": 308,
+      "y": 594,
+      "depth": 2384.7692307692305,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-b-rail-2-0",
+      "file": "grand-tower/second-dock-b-rail-2-0.png",
+      "x": 319,
+      "y": 593,
+      "depth": 2385.6602564102564,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-b-rail-1-0",
+      "file": "grand-tower/second-dock-b-rail-1-0.png",
+      "x": 291,
+      "y": 620,
+      "depth": 2408.3076923076924,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "second-dock-b-rail-0-17",
+      "file": "grand-tower/second-dock-b-rail-0-17.png",
+      "x": 294,
+      "y": 624,
+      "depth": 2413.775641025641,
+      "level": 2,
+      "kind": "prop"
+    },
+    {
+      "id": "third-dock-a",
+      "file": "grand-tower/third-dock-a.png",
+      "x": 474,
+      "y": 532,
+      "depth": 3365.3846153846152,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-dock-a-rail-0-17",
+      "file": "grand-tower/third-dock-a-rail-0-17.png",
+      "x": 502,
+      "y": 514,
+      "depth": 3384.224358974359,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-dock-a-rail-1-0",
+      "file": "grand-tower/third-dock-a-rail-1-0.png",
+      "x": 542,
+      "y": 521,
+      "depth": 3389.3186813186812,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-north-walk",
+      "file": "grand-tower/third-north-walk.png",
+      "x": 515,
+      "y": 541,
+      "depth": 3393,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-dock-a-rail-2-0",
+      "file": "grand-tower/third-dock-a-rail-2-0.png",
+      "x": 480,
+      "y": 539,
+      "depth": 3412.3397435897436,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-dock-a-rail-1-71",
+      "file": "grand-tower/third-dock-a-rail-1-71.png",
+      "x": 520,
+      "y": 544,
+      "depth": 3413.978021978022,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-north-walk-rail-0-6",
+      "file": "grand-tower/third-north-walk-rail-0-6.png",
+      "x": 542,
+      "y": 526,
+      "depth": 3421.4375,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-dock-b",
+      "file": "grand-tower/third-dock-b.png",
+      "x": 360,
+      "y": 589,
+      "depth": 3423.076923076923,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-north-walk-rail-2-25",
+      "file": "grand-tower/third-north-walk-rail-2-25.png",
+      "x": 528,
+      "y": 541,
+      "depth": 3426.625,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-turntable",
+      "file": "grand-tower/third-turntable.png",
+      "x": 490,
+      "y": 597,
+      "depth": 3443,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-bearing-approach",
+      "file": "grand-tower/third-bearing-approach.png",
+      "x": 519,
+      "y": 612,
+      "depth": 3445.75,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-outer-gallery",
+      "file": "grand-tower/third-outer-gallery.png",
+      "x": 480,
+      "y": 591,
+      "depth": 3450.5,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-dock-b-rail-0-17",
+      "file": "grand-tower/third-dock-b-rail-0-17.png",
+      "x": 409,
+      "y": 575,
+      "depth": 3451.4679487179487,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-outer-gallery-rail-3-63",
+      "file": "grand-tower/third-outer-gallery-rail-3-63.png",
+      "x": 570,
+      "y": 580,
+      "depth": 3455.907894736842,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-north-walk-rail-1-0",
+      "file": "grand-tower/third-north-walk-rail-1-0.png",
+      "x": 636,
+      "y": 584,
+      "depth": 3456,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-south-walk",
+      "file": "grand-tower/third-south-walk.png",
+      "x": 378,
+      "y": 609,
+      "depth": 3461.25,
+      "level": 3,
+      "kind": "floor"
+    },
+    {
+      "id": "third-dock-b-rail-2-0",
+      "file": "grand-tower/third-dock-b-rail-2-0.png",
+      "x": 359,
+      "y": 586,
+      "depth": 3463.044871794872,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-dock-b-rail-1-0",
+      "file": "grand-tower/third-dock-b-rail-1-0.png",
+      "x": 414,
+      "y": 595,
+      "depth": 3463.846153846154,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-portrait-wall",
+      "file": "grand-tower/third-portrait-wall.png",
+      "x": 531,
+      "y": 559,
+      "depth": 3464.5,
+      "level": 3,
+      "kind": "wall"
+    },
+    {
+      "id": "third-dock-b-rail-1-83",
+      "file": "grand-tower/third-dock-b-rail-1-83.png",
+      "x": 373,
+      "y": 605,
+      "depth": 3473.5384615384614,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-south-walk-rail-0-13",
+      "file": "grand-tower/third-south-walk-rail-0-13.png",
+      "x": 414,
+      "y": 598,
+      "depth": 3483.625,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-outer-gallery-rail-1-0",
+      "file": "grand-tower/third-outer-gallery-rail-1-0.png",
+      "x": 506,
+      "y": 586,
+      "depth": 3489.75,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-bearing-approach-rail-1-0",
+      "file": "grand-tower/third-bearing-approach-rail-1-0.png",
+      "x": 567,
+      "y": 618,
+      "depth": 3490.5,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-outer-gallery-rail-3-11",
+      "file": "grand-tower/third-outer-gallery-rail-3-11.png",
+      "x": 493,
+      "y": 622,
+      "depth": 3496.5263157894738,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-south-walk-rail-2-0",
+      "file": "grand-tower/third-south-walk-rail-2-0.png",
+      "x": 383,
+      "y": 605,
+      "depth": 3500.9375,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "third-south-walk-rail-1-0",
+      "file": "grand-tower/third-south-walk-rail-1-0.png",
+      "x": 499,
+      "y": 652,
+      "depth": 3524.25,
+      "level": 3,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-north-walk-rail-3-0",
+      "file": "grand-tower/fourth-north-walk-rail-3-0.png",
+      "x": 312,
+      "y": 366,
+      "depth": 4318,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-north-walk",
+      "file": "grand-tower/fourth-north-walk.png",
+      "x": 315,
+      "y": 385,
+      "depth": 4318.25,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-portrait-wall",
+      "file": "grand-tower/fourth-portrait-wall.png",
+      "x": 202,
+      "y": 339,
+      "depth": 4324,
+      "level": 4,
+      "kind": "wall"
+    },
+    {
+      "id": "fourth-outer-gallery",
+      "file": "grand-tower/fourth-outer-gallery.png",
+      "x": 185,
+      "y": 387,
+      "depth": 4327,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-bearing-approach",
+      "file": "grand-tower/fourth-bearing-approach.png",
+      "x": 266,
+      "y": 429,
+      "depth": 4339.75,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-north-walk-rail-0-0",
+      "file": "grand-tower/fourth-north-walk-rail-0-0.png",
+      "x": 334,
+      "y": 366,
+      "depth": 4342.85294117647,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-outer-gallery-rail-1-11",
+      "file": "grand-tower/fourth-outer-gallery-rail-1-11.png",
+      "x": 296,
+      "y": 391,
+      "depth": 4348.8421052631575,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-outer-gallery-rail-3-0",
+      "file": "grand-tower/fourth-outer-gallery-rail-3-0.png",
+      "x": 182,
+      "y": 368,
+      "depth": 4351.75,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-a",
+      "file": "grand-tower/fourth-dock-a.png",
+      "x": 407,
+      "y": 443,
+      "depth": 4358.923076923077,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-turntable",
+      "file": "grand-tower/fourth-turntable.png",
+      "x": 274,
+      "y": 433,
+      "depth": 4359,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-north-walk-rail-2-12",
+      "file": "grand-tower/fourth-north-walk-rail-2-12.png",
+      "x": 343,
+      "y": 392,
+      "depth": 4359.544117647059,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-a-rail-1-86",
+      "file": "grand-tower/fourth-dock-a-rail-1-86.png",
+      "x": 459,
+      "y": 424,
+      "depth": 4372.307692307692,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-a-rail-1-0",
+      "file": "grand-tower/fourth-dock-a-rail-1-0.png",
+      "x": 406,
+      "y": 433,
+      "depth": 4382.461538461538,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-a-rail-2-0",
+      "file": "grand-tower/fourth-dock-a-rail-2-0.png",
+      "x": 466,
+      "y": 426,
+      "depth": 4382.955128205128,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-outer-gallery-rail-1-58",
+      "file": "grand-tower/fourth-outer-gallery-rail-1-58.png",
+      "x": 227,
+      "y": 426,
+      "depth": 4383.657894736842,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-south-walk-rail-3-0",
+      "file": "grand-tower/fourth-south-walk-rail-3-0.png",
+      "x": 175,
+      "y": 434,
+      "depth": 4386.25,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-south-walk",
+      "file": "grand-tower/fourth-south-walk.png",
+      "x": 178,
+      "y": 453,
+      "depth": 4386.5,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-dock-a-rail-0-17",
+      "file": "grand-tower/fourth-dock-a-rail-0-17.png",
+      "x": 404,
+      "y": 438,
+      "depth": 4394.532051282051,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-south-walk-rail-0-24",
+      "file": "grand-tower/fourth-south-walk-rail-0-24.png",
+      "x": 229,
+      "y": 449,
+      "depth": 4416.544117647059,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-b",
+      "file": "grand-tower/fourth-dock-b.png",
+      "x": 295,
+      "y": 500,
+      "depth": 4416.615384615385,
+      "level": 4,
+      "kind": "floor"
+    },
+    {
+      "id": "fourth-south-walk-rail-2-6",
+      "file": "grand-tower/fourth-south-walk-rail-2-6.png",
+      "x": 175,
+      "y": 445,
+      "depth": 4422.35294117647,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-b-rail-1-67",
+      "file": "grand-tower/fourth-dock-b-rail-1-67.png",
+      "x": 308,
+      "y": 482,
+      "depth": 4432.7692307692305,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-b-rail-2-0",
+      "file": "grand-tower/fourth-dock-b-rail-2-0.png",
+      "x": 319,
+      "y": 481,
+      "depth": 4433.660256410257,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-b-rail-1-0",
+      "file": "grand-tower/fourth-dock-b-rail-1-0.png",
+      "x": 291,
+      "y": 508,
+      "depth": 4456.307692307692,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fourth-dock-b-rail-0-17",
+      "file": "grand-tower/fourth-dock-b-rail-0-17.png",
+      "x": 294,
+      "y": 512,
+      "depth": 4461.775641025641,
+      "level": 4,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-dock-a",
+      "file": "grand-tower/fifth-dock-a.png",
+      "x": 474,
+      "y": 420,
+      "depth": 5413.384615384615,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-dock-a-rail-0-17",
+      "file": "grand-tower/fifth-dock-a-rail-0-17.png",
+      "x": 502,
+      "y": 402,
+      "depth": 5432.224358974359,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-dock-a-rail-1-0",
+      "file": "grand-tower/fifth-dock-a-rail-1-0.png",
+      "x": 542,
+      "y": 409,
+      "depth": 5437.318681318681,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-north-walk",
+      "file": "grand-tower/fifth-north-walk.png",
+      "x": 515,
+      "y": 429,
+      "depth": 5441,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-dock-a-rail-2-0",
+      "file": "grand-tower/fifth-dock-a-rail-2-0.png",
+      "x": 480,
+      "y": 427,
+      "depth": 5460.339743589743,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-dock-a-rail-1-71",
+      "file": "grand-tower/fifth-dock-a-rail-1-71.png",
+      "x": 520,
+      "y": 432,
+      "depth": 5461.978021978022,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-north-walk-rail-0-6",
+      "file": "grand-tower/fifth-north-walk-rail-0-6.png",
+      "x": 542,
+      "y": 414,
+      "depth": 5469.4375,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-dock-b",
+      "file": "grand-tower/fifth-dock-b.png",
+      "x": 360,
+      "y": 477,
+      "depth": 5471.076923076923,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-north-walk-rail-2-25",
+      "file": "grand-tower/fifth-north-walk-rail-2-25.png",
+      "x": 528,
+      "y": 429,
+      "depth": 5474.625,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-turntable",
+      "file": "grand-tower/fifth-turntable.png",
+      "x": 490,
+      "y": 485,
+      "depth": 5491,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-bearing-approach",
+      "file": "grand-tower/fifth-bearing-approach.png",
+      "x": 519,
+      "y": 500,
+      "depth": 5493.75,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-outer-gallery",
+      "file": "grand-tower/fifth-outer-gallery.png",
+      "x": 480,
+      "y": 479,
+      "depth": 5498.5,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-dock-b-rail-0-17",
+      "file": "grand-tower/fifth-dock-b-rail-0-17.png",
+      "x": 409,
+      "y": 463,
+      "depth": 5499.467948717948,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-outer-gallery-rail-3-63",
+      "file": "grand-tower/fifth-outer-gallery-rail-3-63.png",
+      "x": 570,
+      "y": 468,
+      "depth": 5503.907894736842,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-north-walk-rail-1-0",
+      "file": "grand-tower/fifth-north-walk-rail-1-0.png",
+      "x": 636,
+      "y": 472,
+      "depth": 5504,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-south-walk",
+      "file": "grand-tower/fifth-south-walk.png",
+      "x": 378,
+      "y": 497,
+      "depth": 5509.25,
+      "level": 5,
+      "kind": "floor"
+    },
+    {
+      "id": "fifth-dock-b-rail-2-0",
+      "file": "grand-tower/fifth-dock-b-rail-2-0.png",
+      "x": 359,
+      "y": 474,
+      "depth": 5511.044871794872,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-dock-b-rail-1-0",
+      "file": "grand-tower/fifth-dock-b-rail-1-0.png",
+      "x": 414,
+      "y": 483,
+      "depth": 5511.846153846154,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-portrait-wall",
+      "file": "grand-tower/fifth-portrait-wall.png",
+      "x": 531,
+      "y": 447,
+      "depth": 5512.5,
+      "level": 5,
+      "kind": "wall"
+    },
+    {
+      "id": "fifth-dock-b-rail-1-83",
+      "file": "grand-tower/fifth-dock-b-rail-1-83.png",
+      "x": 373,
+      "y": 493,
+      "depth": 5521.538461538462,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-south-walk-rail-0-13",
+      "file": "grand-tower/fifth-south-walk-rail-0-13.png",
+      "x": 414,
+      "y": 486,
+      "depth": 5531.625,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-outer-gallery-rail-1-0",
+      "file": "grand-tower/fifth-outer-gallery-rail-1-0.png",
+      "x": 506,
+      "y": 474,
+      "depth": 5537.75,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-bearing-approach-rail-1-0",
+      "file": "grand-tower/fifth-bearing-approach-rail-1-0.png",
+      "x": 567,
+      "y": 506,
+      "depth": 5538.5,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-outer-gallery-rail-3-11",
+      "file": "grand-tower/fifth-outer-gallery-rail-3-11.png",
+      "x": 493,
+      "y": 510,
+      "depth": 5544.526315789473,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-south-walk-rail-2-0",
+      "file": "grand-tower/fifth-south-walk-rail-2-0.png",
+      "x": 383,
+      "y": 493,
+      "depth": 5548.9375,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "fifth-south-walk-rail-1-0",
+      "file": "grand-tower/fifth-south-walk-rail-1-0.png",
+      "x": 499,
+      "y": 540,
+      "depth": 5572.25,
+      "level": 5,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-north-walk-rail-3-0",
+      "file": "grand-tower/sixth-north-walk-rail-3-0.png",
+      "x": 312,
+      "y": 254,
+      "depth": 6366,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-north-walk",
+      "file": "grand-tower/sixth-north-walk.png",
+      "x": 315,
+      "y": 273,
+      "depth": 6366.25,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-portrait-wall",
+      "file": "grand-tower/sixth-portrait-wall.png",
+      "x": 202,
+      "y": 227,
+      "depth": 6372,
+      "level": 6,
+      "kind": "wall"
+    },
+    {
+      "id": "sixth-outer-gallery",
+      "file": "grand-tower/sixth-outer-gallery.png",
+      "x": 185,
+      "y": 275,
+      "depth": 6375,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-bearing-approach",
+      "file": "grand-tower/sixth-bearing-approach.png",
+      "x": 266,
+      "y": 317,
+      "depth": 6387.75,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-north-walk-rail-0-0",
+      "file": "grand-tower/sixth-north-walk-rail-0-0.png",
+      "x": 334,
+      "y": 254,
+      "depth": 6390.85294117647,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-outer-gallery-rail-1-11",
+      "file": "grand-tower/sixth-outer-gallery-rail-1-11.png",
+      "x": 296,
+      "y": 279,
+      "depth": 6396.8421052631575,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-outer-gallery-rail-3-0",
+      "file": "grand-tower/sixth-outer-gallery-rail-3-0.png",
+      "x": 182,
+      "y": 256,
+      "depth": 6399.75,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-a",
+      "file": "grand-tower/sixth-dock-a.png",
+      "x": 407,
+      "y": 331,
+      "depth": 6406.923076923077,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-turntable",
+      "file": "grand-tower/sixth-turntable.png",
+      "x": 274,
+      "y": 321,
+      "depth": 6407,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-north-walk-rail-2-12",
+      "file": "grand-tower/sixth-north-walk-rail-2-12.png",
+      "x": 343,
+      "y": 280,
+      "depth": 6407.544117647059,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-a-rail-1-86",
+      "file": "grand-tower/sixth-dock-a-rail-1-86.png",
+      "x": 459,
+      "y": 312,
+      "depth": 6420.307692307692,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-a-rail-1-0",
+      "file": "grand-tower/sixth-dock-a-rail-1-0.png",
+      "x": 406,
+      "y": 321,
+      "depth": 6430.461538461538,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-a-rail-2-0",
+      "file": "grand-tower/sixth-dock-a-rail-2-0.png",
+      "x": 466,
+      "y": 314,
+      "depth": 6430.955128205128,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-outer-gallery-rail-1-58",
+      "file": "grand-tower/sixth-outer-gallery-rail-1-58.png",
+      "x": 227,
+      "y": 314,
+      "depth": 6431.657894736842,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-south-walk-rail-3-0",
+      "file": "grand-tower/sixth-south-walk-rail-3-0.png",
+      "x": 175,
+      "y": 322,
+      "depth": 6434.25,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-south-walk",
+      "file": "grand-tower/sixth-south-walk.png",
+      "x": 178,
+      "y": 341,
+      "depth": 6434.5,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-dock-a-rail-0-17",
+      "file": "grand-tower/sixth-dock-a-rail-0-17.png",
+      "x": 404,
+      "y": 326,
+      "depth": 6442.532051282051,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-south-walk-rail-0-24",
+      "file": "grand-tower/sixth-south-walk-rail-0-24.png",
+      "x": 229,
+      "y": 337,
+      "depth": 6464.544117647059,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-b",
+      "file": "grand-tower/sixth-dock-b.png",
+      "x": 295,
+      "y": 388,
+      "depth": 6464.615384615385,
+      "level": 6,
+      "kind": "floor"
+    },
+    {
+      "id": "sixth-south-walk-rail-2-6",
+      "file": "grand-tower/sixth-south-walk-rail-2-6.png",
+      "x": 175,
+      "y": 333,
+      "depth": 6470.35294117647,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-b-rail-1-67",
+      "file": "grand-tower/sixth-dock-b-rail-1-67.png",
+      "x": 308,
+      "y": 370,
+      "depth": 6480.7692307692305,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-b-rail-2-0",
+      "file": "grand-tower/sixth-dock-b-rail-2-0.png",
+      "x": 319,
+      "y": 369,
+      "depth": 6481.660256410257,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-b-rail-1-0",
+      "file": "grand-tower/sixth-dock-b-rail-1-0.png",
+      "x": 291,
+      "y": 396,
+      "depth": 6504.307692307692,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "sixth-dock-b-rail-0-17",
+      "file": "grand-tower/sixth-dock-b-rail-0-17.png",
+      "x": 294,
+      "y": 400,
+      "depth": 6509.775641025641,
+      "level": 6,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-west-portrait-porch",
+      "file": "grand-tower/seventh-west-portrait-porch.png",
+      "x": 251,
+      "y": 198,
+      "depth": 7362.75,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-crown-bridge-rail-3-50",
+      "file": "grand-tower/seventh-crown-bridge-rail-3-50.png",
+      "x": 316,
+      "y": 178,
+      "depth": 7367.625,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-west-portrait-porch-rail-0-0",
+      "file": "grand-tower/seventh-west-portrait-porch-rail-0-0.png",
+      "x": 311,
+      "y": 179,
+      "depth": 7367.857142857143,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-west-portrait-porch-rail-3-50",
+      "file": "grand-tower/seventh-west-portrait-porch-rail-3-50.png",
+      "x": 280,
+      "y": 179,
+      "depth": 7373.875,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-up-west-door",
+      "file": "grand-tower/seventh-up-west-door.png",
+      "x": 240,
+      "y": 158,
+      "depth": 7390.25,
+      "level": 7,
+      "kind": "wall"
+    },
+    {
+      "id": "seventh-west-portrait-porch-rail-2-0",
+      "file": "grand-tower/seventh-west-portrait-porch-rail-2-0.png",
+      "x": 248,
+      "y": 211,
+      "depth": 7410.5,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-west-portrait-porch-rail-1-25",
+      "file": "grand-tower/seventh-west-portrait-porch-rail-1-25.png",
+      "x": 300,
+      "y": 213,
+      "depth": 7411.6875,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-crown-bridge",
+      "file": "grand-tower/seventh-crown-bridge.png",
+      "x": 306,
+      "y": 197,
+      "depth": 7423.25,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-crown-bridge-rail-2-42",
+      "file": "grand-tower/seventh-crown-bridge-rail-2-42.png",
+      "x": 350,
+      "y": 214,
+      "depth": 7437.918604651163,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-crown-bridge-rail-0-0",
+      "file": "grand-tower/seventh-crown-bridge-rail-0-0.png",
+      "x": 328,
+      "y": 178,
+      "depth": 7449,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-dock-a",
+      "file": "grand-tower/seventh-dock-a.png",
+      "x": 474,
+      "y": 308,
+      "depth": 7461.384615384615,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-north-walk",
+      "file": "grand-tower/seventh-north-walk.png",
+      "x": 515,
+      "y": 317,
+      "depth": 7489,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-dock-a-rail-2-0",
+      "file": "grand-tower/seventh-dock-a-rail-2-0.png",
+      "x": 480,
+      "y": 315,
+      "depth": 7508.339743589743,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-dock-a-rail-1-71",
+      "file": "grand-tower/seventh-dock-a-rail-1-71.png",
+      "x": 520,
+      "y": 320,
+      "depth": 7509.978021978022,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-east-observatory-porch",
+      "file": "grand-tower/seventh-east-observatory-porch.png",
+      "x": 541,
+      "y": 346,
+      "depth": 7512.5,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-north-walk-rail-2-50",
+      "file": "grand-tower/seventh-north-walk-rail-2-50.png",
+      "x": 528,
+      "y": 317,
+      "depth": 7514.875,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-dock-b",
+      "file": "grand-tower/seventh-dock-b.png",
+      "x": 360,
+      "y": 365,
+      "depth": 7519.076923076923,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-east-observatory-porch-rail-3-0",
+      "file": "grand-tower/seventh-east-observatory-porch-rail-3-0.png",
+      "x": 538,
+      "y": 339,
+      "depth": 7534.28125,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-crown-bridge-rail-1-0",
+      "file": "grand-tower/seventh-crown-bridge-rail-1-0.png",
+      "x": 654,
+      "y": 347,
+      "depth": 7536.625,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-bearing-approach",
+      "file": "grand-tower/seventh-bearing-approach.png",
+      "x": 519,
+      "y": 388,
+      "depth": 7541.75,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-east-observatory-porch-rail-0-88",
+      "file": "grand-tower/seventh-east-observatory-porch-rail-0-88.png",
+      "x": 652,
+      "y": 355,
+      "depth": 7543.53125,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-outer-gallery",
+      "file": "grand-tower/seventh-outer-gallery.png",
+      "x": 480,
+      "y": 367,
+      "depth": 7546.5,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-dock-b-rail-0-17",
+      "file": "grand-tower/seventh-dock-b-rail-0-17.png",
+      "x": 409,
+      "y": 351,
+      "depth": 7547.467948717948,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-east-observatory-porch-rail-2-50",
+      "file": "grand-tower/seventh-east-observatory-porch-rail-2-50.png",
+      "x": 538,
+      "y": 357,
+      "depth": 7551.375,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-north-walk-rail-1-0",
+      "file": "grand-tower/seventh-north-walk-rail-1-0.png",
+      "x": 636,
+      "y": 360,
+      "depth": 7552,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-east-observatory-porch-rail-1-0",
+      "file": "grand-tower/seventh-east-observatory-porch-rail-1-0.png",
+      "x": 631,
+      "y": 359,
+      "depth": 7552.875,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-outer-gallery-rail-1-0",
+      "file": "grand-tower/seventh-outer-gallery-rail-1-0.png",
+      "x": 630,
+      "y": 362,
+      "depth": 7554.8026315789475,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-south-walk",
+      "file": "grand-tower/seventh-south-walk.png",
+      "x": 378,
+      "y": 385,
+      "depth": 7557.25,
+      "level": 7,
+      "kind": "floor"
+    },
+    {
+      "id": "seventh-dock-b-rail-2-0",
+      "file": "grand-tower/seventh-dock-b-rail-2-0.png",
+      "x": 359,
+      "y": 362,
+      "depth": 7559.044871794872,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-dock-b-rail-1-0",
+      "file": "grand-tower/seventh-dock-b-rail-1-0.png",
+      "x": 414,
+      "y": 371,
+      "depth": 7559.846153846154,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-portrait-wall",
+      "file": "grand-tower/seventh-portrait-wall.png",
+      "x": 531,
+      "y": 335,
+      "depth": 7560.5,
+      "level": 7,
+      "kind": "wall"
+    },
+    {
+      "id": "seventh-bearing-approach-rail-0-0",
+      "file": "grand-tower/seventh-bearing-approach-rail-0-0.png",
+      "x": 538,
+      "y": 369,
+      "depth": 7560.964285714285,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-bearing-approach-rail-3-0",
+      "file": "grand-tower/seventh-bearing-approach-rail-3-0.png",
+      "x": 516,
+      "y": 369,
+      "depth": 7561,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-outer-gallery-rail-3-58",
+      "file": "grand-tower/seventh-outer-gallery-rail-3-58.png",
+      "x": 562,
+      "y": 375,
+      "depth": 7563.513157894737,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-up-east-door",
+      "file": "grand-tower/seventh-up-east-door.png",
+      "x": 590,
+      "y": 333,
+      "depth": 7565.25,
+      "level": 7,
+      "kind": "wall"
+    },
+    {
+      "id": "seventh-dock-b-rail-1-83",
+      "file": "grand-tower/seventh-dock-b-rail-1-83.png",
+      "x": 373,
+      "y": 381,
+      "depth": 7569.538461538462,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-bearing-approach-rail-2-57",
+      "file": "grand-tower/seventh-bearing-approach-rail-2-57.png",
+      "x": 516,
+      "y": 380,
+      "depth": 7571.964285714285,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-south-walk-rail-0-13",
+      "file": "grand-tower/seventh-south-walk-rail-0-13.png",
+      "x": 414,
+      "y": 374,
+      "depth": 7579.625,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-bearing-approach-rail-1-0",
+      "file": "grand-tower/seventh-bearing-approach-rail-1-0.png",
+      "x": 567,
+      "y": 394,
+      "depth": 7586.5,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-outer-gallery-rail-3-11",
+      "file": "grand-tower/seventh-outer-gallery-rail-3-11.png",
+      "x": 493,
+      "y": 391,
+      "depth": 7588.657894736842,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-south-walk-rail-2-0",
+      "file": "grand-tower/seventh-south-walk-rail-2-0.png",
+      "x": 383,
+      "y": 381,
+      "depth": 7596.9375,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-outer-gallery-rail-1-32",
+      "file": "grand-tower/seventh-outer-gallery-rail-1-32.png",
+      "x": 506,
+      "y": 386,
+      "depth": 7597.355263157895,
+      "level": 7,
+      "kind": "prop"
+    },
+    {
+      "id": "seventh-south-walk-rail-1-0",
+      "file": "grand-tower/seventh-south-walk-rail-1-0.png",
+      "x": 499,
+      "y": 428,
+      "depth": 7620.25,
+      "level": 7,
+      "kind": "prop"
+    }
+  ],
+  "lights": [
+    {
+      "x": 497,
+      "y": 629,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 0
+    },
+    {
+      "x": 549,
+      "y": 599,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 1
+    },
+    {
+      "x": 497,
+      "y": 517,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 2
+    },
+    {
+      "x": 226,
+      "y": 523,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 2
+    },
+    {
+      "x": 549,
+      "y": 487,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 3
+    },
+    {
+      "x": 555,
+      "y": 632,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 3
+    },
+    {
+      "x": 497,
+      "y": 405,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 4
+    },
+    {
+      "x": 226,
+      "y": 411,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 4
+    },
+    {
+      "x": 549,
+      "y": 375,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 5
+    },
+    {
+      "x": 555,
+      "y": 520,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 5
+    },
+    {
+      "x": 497,
+      "y": 293,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 6
+    },
+    {
+      "x": 226,
+      "y": 299,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 6
+    },
+    {
+      "x": 549,
+      "y": 263,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 7
+    },
+    {
+      "x": 555,
+      "y": 408,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 7
+    },
+    {
+      "x": 272,
+      "y": 708,
+      "radius": 25,
+      "color": "#efb06f",
+      "intensity": 0.43,
+      "flicker": true,
+      "level": 0
+    },
+    {
+      "x": 372,
+      "y": 758,
+      "radius": 25,
+      "color": "#efb06f",
+      "intensity": 0.43,
+      "flicker": true,
+      "level": 0
+    },
+    {
+      "x": 211,
+      "y": 603,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 0
+    },
+    {
+      "x": 611,
+      "y": 803,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 0
+    },
+    {
+      "x": 253,
+      "y": 207,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 7
+    },
+    {
+      "x": 603,
+      "y": 382,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 7
+    },
+    {
+      "x": 216,
+      "y": 505,
+      "radius": 20,
+      "color": "#f3b46f",
+      "intensity": 0.35,
+      "flicker": true,
+      "level": 2
+    }
+  ],
+  "actorContactShadow": true,
+  "projectionOffsetY": 392,
+  "movingFlights": [
+    {
+      "id": "original",
+      "shape": "original",
+      "referencePivot": {
+        "x": 256,
+        "y": 198
+      },
+      "referenceZ": 0,
+      "frames": 49,
+      "columns": 7,
+      "rows": 7,
+      "x": 298,
+      "y": 151,
+      "frameWidth": 290,
+      "frameHeight": 203,
+      "deckFile": "grand-tower/flight-original-deck.png",
+      "frontFile": "grand-tower/flight-original-front.png"
+    },
+    {
+      "id": "westward",
+      "shape": "westward",
+      "referencePivot": {
+        "x": 256,
+        "y": 198
+      },
+      "referenceZ": 0,
+      "frames": 49,
+      "columns": 7,
+      "rows": 7,
+      "x": 213,
+      "y": 154,
+      "frameWidth": 200,
+      "frameHeight": 185,
+      "deckFile": "grand-tower/flight-westward-deck.png",
+      "frontFile": "grand-tower/flight-westward-front.png"
+    },
+    {
+      "id": "eastward",
+      "shape": "eastward",
+      "referencePivot": {
+        "x": 256,
+        "y": 198
+      },
+      "referenceZ": 0,
+      "frames": 49,
+      "columns": 7,
+      "rows": 7,
+      "x": 383,
+      "y": 265,
+      "frameWidth": 200,
+      "frameHeight": 104,
+      "deckFile": "grand-tower/flight-eastward-deck.png",
+      "frontFile": "grand-tower/flight-eastward-front.png"
+    }
+  ],
+  "animations": [
+    {
+      "id": "portrait-turn-2",
+      "file": "grand-tower/portrait-turn-2.png",
+      "x": 281,
+      "y": 474,
+      "depth": 2277,
+      "level": 2,
+      "kind": "wall",
+      "frameWidth": 20,
+      "frameHeight": 37,
+      "frames": 12,
+      "frameRate": 1.7400000000000002,
+      "startFrame": 2
+    },
+    {
+      "id": "portrait-turn-4",
+      "file": "grand-tower/portrait-turn-4.png",
+      "x": 281,
+      "y": 362,
+      "depth": 4325,
+      "level": 4,
+      "kind": "wall",
+      "frameWidth": 20,
+      "frameHeight": 37,
+      "frames": 12,
+      "frameRate": 1.8800000000000001,
+      "startFrame": 4
+    },
+    {
+      "id": "portrait-turn-6",
+      "file": "grand-tower/portrait-turn-6.png",
+      "x": 281,
+      "y": 250,
+      "depth": 6373,
+      "level": 6,
+      "kind": "wall",
+      "frameWidth": 20,
+      "frameHeight": 37,
+      "frames": 12,
+      "frameRate": 2.02,
+      "startFrame": 6
+    }
+  ]
+}
