@@ -664,6 +664,71 @@ const SchoolFurnishings = (() => {
     return true;
   }
 
+  let floorShield;
+  function floorCrest(c,x,y,width){
+    if(!textures.school)return;
+    if(!floorShield){
+      const doc=c.canvas.ownerDocument,im=doc.createElement('canvas');
+      im.width=184;im.height=166;
+      const g=im.getContext('2d');g.imageSmoothingEnabled=false;
+      // Inlay the four original A22 beasts around the original A21 shield.
+      // The common outer border keeps the arms legible as one device at floor pitch.
+      const shield=new Path2D();
+      shield.moveTo(4,12);shield.quadraticCurveTo(45,18,92,3);
+      shield.quadraticCurveTo(139,18,180,12);shield.lineTo(176,81);
+      shield.quadraticCurveTo(172,127,92,162);
+      shield.quadraticCurveTo(13,126,8,81);shield.closePath();
+      g.fillStyle='#524e43';g.fill(shield);g.save();g.clip(shield);
+      const quarters=[
+        ['shieldGryffindor',0,0,'#92524b',[41,43,65,66],[210,177,100]],
+        ['shieldSlytherin',92,0,'#536e60',[142,43,60,64],[199,203,179]],
+        ['shieldHufflepuff',0,79,'#b3a06a',[59,106,57,48],[65,65,59]],
+        ['shieldRavenclaw',92,79,'#566b7c',[126,105,55,48],[203,203,182]]
+      ];
+      for(const [key,dx,dy,field,[ax,ay,aw,ah],stone] of quarters){
+        g.fillStyle=field;g.fillRect(dx,dy,92,90);
+        const src=textures[key],mask=doc.createElement('canvas');
+        mask.width=src.naturalWidth;mask.height=src.naturalHeight;
+        const m=mask.getContext('2d');m.drawImage(src,0,0);
+        const pixels=m.getImageData(0,0,mask.width,mask.height),data=pixels.data;
+        let l=mask.width,t=mask.height,r=0,b=0;
+        for(let yy=0;yy<mask.height;yy++)for(let xx=0;xx<mask.width;xx++){
+          const i=(yy*mask.width+xx)*4,red=data[i],blue=data[i+2],green=data[i+1];
+          // Sample only the charge inside each shield. Its border remains on the
+          // source badge; the assembled device has a single limestone moulding.
+          const inset=8+Math.max(0,(yy-63)*.78);
+          const inside=yy>15&&yy<97&&xx>inset&&xx<mask.width-inset;
+          const animal=key==='shieldGryffindor'?red>145&&green>96:
+            key==='shieldHufflepuff'?red<115&&green<115:
+              red>141&&green>141&&blue>134;
+          if(!inside||!animal||data[i+3]<160){data[i+3]=0;continue;}
+          const highlight=(((xx*7+yy*13)%11)-5)*.65;
+          for(let k=0;k<3;k++)data[i+k]=stone[k]+highlight;
+          l=Math.min(l,xx);t=Math.min(t,yy);r=Math.max(r,xx);b=Math.max(b,yy);
+        }
+        m.putImageData(pixels,0,0);
+        if(r>l&&b>t)g.drawImage(mask,l,t,r-l+1,b-t+1,ax-aw/2,ay-ah/2,aw,ah);
+      }
+      g.strokeStyle='#aa9667';g.lineWidth=3;g.beginPath();
+      g.moveTo(92,4);g.lineTo(92,162);g.moveTo(7,79);g.lineTo(179,79);g.stroke();
+      g.strokeStyle='#796e51';g.lineWidth=12;g.stroke(shield);
+      g.strokeStyle='#c7b27f';g.lineWidth=6;g.stroke(shield);
+      g.strokeStyle='#e1d0a5';g.lineWidth=2;g.stroke(shield);
+      g.drawImage(textures.school,73,53,38,45);g.restore();
+      const pixels=g.getImageData(0,0,im.width,im.height),data=pixels.data;
+      for(let row=0;row<im.height;row++)for(let col=0;col<im.width;col++){
+        const i=(row*im.width+col)*4;if(!data[i+3])continue;
+        const joint=(row+3)%17===0||(col+9*Math.floor((row+3)/17))%23===0;
+        const seed=(Math.imul(col+57,19349663)^Math.imul(row+31,73856093))>>>0;
+        const grain=(seed%7)-3+(joint?-8:0);
+        for(let k=0;k<3;k++)data[i+k]=data[i+k]*.96+grain+3;
+      }
+      g.putImageData(pixels,0,0);floorShield=im;
+    }
+    const height=width*floorShield.height/floorShield.width*.62;
+    c.drawImage(floorShield,x-width/2,y-height/2,width,height);
+  }
+
   function rota(c, x, y, slope = .5) {
     c.save();
     c.translate(x, y);
@@ -693,102 +758,87 @@ const SchoolFurnishings = (() => {
     const phase=Math.round(slide*60/(2*Math.PI*5.75)*24)%24;
     c.drawImage(sprite,phase*112,0,112,104,x-16,y-21,56,52);
   }
-  return { ready, drawPracticeSeat, objects: room => byDepth[room] || [], target, targetFoot, armour, card, crest, rota, traversalStone, galleryWinch };
+  return { ready, drawPracticeSeat, objects: room => byDepth[room] || [], target, targetFoot, armour, card, crest, floorCrest, rota, traversalStone, galleryWinch };
 })();
 
-/* House-point cabinet and its paired guardians, using the selected D97 glass,
-   heraldic and armour plates at two source pixels per world unit. */
+/* The same foot-registered display harness worn in the Armour Practice Bay.
+   Its native plate tooling, visor piercings and joints come from the original
+   orthographic bake in tools/isometric_armour.cjs. */
 const SchoolHallFurnishings=(()=>{
   'use strict';
-  const sources={
-    gryffindor:'data:image/png;base64,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',
-    slytherin:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAB4CAYAAACaTFAUAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAPmElEQVR42u2aB3RU1RaGh6aoCIIgGjrpEyAYjBDSSAIphBQpCS0hBEIJAQKIEClSAwbpTUFFLKhYeKjv2ZbtYWH5nkogiWBFigQIJZQooO9/+z/DndxMJiEzmQTfesxaZ83MnXvP+e6/99nn7D3XYPhfex048C2mT5+OvwzQn5dK8MZbO1Fy8RyioqOvM1jduig+fRKjpmSggWtrvLLjVRQdP4akkanQfq9VnpuaNMHJ478iOnkwjH17wSMyCPWcW2HF+tXAn1ewY+cODB0+HOvWrcOUaVPRpn0b9PDrUXOQ9/rci++/P4A7O7nBU2Bc+vjDJcwfxugQ1HV2QkzKMPz9H28I2yWcP3cGxadO4MSxo9j/bX7NQLXr0AHvffiemKst3PoEwFWAXMMDFJiXKGaMDIYxJhSGti1hcGqG2JSh8A4JhI+0XZ/ucjxUbHwctm3fhluMznCPCJQWALdwf2mBaNzFFc3uM2Jc1jQY2rVUn72ieqnzbvNyxh8yGS5LcyjQoMEJ2PriVjRwa4uOvf3QNaYPXEJ7ovn9Xvjwi38it2AP8J8/8eWer3C++AzSsqagsbebAq8v17z7wftYnJ2NQYmJjgFr3a4dnt/+Am7yaAd38SG/hBhs3bEdd/kYMWnuTBw5ehgXL57F3r17kLdvD34vuYiSknNoea9RJkCgKBmA2dnzcfFcMQx1DdWHcvP0xNvvvY2bBYiddwz1w4ZtW3D8xDE0ETNOnD8LTl098ebbbyI/fy8K8vdhr4Ad/fUwRj+UCZfe/mp2NnBphZLzZ/Hk05urCVWnHr7O/TcaerRXQPQdpwAfNPDogA4h3cWZW6BL3xDs+mo3dn/1pQK5KKb75puv8B+ZefVlJnpGBatrm9/fCUnpaQoscUgC7A6MJ0WNBi6tzUCcaW4RphnHEODk7wND62byPQDNfDxxt5834mS25efl4piY1ND6TrhFcmYGwChOX9+1DXLWLMdvJecxMTPTdjDekXuwH9wVkKlx2ntEBcFVTEIQZ3F0VzGnFho6SZyat2wJ9u/PF6f/A4Z77lDhQgsZVM3Q/h7MWbIQRScKsfkpG0xZcu4sUmXp8JJBOKWNYiIOeFf3zjC0aYl7xMEZg27z6igDSTRneBCHvtmlrZjwCPbm7pGgeVZdz5txjTBBOYu6naSv9BlTcUaWpyoDHT1yCHvyvlHLhocEQsM9jXGrBMpjEpFzxZGLTp4A8IeK1mue3IDwhHgYmhiQMCYFvxz+RYC+xulTJ1HPxUlFe5OKJiU9IoLg7NcNp07aADR/4QIZ9LjqwFnMsvnF53DxfDFyZarnymAFBXnIy9uDb+V9nxzj94vnz+DHH7+XZWc/9smsO11UKEtNK3VTmtlpPsLd1cUDhXJzhro3VRGqjgHFZ06hYWcXdAzpgXzZHxGQA9FH6GPAFWl/4rvvCgQuVzXCEvRU0XH1ez2ZGHogrd3m2QG7d38BQ/36VVcpKysLHgHdVQfHZftx8KcfzDCGO+vB0Miglg/vPsF48fVXxJGvqAjOO0/JzEBgXLQoYnJmmkuvEmfhcy+9AL+e3asO5O3TDUfEH+p0dMLWV1+SzwfxrazoZ04VoamvpxrIhbNMwoJXv1CJ7O3F4ZvjdveOMLRqKpMhyLQw99GZSwPqcDdy1q7CgIRBtoWAK7+VoI2vN+rJRo2LJhX65eBPSh3vmDBx2GAxSysYWt4mU/puGFrcgqbdjHDq6XNVGX9TDNObTGZkHQme83OyEdgr2DagtDFjcEpiBqfvjOx5OHzoZwV1+fcSLFj+KBauXIaA2Ei88/EHylyM1Fcu/YaTJwsROSwBzXyN5fzHlUCietaieQiPiLA9SL624zXcKqt4p+hQWVh/kfUr1+zEdPIDBwrUIrvvasvbl6sW3oKCfbLwnkdDCReMZaUKBajlZ+nqFejh39O+5eT3C+eUWTqG9cSAcSkqBnGZKLlQrACPyXr2ww/7lWNfFjP/ISpxu1tQsBdHxffo/AyehOE2hd+3vfYyomP62QfUf0B/XCg+C09ZxblrrCMBb/iUdHz8+SfCcBlNjS7oHhUGQ1NJAJpKbLm7MVKnZuCE7M2/k5BBUDo6HZphoLm3O9754F24eXjYvxM4cvgQJs6crjpkx0Zx2k4yu26XzVnbYF/cJAuos8QsN1keXEL8BDwETl5uCopJQ66oxZvxiu4F36je+FUW4UZN7qje1uT8mSK1RHQWf2rbyxeJGWkwhkqgk61JC18veMpUdwuV5aFPEDr3lXPu66I2dN9/J4G16IREaa5nPbBs/SqcO3taYBpUD8jZzUXc5xKcJeDd7uMmbnIFhTIL6TfcNeZsWKMWX0NjgwoNl+Q4/e3IoZ8k0heideB9aBvki12ffyYKHXHQ3ls2cAX79irHPCYRvL1vV7QK7IYWXd2xpyBXAVyQdY++9fPPpujOvffjzz+Dlj29JZtpo75/+eVuxyUDQ4YMlSWkGPWM7bD0qY0SBIPUmsctCEFjRyehUPymsPCoAkyTra2HmNYl0BeLJH79S3aa/QcOdGx2ckeL5jLVD8jWpJF5WWAUZkLJ/VN72e46S9bCrJfB8FZJk9Zs2oCDEuk9vDrVTFLJre7l3y/gDlkuCOHVL0TtnxhEGSIMLW9VW90Fjy3F9p2vi6lOI0/2UzVaC9j12S74RobBGNgDYx6cjOYSk+JHDENLiTUr1q/BI7JmHTz4o2xT9qNho0aolWIF7/qE+AsX4CLZC+Xn7cU5UeOTTz5Wm7dBCQmIiIys3aqJu9FLBqyHfjExqFOnzl+n2HXjdeN143Xj5cjXp9tmwrJtXzMOL60aixdXjsELy9Ng7RyHA7zxRAZ2bpyAHRsm4LV16Xh17XgFMjkt1mp7eslIPJWdgs2LR+CJhcl4fEESNswbbh+gdtFbmyYqkL8pkHTzYP7hETY17bq1c4Zh9eyhWPnwEKzIGlw1OEsQeyGuBZfzUAIenT4IS6YNrBhKmebxsoo4CsQa2OKpA7Awsz8WTH6gPNT6eaPB9vr6dPGR8eY7iR8SXyNN63/exHjMzYiDNn45oFfEUV9ePRYvLEtWraaAtP7npMdi1viY8kDbV45E/+jeaupuW5GG55ePVhekJkXXSGPfBMka2081jj1zbGxZoIOf5Kgfnl02CltzUrFlaar5ThwJwqaBaDA7N2ZaB3r+o13qBLYnF6dg06IREkOSsXF+kt1w2nUPj4spB8I2Y93WyoEeyJiFwAeGI6h/kvmitXOHYY3EkFWzTDFk+cxELJuRYB7Msj2SIc46IQ6zxUf0IFp/cWlTETdmGnoPH18xEBuB2ALjhwtUkkAlI3jACPQaKG1QirlDfVs0xTR150+KF5A4q+dEj5yEfqmTETMqU5LGKdjyzkcCNFXBsBGmUiC9Svm/HlKt18AUhAwaiZCEVIQmjkLY4FHoPXg0eg9JQ5+hYxA+bCwiho9DRNJ4RCanIyp5AvqOyEDflIkCNFGAJgmQQI3OVECaOpUC8bMGFGBWyQQVfFUlQoWaocoChRNIBooUqChCjRColAwzkKaSHohjVhFoWBmVTKazVMkEZKlSpKaSDkhvNvuA4oaZVSoFuqpSgqiUmIqwxGuYTQNKKQUiDP3IJiBLlUxAyeXMFmbFbOWARpQH0vvPNYGsmU1zbL3ZKvIjqwqNtA6kjVd1IDEbQ4CtQNZ8SD/L7AIyT/9KgMIqATLNMm3aV2yuKgFZm/4VAZU69dVpX4E6/UZZN5djgLRZdk1zVT67bALSQ215/xmz2fjZBGTNXAyK1nwns0J17AIKz55ZBsjmJjB8rzaQHipqc7YCunfhJAVoS6tMHbuBQtc9ooB6PjYDcVsfg9eccegybwKCV89WkPydLXDlwzDOHgu3maPQI2e6gln68RuOA9JDaWaL2ZKD7o8+qGA8Hk5T7wErshQEm+uMVPXdZ9Hka6pTLSDeKYGoAj9TrZC1c5UiHJxm5TECEypy02K4Z412PJClSn02LlAgEU8sQudH0tFrzRzcv3SaOu67ZKoy3X3ZU9BhWvI1YaoFxKaZLWjVLOVLXRdMVGajP1Glvk8ugeesMeo7VbKMyg4DslSp39OPKpBuizNVo+/w3W/ZQ3B5aKSCq4o61QLSQ1EdDk7T0Z/Y4p9drkDo0FWFcRgQnbXjgyOUv/CdjsxGB6fZag3IUiUqQ9M5T09RcYdObQuMw4A0KCpCKKqjn1W1CmSpEmOPFhBtVcdhQHooBkqazB4YhwNpUPaY6v8DiDCMRWzX1WTmbYnsHDUg7hCvi1PrTaUH4rb1ukx7DYZZLIG0pYN7aW7qazUwajBMrVU6pFOI2QZVYpZR62sZU6JyQEwQ7VCp2tsPlmhYeLAEilAZqykfY/pTo9sPc7lP1YySVWlGA9J8SCWKNBsrHiNNuXyNbdBKS31Jyn+0DDZMr5DKXE2JYrQNKlU761AptSpcpZYBCtcKDebM1aRSjWUdai/dP7nUfwg02ApQsj6VdjCQZVnGbK5BpQUHzYcqAmJu7/DM1Zq5tIJDWR8aby4J64sNDgHS16wt69WauVj9KOfUyeWrHxWVYuwCKlertijnlQJZK1ZNdgyQfprTkcuok1iqjmXppSxQ2b8U+B9HtStoGgybvtipAZQrvVw9ri8FVxtIv73grDIDCYwlCDNYFhmYWjNJtATTKq+xaVPUHy52FT31MPQbfeVMG5BpMwGYBjFjZfbBjT6PMwuxBIu9+pdU/NgH7a9Tc4pr9UVtAFY7mAxyUFY7mHH03jDfXPlgRYRqMUfTV9s0MJuB9ObSFCEQyy2s99BELCZEP7VUQTEgMnVm1sqqWuwzy1Sazfyev/GdlRA9mE1/LegLnfpiJztnx1r6zIFYduFnKkFYNh6jUlr0ZmNRgu+sAWj92vxvEAdm5xoQFdAG13J4AtKHeKzT3PEKiOew3McslsrxHBa0qBzV5Xk0u81AvIhOqgHRRDQVnZaf2TFNRHAOrvkUQflOv2LtkabmjdGM4Y8vVMDtpyZVDajMfxzirBxMA+JAVIYzi07Lz7xrVj6oCFUiiFZ9pZlY1uPv3vMz1DGeo5m+Sn9xakC8kB3yzjUgfqb07Jg1ISoYtn6eMgPP918+U6nEY1rJmOU+HqdZqS5vgNfyM81bJSCqQzXotJSbYJSaTVU3xBQEoEo0KcE0vyEQzcNzqQ6B+BuV43kMBfxOSIJpKlkF0v9vz06pBOVnp4Rih/Y+YUVwLr40H4H4nfWkSv+31wNpRaiaesKKiumr+5U+SFDbT1hZNdmNJ6xuPGFV3Ses+LreT1hZ9aPr9YRVpZWI2n7CyqZiZE09YXWtcf8LfJfCt9054xUAAAAASUVORK5CYII=',
-    ravenclaw:'data:image/png;base64,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',
-    hufflepuff:'data:image/png;base64,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',
-    west:'data:image/png;base64,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',
-    east:'data:image/png;base64,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'
-  };
-  const order=['gryffindor','slytherin','ravenclaw','hufflepuff'];
-  const originals={};
-  const ready=typeof Image==='undefined'?Promise.resolve():Promise.all(Object.entries(sources).map(([key,url])=>new Promise((resolve,reject)=>{
-    const image=new Image();
-    image.onload=()=>{originals[key]=image;resolve();};
-    image.onerror=()=>reject(new Error('Could not load the Entrance Hall exhibit '+key));
-    image.src=url;
-  })));
-  let cabinet;
-  const density=2,originX=60,originY=105;
-  function makeCabinet(c){
-    const plate=c.canvas.ownerDocument.createElement('canvas');
-    plate.width=120*density;plate.height=137*density;
-    const surface=new SchoolJoinery.Surface(plate.width,plate.height,(along,depth,z=0)=>
-      [(originX+along-depth)*density,(originY+(depth+along)*.5-z)*density]);
-    // Refit the accepted ogee and moulding profile to the east wall.
-    // A narrow iron-bound shoe keeps the oak dry above the stone at each end.
-    const centres=[-36,-12,12,36];
-    for(const y of [-48,-24,0,24,48]){
-      surface.box(y-1.65,-4,y+1.65,3.8,0,4.6,0x867b63,0x4e4b46,0x59574e);
-      surface.box(y-2.1,-4.3,y+2.1,4.2,.9,2.2,0x94816a,0x595044,0x625744);
-    }
-    SchoolJoinery.cabinet(surface,'y',-4.5,centres);
-    // Rift-sawn oak on the cap follows its long axis. Four mitres and the
-    // interrupted arris give its width and thickness a readable scale.
-    for(const [height,front] of [[76.5,3],[8.5,5.1]]){
-      const start=-52,end=52;
-      surface.floor(start,-4.35,end,front,height+.04,(v,d)=>{
-        const grain=Math.sin(v*.083+d*4.4)+.55*Math.sin(v*.16+d*3.6);
-        return grain>1.15?0xb29b75:grain<-.95?0x96815e:0xa78f69;
-      });
-      for(const v of [-47,-24,0,24,47]){
-        surface.line([v,-4.1,height+.1],[v+.8,front,height+.1],0x816d50);
-        surface.line([v+.8,-3.9,height+.1],[v+1.4,front-1.3,height+.1],0xbfaa81);
+
+  const width=104,height=138,soleX=52,soleY=134;
+  const sentinels=new Map();
+
+  function restSword(pixels){
+    const rgba=pixels.data;
+    // The lesson suit holds this sword above the floor. Replace only the free
+    // blade below its existing crossguard; the gauntlet and hilt stay intact.
+    for(let y=69;y<=111;y++){
+      for(let u=-33;u<=-21;u++){
+        rgba[(y*width+soleX+u)*4+3]=0;
       }
-      for(const [v,l] of [[-49,11],[-28,15],[-3,12],[26,17]])
-        surface.line([v,front,height],[v+l,front,height],0xc8ad7d);
     }
-    // Short bronze shoes link the stiles to the sill. Rubbed light follows
-    // the heads of the two pins; the column of bright glass sits well clear.
-    for(const v of [-48,-24,0,24,48]){
-      surface.box(v-1.25,-.1,v+1.25,1.65,9,13.5,0xa08253,0x564735,0x725c40);
-      surface.box(v-1.65,.3,v+1.65,1.95,13.1,14.1,0xc0a373,0x745d46,0x826b4d);
-      surface.line([v-.43,1.7,11.2],[v+.1,1.7,11.3],0xc7b387);
+    const back=[64,68,75],face=[138,147,151],edge=[192,195,188];
+    const tipRow=132;
+    for(let y=69;y<=tipRow;y++){
+      const t=(y-69)/(tipRow-69);
+      const ridge=-24.35-13.6*t;
+      const half=2.85*(1-.56*t)*Math.min(1,(tipRow+1-y)/9);
+      const left=Math.round(ridge-half),right=Math.round(ridge+half);
+      for(let u=left;u<=right;u++){
+        const colour=u===left&&t<.85?edge:u<ridge?face:back;
+        const i=(y*width+soleX+u)*4;
+        rgba[i]=colour[0];rgba[i+1]=colour[1];rgba[i+2]=colour[2];rgba[i+3]=255;
+      }
     }
-    const ctx=plate.getContext('2d');
-    ctx.putImageData(new ImageData(surface.buf,surface.w,surface.h),0,0);
-    ctx.imageSmoothingEnabled=false;
-    // The origin in each glass master is between the rails. Its lower collar
-    // rests on the shelf, where the original contact crescent remains visible.
-    for(let i=0;i<order.length;i++){
-      const along=centres[i],image=originals[order[i]];
-      const sx=(originX+along-1.8)*density,sy=(originY+(1.8+along)*.5)*density;
-      ctx.fillStyle='rgba(38,30,29,.42)';
-      ctx.beginPath();ctx.ellipse(sx,sy-15.6,16.1,3.4,0,0,Math.PI*2);ctx.fill();
-      // On this wall the D97 shield already has the correct perspective.
-      // The glass and animal retain every original pixel, including handedness.
-      ctx.drawImage(image,Math.round(sx-17),Math.round(sy-136));
+  }
+
+  function proof(c,shield){
+    const im=c.canvas.ownerDocument.createElement('canvas');
+    im.width=width;im.height=height;
+    const g=im.getContext('2d');
+    g.setTransform(2,0,0,2,soleX,soleY);g.imageSmoothingEnabled=false;
+    const facing=shield?'east':'south';
+    if(!SchoolFurnishings.armour(g,0,0,facing,false,0,true))return null;
+    if(shield)SchoolWorkshop.guardShield(g,0,0,facing,-1);
+    const pixels=g.getImageData(0,0,width,height);
+    if(!shield)restSword(pixels);
+    // Warm reflected stone light from the stair mouth. Preserve the native
+    // luminance steps between rolled steel, dark bluing, lining and brass.
+    const rgba=pixels.data;
+    for(let i=0;i<rgba.length;i+=4){
+      if(!rgba[i+3])continue;
+      const r=rgba[i],green=rgba[i+1],b=rgba[i+2];
+      const luminance=.25*r+.6*green+.15*b;
+      rgba[i]=.72*r+.28*luminance+4;
+      rgba[i+1]=.74*green+.26*luminance+2;
+      rgba[i+2]=.72*b+.28*luminance-3;
     }
-    return plate;
+    g.putImageData(pixels,0,0);
+    return im;
   }
-  function draw(c,x,y){
-    if(!cabinet&&!order.every(key=>originals[key]))return;
-    if(!cabinet)cabinet=makeCabinet(c);
-    const {poly}=SchoolWorkshop;
-    poly(c,[[x-50,y-25],[x+50,y+25],[x+42,y+30],[x-57,y-21]],'rgba(44,36,33,.23)');
-    poly(c,[[x-49,y-24],[x+48,y+24],[x+44,y+27],[x-54,y-22]],'rgba(40,34,33,.19)');
-    c.drawImage(cabinet,x-originX,y-originY,cabinet.width/density,cabinet.height/density);
+
+  function stoneGuardian(c,x,y,side,variant=0){
+    const shield=variant===1;
+    let sprite=sentinels.get(shield);
+    if(!sprite){
+      sprite=proof(c,shield);
+      if(!sprite)return false;
+      sentinels.set(shield,sprite);
+    }
+    // The two source views have different fists and blade angles. Face them
+    // into the stair; the shield stays registered to its original forearm.
+    const inward=shield?side==='east'||side===1:side==='west'||side===-1;
+    c.save();c.translate(Math.round(x*2)/2,Math.round(y*2)/2);
+    if(inward)c.scale(-1,1);
+    c.imageSmoothingEnabled=false;
+    c.drawImage(sprite,-soleX/2,-soleY/2,width/2,height/2);
+    c.restore();
+    return true;
   }
-  function armour(c,x,y,side){
-    const image=originals[side];
-    if(!image)return;
-    const w=image.naturalWidth/density,h=image.naturalHeight/density;
-    // The registered foot is the front tip of the painted diamond plinth.
-    // Tuck the contact shadow below the stone's lower rim.
-    const hull=[[-13,-6.1],[-1,-11.9],[13.9,-5.7],[2.8,.75]];
-    SchoolWorkshop.poly(c,hull.map(([u,v])=>[x+u-.8,y+v+.55]),'rgba(49,43,42,.27)');
-    SchoolWorkshop.line(c,[[x-12,y-5],[x+2.8,y+.45],[x+13.5,y-5.7]],'rgba(46,40,37,.31)',1);
-    c.drawImage(image,x-w/2,y-h,w,h);
-  }
-  return {ready,draw,armour};
+
+  return {ready:SchoolFurnishings.ready,stoneGuardian};
 })();
 
 /* Original direction rows, one-shot timings and feet registrations come from the cast manifest. */
@@ -2921,35 +2971,746 @@ const SchoolPracticeHatch=(()=>{
   return {draw};
 })();
 
+/* The intact court shown in the final film's construction drawing F1114C.
+   The two cloister walks meet the paved apron of the central timber doors. */
+const SchoolCourtyard=(()=>{
+  'use strict';
+  const spawn={x:320,y:246},door={x:320,y:168},returnPoint={x:320,y:183};
+  const outline=[[171,154],[469,154],[686,262.5],[472,369.5],[168,369.5],[-46,262.5]];
+  const stone=['#847f72','#928a77','#8a8372','#96907e','#827d71','#938c79'];
+  function contains(x,y){
+    if(!Number.isFinite(x+y))return false;
+    for(let i=0;i<outline.length;i++){
+      const [ax,ay]=outline[i],[bx,by]=outline[(i+1)%outline.length],dx=bx-ax,dy=by-ay;
+      if(dx*(y-ay)-dy*(x-ax)<Math.hypot(dx,dy)*5.5)return false;
+    }
+    return true;
+  }
+  const face=(c,points,ink)=>SchoolArchitecture.fill(c,points,ink);
+  const line=(c,points,ink,size=.7)=>SchoolArchitecture.edge(c,points,ink,size);
+  const oval=(c,x,y,rx,ry,ink)=>SchoolArchitecture.ellipse(c,x,y,rx,ry,ink);
+  const rng=start=>()=>{start=(Math.imul(start,1664525)+1013904223)>>>0;return start/4294967296;};
+  function clip(c,points){
+    c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.clip();
+  }
+  function contour(p,r,foot,spring,crown){
+    const out=[p(-r,foot),p(-r,spring)];
+    for(const dir of [-1,1]){
+      for(let k=1;k<=12;k++){
+        const t=dir===-1?k/12:1-k/12;
+        out.push(p(dir*r*(1-t),spring+(crown-spring)*Math.sqrt(t*(1.5-.5*t))));
+      }
+    }
+    out.push(p(r,foot));return out;
+  }
+  function arch(c,p,r,foot,spring,crown,ink){
+    face(c,contour(p,r,foot,spring,crown),ink);
+  }
+  function archBand(c,p,r,base,spring,tip,w,cast){
+    // Wedge joints end on the intrados; narrow alternating fillets catch the sky.
+    const outer=contour(p,r+w,base,spring+w*.25,tip+w),inner=contour(p,r,base,spring,tip);
+    for(let i=0;i<outer.length-1;i++){
+      face(c,[outer[i],outer[i+1],inner[i+1],inner[i]],cast[i%cast.length]);
+      if(i>0&&i%3===0&&i<outer.length-2)line(c,[outer[i],inner[i]],'#524f48',.56);
+    }
+    line(c,outer,'#c5b89a',.78);line(c,inner,'#514e48',.86);
+  }
+  function masonry(c,p,x0,x1,z0,z1,base,cv,seed,course=9){
+    const rand=rng(seed);
+    face(c,[p(x0,z0),p(x1,z0),p(x1,z1),p(x0,z1)],base);
+    for(let z=z0,row=0;z<z1;z+=course,row++){
+      let ax=x0-(row%2?7+rand()*6:0);
+      while(ax<x1){
+        const bx=ax+13+rand()*22,a=Math.max(x0,ax+.22),b=Math.min(x1,bx-.28),h=Math.min(z+course-.56,z1);
+        if(b>a+.5){
+          const zz=z+.38,k=Math.floor(rand()*cv.length);
+          face(c,[p(a,zz),p(b,zz),p(b,h),p(a,h)],cv[k]);
+          if(rand()>.33)line(c,[p(a+.6,h-.16),p(a+Math.min((b-a)*.84,13),h-.16)],'#b2aa91',.43);
+          // Isolated chips cluster around a bedding seam. The large remaining
+          // planes hold daylight, even when the whole facade is seen on a phone.
+          if(b-a>8&&rand()<.8){
+            const xx=a+2+rand()*(b-a-6),e=zz+.6+rand()*2.2;
+            face(c,[p(xx,e),p(xx+1.2,e+.65),p(xx+3.2,e+.6),p(xx+1.75,e+.22)],'#78786b');
+            line(c,[p(xx+.35,e-.2),p(xx+2.05,e+.12)],'#b4ac92',.43);
+          }
+          if(rand()>.42&&b-a>7){
+            const q=a+2+rand()*(b-a-4),e=zz+1.3+rand()*(h-zz-2.4);
+            line(c,[p(q,e),p(Math.min(b-1,q+1+rand()*4),e+.17)],'#78786b',.44);
+          }
+        }
+        ax=bx;
+      }
+    }
+  }
+  function sky(c){
+    const g=c.createLinearGradient(0,-240,0,180);g.addColorStop(0,'#778e9a');g.addColorStop(.54,'#a9bac0');g.addColorStop(1,'#cbd0be');
+    c.fillStyle=g;c.fillRect(-500,-260,1600,760);
+    const rand=rng(192);
+    for(let i=0;i<85;i++){
+      const x=rand()*1250-235,y=rand()*210-160,len=10+rand()*51;
+      face(c,[[x,y],[x+len*.29,y-2],[x+len*.57,y-3.4],[x+len*.82,y-1.1],[x+len,y+.2],[x+len*.42,y+.51]],'rgba(230,229,209,.18)');
+    }
+    for(const [base,amp,ink] of [[62,34,'#819297'],[83,43,'#718487'],[101,39,'#657878']]){
+      const ridge=[[-350,220]];
+      for(let x=-350;x<1000;x+=10){const y=base+amp*Math.sin(x*.022+base*.23)*.36+amp*Math.sin(x*.009+base*.19)*.53+rand()*4;ridge.push([x,y]);}
+      ridge.push([1000,225]);face(c,ridge,ink);
+    }
+  }
+  function pavement(c){
+    const rand=rng(1630);
+    c.save();clip(c,outline);
+    c.fillStyle='#8b8776';c.fillRect(-50,151,740,225);
+    // The sandy crossing opens to broad joints of flagstone under the cloister.
+    const p=(u,v)=>[320+u-v,125+(u+v)*.5];
+    const slabs=['#a59e8a','#a09a88','#a9a18d','#a59e8e','#999584','#aca48f','#a39e8f'];
+    for(let j=-17;j<35;j++)for(let i=-10;i<23;i++){
+      const v=j*14.4,u=(i+(j%2)*.48)*30.6,[x,y]=p(u,v);
+      if(x< -94||x>745||y<135||y>372)continue;
+      const col=slabs[Math.floor(rand()*slabs.length)],a=p(u+.6,v+.49),b=p(u+30.28,v+.49),d=p(u+.6,v+14.18);
+      face(c,[a,b,p(u+30.28,v+14.18),d],col);
+      line(c,[d,a,b],'rgba(209,200,176,.61)',.48);
+      if(rand()<.29)line(c,[p(u+3,v+6),p(u+8,v+6.2),p(u+11,v+5)],'#918c7b',.48);
+    }
+    const grass=[
+      [[155,209],[287,209],[286,250],[104,250],[87,243]],
+      [[353,209],[485,209],[553,243],[536,250],[354,250]],
+      [[102,274],[286,274],[286,341],[172,341],[64,287]],
+      [[354,274],[537,274],[576,287],[468,341],[354,341]]
+    ];
+    for(const bed of grass){
+      const rim=bed.concat([bed[0]]);line(c,rim,'#625f51',4);
+      line(c,rim,'#b7ad94',2.35);face(c,bed,'#707657');
+      c.save();clip(c,bed);
+      const xs=bed.map(v=>v[0]),ys=bed.map(v=>v[1]);
+      const lo=Math.min(...xs),hi=Math.max(...xs),near=Math.min(...ys),far=Math.max(...ys);
+      const wash=c.createLinearGradient(lo,near,hi,far);wash.addColorStop(0,'#697359');wash.addColorStop(.48,'#85875f');wash.addColorStop(1,'#747d5c');
+      c.fillStyle=wash;c.fillRect(lo,near,hi-lo,far-near);
+      for(let i=0;i<(hi-lo)*.55;i++){
+        const x=lo+rand()*(hi-lo),y=near+rand()*(far-near),sz=2+rand()*7;
+        face(c,[[x-sz,y],[x-sz*.3,y-1.2],[x+sz*.36,y-1.25],[x+sz,y-.3],[x+sz*.33,y+.7],[x-sz*.65,y+.55]],i%2?'rgba(169,156,111,.18)':'rgba(71,86,63,.14)');
+      }
+      for(let i=0;i<(hi-lo)*(far-near)*.065;i++){
+        const x=lo+rand()*(hi-lo),y=near+rand()*(far-near),len=.5+rand()*2;
+        line(c,[[x,y],[x+len,y-.3]],rand()>.49?'#929478':'#677158',.54);
+      }
+      line(c,rim,'rgba(59,60,46,.3)',2.5);
+      c.restore();
+    }
+    const tracks=[[[288,209],[352,209],[354,250],[286,250]],[[286,250],[354,250],[352,341],[288,341]],
+      [[75,252],[562,252],[579,272],[61,272]]];
+    for(const path of tracks)face(c,path,'#a9a18a');
+    for(let i=0;i<2300;i++){
+      const x=66+rand()*512,y=207+rand()*135;
+      if((x<287||x>353)&&(y<254||y>270))continue;
+      c.fillStyle=rand()>.52?'#968f78':'#c2b79c';c.fillRect(x,y,.55+rand()*1.1,.53);
+    }
+    for(const e of [[285,210,285,251],[355,210,355,251],[285,274,285,341],[355,274,355,341]]){
+      line(c,[[e[0],e[1]],[e[2],e[3]]],'#9f9b84',1.1);
+      for(let y=e[1];y<e[3];y+=7.4)line(c,[[e[0]-.8,y],[e[0]+.8,y+.4]],'#777963',.68);
+    }
+    for(const sign of [-1,1])for(let i=0;i<5;i++){
+      const n=i*43.2,start=[320+sign*(149+n),154+n*.5];
+      face(c,[[start[0]-3,start[1]],[start[0]+3.1,start[1]+1.2],[start[0]+15,start[1]+12],[start[0]+9,start[1]+11.5]],'rgba(55,65,60,.18)');
+    }
+    // Rainwater carries a dark tide mark along the bases of the arcade.
+    for(const edge of [[[169,160],[-44,266]],[[471,160],[684,266]],[[172,160],[469,160]]]){
+      line(c,edge,'rgba(63,66,60,.22)',8.1);line(c,edge,'#898576',1);
+    }
+    for(const sign of [-1,1]){
+      const a=320+sign*151,b=320+sign*40;
+      face(c,[[a,156],[b,156],[b+8,162.8],[a+6,162]],'rgba(59,61,54,.15)');
+      for(const offset of [49,77,143]){
+        const x=320+offset*sign;
+        face(c,[[x-6,154.4],[x+7,154.4],[x+15.4,165],[x+4,165.8]],'rgba(57,61,55,.18)');
+      }
+    }
+    c.restore();
+  }
+  function viaductApron(c){
+    // The near edge is a cut through the long approach from the viaduct.
+    // Carry the bridge and its supporting courses below the cut, including
+    // in the tall portrait frame when Harry stands near the entrance axis.
+    const rand=rng(617),bank=[[-270,278],[-46,262.5],[168,369.5],[472,369.5],[686,262.5],[980,278],[980,570],[-270,570]];
+    face(c,bank,'#60695e');
+    c.save();clip(c,bank);
+    for(let i=0;i<350;i++){
+      const x=-250+rand()*1220,y=286+rand()*280,w=8+rand()*30;
+      face(c,[[x-w,y+8],[x-w*.3,y-2],[x,y-6],[x+w*.55,y-2],[x+w,y+9]],i%2?'#697261':'#626e60');
+    }
+    for(const [a,b] of [[[ -46,262.5],[168,369.5]],[[168,369.5],[472,369.5]],[[472,369.5],[686,262.5]]]){
+      const span=b[0]-a[0],slope=(b[1]-a[1])/span,wall=(u,z)=>[a[0]+u,a[1]+u*slope-z];
+      masonry(c,wall,0,span,-39,-.1,'#5d6259',['#77796c','#737769','#7b7d6d','#7a7c6e'],span,7.8);
+      line(c,[wall(0,-1.3),wall(span,-1.3)],'#b5ac91',1.55);
+      line(c,[wall(0,-5.2),wall(span,-5.2)],'#545e54',1.25);
+    }
+    const edges=[[277,365],[363,365],[381,561],[259,561]];
+    face(c,edges,'#9c9882');c.save();clip(c,edges);
+    for(let y=366,k=0;y<562;y+=7.6,k++){
+      line(c,[[258,y],[382,y]],'#827f6e',.83);
+      for(let x=257+k%2*11;x<382;x+=23)line(c,[[x,y+.4],[x+.2,y+7.1]],'#878671',.68);
+    }
+    c.restore();
+    for(const sign of [-1,1]){
+      const a=[320+sign*43.3,367],b=[320+sign*61,561];
+      line(c,[a,b],'#64695d',5.3);line(c,[[a[0]-.7,a[1]-1.7],[b[0]-.7,b[1]-1.7]],'#b5b09b',2.7);
+    }
+    c.restore();
+  }
+  const main=(u,z)=>[320+u,152-z];
+  function pointedLight(c,p,r,spring,h,foot){
+    arch(c,p,r+1.6,foot-.6,spring,h+1.4,'#b8b097');
+    arch(c,p,r,foot,spring,h,'#454e4d');
+    arch(c,p,r-1.05,foot+1,spring,h-1.6,'#788782');
+    for(let x=-r+2;x<r;x+=3){
+      const cap=spring+(h-spring)*Math.sqrt(Math.max(0,1-Math.abs(x/r)));
+      line(c,[p(x,foot+1),p(x,cap-.8)],x<0?'#6c7975':'#89958b',.45);
+    }
+    line(c,[p(0,foot+.1),p(0,h-.5)],'#555e59',.94);
+    for(let z=foot+3;z<spring;z+=5.25)line(c,[p(-r+.75,z),p(r-.75,z)],'#59635f',.43);
+    line(c,[p(-r-1,foot-1.2),p(r+1.1,foot-1.2)],'#c7bca0',1.14);
+  }
+  function gable(c){
+    const p=main;
+    const tower=(x,zbase,w,h,lit)=>{
+      const bottom=140,top=152-zbase-h;
+      face(c,[[x-w,bottom],[x-w,top],[x-w*.42,top-4],[x+w*.48,top-4],[x+w,top],[x+w,bottom]],lit);
+      face(c,[[x+w*.39,bottom],[x+w*.39,top-4],[x+w,top],[x+w,bottom]],'#666b66');
+      for(const a of [-.56,.25]){const tx=x+a*w;pointedLight(c,(u,z)=>[tx+u,top+23-z],2.55,7,10.8,0);}
+      for(let y=top+8,n=0;y<bottom;y+=8.6,n++){
+        line(c,[[x-w,y],[x+w*.38,y-2],[x+w,y]],'#6a706a',.54);
+        for(const k of (n%2?[-.75,.18]:[-.31,.69]))line(c,[[x+k*w,y-.55],[x+k*w,y+6.6]],'#6e756e',.43);
+      }
+      line(c,[[x-w,top+3],[x+w*.36,top],[x+w,top+3]],'#ada68b',1.3);
+      face(c,[[x-w-3,top],[x-w*.38,top-10],[x+1,top-56],[x+w*.53,top-10],[x+w+3,top],[x+w*.35,top+2]],'#4f6168');
+      face(c,[[x-w-3,top],[x-w*.38,top-10],[x+1,top-56],[x+w*.26,top-3],[x+w*.35,top+2]],'#69777a');
+      line(c,[[x+1,top-56],[x+1,top-60]],'#4a5556',.8);
+      for(let y=8;y<35;y+=5)line(c,[[x-w*(1-y/44),top-y],[x+w*(1-y/44)*.37,top-y+1]],'#536568',.63);
+    };
+    // The stair turrets rise out of continuous return walls. The slate
+    // slopes and dark eaves stay visible between the gate and the cloister.
+    function returnWing(x,dir,length,height){
+      const q=(u,z)=>[x+dir*u,127-u*.17-z];
+      masonry(c,q,0,length,0,height,'#646e65',['#798074','#7f8477','#787c72','#858879'],127,8);
+      face(c,[q(-3,height),q(length+2,height),q(length-11,height+25),q(6,height+43)],'#627276');
+      for(let j=2;j<24;j+=3.8)line(c,[q(j*.24,height+j),q(length-j*.42,height+j)],'#748180',.64);
+      line(c,[q(-3,height),q(length+2,height)],'#515e5d',2.15);
+      for(let u=11;u<length-7;u+=14){
+        const o=(v,z)=>q(u+v,z);pointedLight(c,o,2.8,height-10,height-4,height-34);
+      }
+    }
+    returnWing(171,-1,63,78);returnWing(469,1,63,78);
+    tower(153,38,13,71,'#8a8b7b');tower(489,40,11.5,68,'#8a8d7e');
+    const coping=[p(-92,115),p(0,201),p(93,115)];
+    masonry(c,p,-153,153,0,94,'#706f64',stone,12,9.2);
+    const g=[p(-90,92),p(-90,115),p(0,197),p(90,115),p(90,91)];
+    c.save();clip(c,g);masonry(c,p,-92,92,90,200,'#79786d',stone,918,9.2);c.restore();
+    face(c,[p(-149,94),p(-131,130),p(-91,148),p(-91,98)],'#606e71');
+    face(c,[p(90,99),p(90,147),p(139,123),p(153,94)],'#58676b');
+    for(const sign of [-1,1]){
+      const q=(x,z)=>p(sign*x,z),roof=[q(90,99),q(90,147),q(139,123),q(153,94)];
+      c.save();clip(c,roof);
+      for(let z=97,i=0;z<150;z+=3.8,i++){
+        line(c,[q(89,z+2.4),q(154,z-.4)],'#768181',.56);
+        for(let x=88+i%2*3;x<153;x+=7.1){
+          const v=z+2.4-(x-89)*.043;
+          line(c,[q(x,v-.24),q(x+.9,v-3.3)],'#526267',.48);
+        }
+      }
+      c.restore();line(c,[q(90,147),q(139,123)],'#91a09e',1.2);
+    }
+    line(c,coping,'#4b5655',6.2);line(c,coping.map(([x,y])=>[x,y-2.3]),'#b4ac97',2.3);
+    line(c,[p(-84,113),p(0,189.2),p(84,113)],'#b2a990',1.12);
+    const band=(a,b,z)=>{line(c,[p(a,z),p(b,z)],'#57574f',3.15);line(c,[p(a,z+1.2),p(b,z+1.2)],'#b7b198',1.4);};
+    band(-146,-49,92);band(49,146,92);
+    // The upper screen is pierced by grouped perpendicular lights. Their
+    // leadwork remains within the cut stone of each lancet.
+    const tracery=(u,z)=>p(u,z+104);
+    arch(c,tracery,22.6,0,31,53,'#bbb39b');arch(c,tracery,20.6,1.1,30.7,50,'#585e58');
+    for(const u of [-14.4,-7.2,0,7.2,14.4]){
+      const h=45-Math.abs(u)*.83;
+      pointedLight(c,(a,z)=>tracery(u+a,z),2.92,h-5,h,3.2);
+    }
+    archBand(c,tracery,21.7,0,31.2,51.3,2.2,stone);
+    for(const u of [-121,-97,97,121])pointedLight(c,(x,z)=>p(u+x,z),5.35,66.3,76.4,42);
+    for(const dir of [-1,1]){
+      const a=dir*146,b=dir*48;
+      face(c,[p(a,0),p(b,0),p(b,4.2),p(a,4.2)],'#73766a');
+      line(c,[p(a,4.9),p(b,4.9)],'#aba48d',1.08);
+      for(const u of [96,121]){
+        const w=dir*u;
+        face(c,[p(w-7.2,40),p(w+7.2,40),p(w+6,37.8),p(w-6,37.8)],'#676f64');
+        line(c,[p(w-7.4,40.4),p(w+7.2,40.4)],'#c5b99e',1.1);
+      }
+      const q=(x,z)=>p(dir*(63+x),z);
+      arch(c,q,6.6,21.6,45,57,'#858474');
+      archBand(c,q,6.55,22,45,57,2,['#a6a18c','#999582','#9d9885']);
+      for(const u of [-3.05,3.05])arch(c,(x,z)=>q(u+x,z),2.5,23.5,45.2,49.2,'#707568');
+      line(c,[q(-2.5,51),q(0,54.2),q(2.5,51),q(0,48.6),q(-2.5,51)],'#b5ae93',.83);
+    }
+    // Buttresses taper back by stages and throw actual projecting cap shadows.
+    for(const sign of [-1,1])for(const [offset,h,w] of [[49,112,6.3],[77,102,5.2],[143,88,5.2]]){
+      const x=offset*sign;
+      face(c,[p(x+2,0),p(x+w+6.5,0),p(x+w+6,19),p(x+w+3.2,25),p(x+w+3.2,60),p(x+w-1,h-6),p(x+2,h-5)],'rgba(52,58,51,.26)');
+      const profile=[[-w,0],[w,0],[w,20],[w-1.7,23],[w-1.7,58],[w-3,62],[w-3,h-7],[0,h],[-w+3,h-7],[-w+3,62],[-w+1.7,58],[-w+1.7,23],[-w,20]];
+      face(c,profile.map(([dx,z])=>p(x+dx,z)),sign>0?'#958d78':'#a09883');
+      face(c,[p(x+w,0),p(x+w+3.2,3),p(x+w+3.2,20),p(x+w,20)],'#66685d');
+      for(let z=9;z<h-7;z+=9.2){const n=z<23?w:z<62?w-1.7:w-3;line(c,[p(x-n+.4,z),p(x+n,z)],'#777669',.59);}
+      for(const [z,n] of [[20,w],[59,w-1.6],[h-7,w-2.9]]){
+        line(c,[p(x-n-.6,z),p(x+n+.4,z)],'#595c54',1.7);
+        line(c,[p(x-n-.8,z+1),p(x+n+.8,z+1)],'#c6b99e',1.05);
+      }
+    }
+  }
+  function gateSurround(c){
+    const p=main;
+    arch(c,p,42,-.8,54.6,87,'#514e44');
+    for(const [r,s,h,w,col] of [[39.8,54.7,84.4,2.8,stone],[36.8,54.5,81.6,2.9,['#918b79','#9c9480','#a29881']],
+      [34.0,54.1,78.8,2.6,['#777969','#8b8674','#86826e']]])archBand(c,p,r,0,s,h,w,col);
+    for(const dir of [-1,1]){
+      for(const [r,w,col] of [[41.3,1.6,'#b5aa8d'],[39.6,1.0,'#6e7062'],[37.45,1.4,'#b5aa8f'],[34.85,1.15,'#817d68']]){
+        line(c,[p(dir*r,2),p(dir*r,54)],col,w);
+      }
+      for(const z of [2.2,5.2,52.1,54.5]){
+        line(c,[p(dir*33.5,z),p(dir*42.5,z)],z>52?'#a99e83':'#827d6c',1.5);
+        line(c,[p(dir*33.4,z+.55),p(dir*42.7,z+.55)],'#b9ad8f',.64);
+      }
+    }
+    arch(c,p,32.8,.65,53.8,77.7,'#302e2b');
+    // A sliver of the interior appears under the lintel once the leaves part.
+    const throat=(x,z)=>p(x,z+1);
+    c.save();clip(c,contour(throat,31.9,0,53,75.8));
+    masonry(c,throat,-33,33,0,78,'#30352e',['#45463f','#41443a','#373d36'],211,11);
+    arch(c,throat,14.4,0,32,47,'#3a3e36');arch(c,throat,11,0,31,43,'#252d28');
+    face(c,[throat(-32,0),throat(-11,11),throat(11,11),throat(32,0)],'#696253');
+    for(const a of [-1,1]){line(c,[throat(a*10,8),throat(a*27,.5)],'#8a7b5d',.65);}
+    c.restore();
+    face(c,[p(-40.5,0),p(40.5,0),[367,157],[273,157]],'#b2a891');
+    line(c,[[273,157],[367,157]],'#6b6759',1.05);
+    line(c,[[275,158.5],[365,158.5]],'#b9af96',.8);
+  }
+  function oakLeaf(c,dir,opening){
+    const hinge=32.7*dir,angle=opening*1.21,span=32.3;
+    const p=(u,z)=>[320+hinge-dir*u*Math.cos(angle),152-z-u*.43*Math.sin(angle)];
+    const rand=rng(dir>0?518:298);
+    const top=u=>54+23.4*Math.sqrt(u/span*(1.5-.5*u/span));
+    const board=['#665342','#605040','#705b47','#78614a','#6c5644','#66503f'];
+    for(let i=0;i<6;i++){
+      const u=i*span/6,b=(i+1)*span/6-.18;
+      face(c,[p(u,1.2),p(b,1.2),p(b,top(b)),p(u,top(u))],board[i]);
+      line(c,[p(u+.2,1.9),p(u+.2,top(u)-.5)],'#958063',.59);
+      for(let j=0;j<5;j++){
+        const gn=u+.6+rand()*(b-u-1),z=6+rand()*(top(gn)-13);
+        line(c,[p(gn,z),p(gn+.13,z+1.6),p(gn-.09,z+3.4+rand()*3)],j%2?'#584838':'#80684d',.44);
+      }
+    }
+    // The shot through these doors shows deep square coffered fields.
+    // Three bevel planes turn each field away from the light.
+    for(let i=0;i<3;i++)for(let j=0;j<7;j++){
+      const u=2.2+i*9.8,z=4.8+j*9.5;
+      if(z+7.6>top(u)-2.1)continue;
+      const a=p(u,z),b=p(u+7.7,z),d=p(u,z+7.4),e=p(u+7.7,z+7.4),mid=p(u+4.2,z+3.5);
+      face(c,[a,b,e,d],'#49382d');
+      face(c,[a,d,mid],'#796048');face(c,[d,e,mid],'#8f6d4c');face(c,[e,b,mid],'#624b39');
+      line(c,[p(u-.25,z-.4),p(u+8,z-.4),p(u+8,z+7.75)],'#9c7d58',.52);
+    }
+    for(const z of [12.8,47.8]){
+      // Riveted foliate strap hinge with split tips following the timber leaves.
+      const band=[[.2,z-1.8],[5,z-1.6],[12,z-.45],[21,z-.6],[27,z-3.4],[25,z-.7],[30,z],[25,z+.8],[27,z+3.6],[20.8,z+1],[11,z+.9],[5,z+1.7],[.2,z+1.6]];
+      face(c,band.map(([u,h])=>p(u,h)),'#383b37');
+      line(c,[p(1,z+1.3),p(5,z+1.1),p(12,z+.5),p(21,z+.57),p(25,z+2.3)],'#92886d',.56);
+      for(const u of [2.4,7,16,22]){const [x,y]=p(u,z);oval(c,x,y,.65,.71,'#b29d76');}
+    }
+    const [x,y]=p(27.6,34);
+    oval(c,x,y,1.7,2.3,'#393b34');oval(c,x,y-.5,.75,.8,'#b6a374');
+    line(c,[[x,y],[x-1.35,y+.9],[x-1.4,y+2.65],[x-.35,y+3.7],[x+.97,y+3],[x+1.1,y+1.25],[x,y]],'#9b895e',.83);
+    line(c,[p(span,2),p(span,76.2)],'#4c4034',.8);
+  }
+  function arcade(c,dir){
+    // Battered piers and deep shadow on the covered walk are distinct from the gatehouse.
+    const at=(u,z,d=0)=>[320+dir*(149+u)+d,154+u*.5-z-dir*d*.5];
+    const axial=(u,z,d=0)=>at(u,z,dir*d);
+    const count=5,width=43.2;
+    const deck=[axial(0,0),axial(count*width,0),axial(count*width,0,13),axial(0,0,13)];
+    face(c,deck,'#656b60');line(c,[deck[0],deck[1]],'#a8a08b',1);
+    const roof=[axial(0,74),axial(count*width,74),axial(count*width,76,18),axial(0,76,18)];
+    face(c,roof,'#6e7976');
+    for(let i=0;i<count;i++){
+      const mid=(i+.5)*width,p=(u,z)=>axial(mid+u,z);
+      masonry(c,p,-width/2,width/2,0,73,'#6d7165',stone,453+i*91+(dir>0?14:0),8.6);
+      arch(c,p,17.5,0,40,56.8,'#3c4846');
+      c.save();clip(c,contour(p,17.2,0,40,56.15));
+      const back=(u,z)=>axial(mid+u,z,10.5);
+      masonry(c,back,-31,31,0,63,'#515950',['#60675b','#5a635a','#58615a','#676d5f'],78+i,9);
+      arch(c,back,9.9,0,31,39,'#454f4a');
+      line(c,[back(-22,0),back(23,0)],'#818471',1.2);
+      face(c,[p(-18,0),p(18,0),back(18,0),back(-18,0)],'#727465');
+      line(c,[p(-18,.6),back(-11,.6)],'#93917b',.9);
+      const shadow=c.createLinearGradient(...p(-17,45),...p(17,1));
+      shadow.addColorStop(0,'rgba(27,39,36,.3)');shadow.addColorStop(.58,'rgba(34,45,40,.11)');shadow.addColorStop(1,'rgba(94,92,64,.05)');
+      face(c,contour(p,17.4,0,40,56.4),shadow);
+      c.restore();
+      archBand(c,p,17.7,0,40.2,57,2.55,['#9d9a86','#98927f','#a7a28b','#aaa28a']);
+      archBand(c,p,16.8,.3,39.45,55.9,.85,['#848779','#aaa28c']);
+      for(const offset of [-11.55,0,11.55]){
+        const t=(x,z)=>p(offset+x,z);pointedLight(c,t,2.1,65.4,68.4,61.2);
+      }
+      for(const zz of [57.8,70.7,73.2])line(c,[p(-width/2,zz),p(width/2,zz)],zz===70.7?'#606458':'#b5ae93',zz===73.2?1.7:.6);
+      const pier=u=>[axial(u-2.7,0),axial(u+2.7,0),axial(u+2.1,40.7),axial(u-2.1,40.7)];
+      face(c,pier(i*width),'#8c8c78');line(c,[axial(i*width-1,2),axial(i*width-1,37)],'#aba38c',.8);
+      for(const z of [2,4.2,38.5,40.7]){
+        line(c,[axial(i*width-3.5,z-.6),axial(i*width+3.5,z-.6)],'#666d5f',1.54);
+        line(c,[axial(i*width-3.5,z),axial(i*width+3.5,z)],'#b4a98e',1);
+      }
+      for(const u of [-1.7,1.8])line(c,[axial(i*width+u,5),axial(i*width+u,36.8)],u<0?'#777b69':'#a8a58d',.72);
+    }
+    // Low crenels are visible against the mountains, including their returns.
+    for(let n=0;n<14;n++){
+      const s=n*15.5+1.4;
+      face(c,[axial(s,74),axial(s+8,74),axial(s+8,79),axial(s,79)],'#999582');
+      face(c,[axial(s+8,74),axial(s+8,79),axial(s+8,79,2.7),axial(s+8,74,2.7)],'#697266');
+      line(c,[axial(s,79),axial(s+8,79)],'#b9b198',.82);
+    }
+    for(const w of [0,86.4,172.8]){
+      face(c,[axial(w-3,0),axial(w+4,0),axial(w+3,48),axial(w+1.4,63),axial(w-1.2,63),axial(w-3,46)],'#888774');
+      line(c,[axial(w-2,1),axial(w-2,46),axial(w,61)],'#b5ab90',.85);
+      for(const z of [4,17,29,41])line(c,[axial(w-2.6,z),axial(w+3,z)],'#6e7264',.72);
+      face(c,[axial(w-3.8,0),axial(w+3.6,0),axial(w+5,-1),axial(w-1,-3)],'#a8a086');
+    }
+  }
+  let architecture;
+  const bounds={x:-390,y:-240,w:1420,h:800};
+  function bake(c){
+    const im=c.canvas.ownerDocument.createElement('canvas');
+    im.width=bounds.w*2;im.height=bounds.h*2;
+    const z=im.getContext('2d');z.setTransform(2,0,0,2,-bounds.x*2,-bounds.y*2);z.imageSmoothingEnabled=false;
+    sky(z);viaductApron(z);pavement(z);
+    gable(z);arcade(z,-1);arcade(z,1);gateSurround(z);
+    return im;
+  }
+  function drawFloor(c){
+    if(!architecture)architecture=bake(c);
+    c.drawImage(architecture,bounds.x,bounds.y,bounds.w,bounds.h);
+  }
+  const restLeaves=new Map();
+  function paintLeaves(c,progress){
+    c.save();clip(c,contour(main,32.65,.6,54,77.7));
+    oakLeaf(c,-1,progress);oakLeaf(c,1,progress);c.restore();
+  }
+  function drawObjects(c,add,time,frame,player,gateOpen=0){
+    const progress=Math.max(0,Math.min(1,gateOpen));
+    add(151.5,()=>{
+      if(progress>0&&progress<1){paintLeaves(c,progress);return;}
+      if(!restLeaves.has(progress)){
+        const im=c.canvas.ownerDocument.createElement('canvas');im.width=140;im.height=164;
+        const z=im.getContext('2d');z.setTransform(2,0,0,2,-570,-144);paintLeaves(z,progress);restLeaves.set(progress,im);
+      }
+      c.drawImage(restLeaves.get(progress),285,72,70,82);
+    });
+  }
+  return {spawn,door,returnPoint,contains,drawFloor,drawObjects};
+})();
+
+/* The film counter stands against the staff-end wall. Each vessel is round
+   and upright; only the base rails and their mountings recede along the wall. */
+const SchoolPointCounter=(()=>{
+  'use strict';
+  const width=69,originX=39,originY=77,density=2;
+  const gems=[
+    ['#204c41','#356f5c','#44846b','#74aa83'],
+    ['#41445c','#626182','#797799','#a39dc2'],
+    ['#612e35','#833e48','#a65154','#ce8181'],
+    ['#765026','#996a32','#b8833f','#dcad64']
+  ];
+  const beadLevels=[9,13,6.6,10.9];
+  const markers=[21.7,30.7,17.8,24.7];
+  let sprite;
+  function makeSprite(doc){
+    const canvas=doc.createElement('canvas');
+    canvas.width=78*density;canvas.height=101*density;
+    const c=canvas.getContext('2d');
+    c.setTransform(density,0,0,density,originX*density,originY*density);
+    const {poly,line,oval}=SchoolWorkshop;
+    const wall=(u,d,z)=>[u-d,(u+d)*.5-z];
+    function rail(a,b,d,z,section){
+      const top=section+z;
+      poly(c,[wall(a,d,top),wall(b,d,top),wall(b,d+section,top),wall(a,d+section,top)],'#96845d');
+      poly(c,[wall(a,d+section,top),wall(b,d+section,top),wall(b,d+section,z),wall(a,d+section,z)],'#5e5443');
+      poly(c,[wall(b,d,top),wall(b,d,z),wall(b,d+section,z),wall(b,d+section,top)],'#403b33');
+      line(c,[wall(a,d+section,top),wall(b,d+section,top)],'#b69e71',.53);
+    }
+    function rod(u,d,low,high,rad){
+      const [x,y]=wall(u,d,0);
+      c.fillStyle='#4d4638';c.fillRect(x-rad,y-high,rad*2,high-low);
+      line(c,[[x-rad*.38,y-low],[x-rad*.38,y-high]],'#ad976b',rad*.69);
+      for(const z of [low+.7,high-.6])oval(c,x,y-z,rad+.35,.53,'#83724f');
+    }
+    function cog(u,d,z,r){
+      const [x,y]=wall(u,d,z),outline=[];
+      for(let i=0;i<48;i++){
+        const t=i*Math.PI/24,rad=(i%4===1||i%4===2)?r:r*.84;
+        outline.push([x+Math.cos(t)*rad*.85,y+Math.sin(t)*rad]);
+      }
+      poly(c,outline,'#64533c');line(c,[...outline,outline[0]],'#aa9366',.55);
+      for(let i=0;i<5;i++){
+        const t=i*Math.PI*.4;
+        line(c,[[x,y],[x+r*.57*Math.cos(t),y+r*.68*Math.sin(t)]],'#b19b6b',.86);
+      }
+      oval(c,x,y,r*.24,r*.27,'#423b32');oval(c,x-.18,y-.23,r*.13,r*.14,'#bb9e69');
+    }
+    function beads(c,x,y,r,rise,colour,index){
+      // Stagger the rows so the top of each bed reads as a mass of tiny beads.
+      const rim=[[x-r,y],[x-r,y-rise+.45],[x-r*.52,y-rise-.45],[x+r*.05,y-rise-.8],[x+r*.63,y-rise-.15],[x+r,y-rise+.7],[x+r,y]];
+      poly(c,rim,colour[1]);oval(c,x,y,r,1.04,colour[0]);oval(c,x,y-rise+.05,r,.84,colour[2]);
+      for(let j=0;j<Math.ceil(rise/1.25);j++){
+        for(let i=0;i<4;i++){
+          const xx=x-r+.8+i*(r*2-1.15)/4+(j%2===0?.1:.56);
+          const yy=y-rise+1+j*1.25+Math.sin(i*7+j)*.38;
+          if(xx>x+r-.3||yy>y-.55)continue;
+          c.fillStyle=colour[(i*7+j*3+index+(i*j)%4)%4];c.fillRect(xx,yy,.85,.68);
+        }
+      }
+    }
+    function animal(x,y,i){
+      // A short raised relief on the slider, in the metal finish of the prop.
+      const profiles=[
+        [[-1.8,1],[-.8,.5],[.9,.6],[1.25,-.05],[1.1,-.5],[-.45,-.65],[-.95,-1.3],[-.55,-1.95],[.85,-2.05],[1.54,-1.72],[.53,-1.53],[-.27,-1.49],[-.06,-1.15],[1.6,-1.05],[2,-.4],[1.8,.7],[.85,1.36],[-.8,1.45]],
+        [[-1.9,-.17],[-1.65,-1.65],[-.45,-.83],[0,-.35],[.95,-1.8],[1.55,-2],[1.22,-.65],[2,-.95],[1.5,.17],[.72,.7],[1,1.05],[-.23,.72],[-1.24,1.7],[-1.71,1.4],[-1.08,.43]],
+        [[-1.7,.65],[-2,-.2],[-1.8,-1.3],[-1.2,-.3],[-.4,-.4],[.5,-.9],[.74,-1.55],[1.44,-1.8],[1.65,-1.23],[2,-.9],[1.55,-.4],[1.07,.05],[1.34,1.1],[.88,1.16],[.15,.62],[-.84,.62],[-1.22,1.45],[-1.8,1.48]],
+        [[-2,.15],[-1.52,-.66],[-.68,-.96],[.3,-.75],[.95,-.6],[1.12,-.97],[1.86,-.33],[2.2,.25],[1.47,.44],[.95,.35],[.61,1.06],[.22,1.13],[-.09,.59],[-1,.6],[-1.24,1.2],[-1.55,1.16],[-1.58,.57]]
+      ];
+      const outline=profiles[i].map(([xx,yy])=>[x+xx,y+yy]);
+      poly(c,outline,'#beab76');line(c,outline.slice(0,5),'#e0c78e',.41);
+      line(c,outline.slice(-4),'#66573a',.5);
+    }
+    function vessel(u,house){
+      const [x,y]=wall(u,.3,0),r=4.74,col=gems[house];
+      const base=y-5.6,top=y-49.9,funnel=y-33;
+      const coat=c.createLinearGradient(x-r,0,x+r,0);
+      coat.addColorStop(0,'rgba(191,204,193,.55)');coat.addColorStop(.15,'rgba(202,215,202,.17)');
+      coat.addColorStop(.56,'rgba(137,162,157,.12)');coat.addColorStop(1,'rgba(76,93,88,.44)');
+      poly(c,[[x-r,base],[x-r,top],[x+r,top],[x+r,base]],coat);
+      oval(c,x,top,r,1.12,'rgba(187,200,184,.42)');
+      beads(c,x,base-.45,r-.59,beadLevels[house],col,house);
+      poly(c,[[x-r+.45,top+1.8],[x+r-.42,top+1.8],[x+r-.42,top+8.5],[x+.68,funnel],[x-.49,funnel],[x-r+.45,top+8.3]],col[0]);
+      poly(c,[[x-r+.77,top+3.6],[x+r-.67,top+3.6],[x+r-.67,top+8],[x+.3,funnel-.6],[x-1,funnel-2.1],[x-r+.75,top+8]],col[1]);
+      oval(c,x,top+3.65,r-.8,.95,col[2]);
+      for(let j=0;j<8;j++){
+        const half=Math.min(r-1.1,(8-j)*.62),xx=x+Math.sin(j*4+house)*half*.78,yy=top+5+j*1.12;
+        line(c,[[xx-.5,yy],[xx+.5,yy-.2]],col[(j%2)+2],.58);
+      }
+      line(c,[[x-.12,funnel],[x-.12,funnel+2.25]],col[2],.52);
+      for(const sign of [-1,1])line(c,[[x+sign*r,top+.3],[x+sign*r,base-.3]],sign<0?'#b7beb0':'#77867c',.66);
+      line(c,[[x-r+1.4,top+1.8],[x-r+1.4,top+13.2]],'rgba(237,239,210,.75)',.68);
+      line(c,[[x-r+1.2,top+18],[x-r+1.2,base-1.5]],'rgba(233,236,209,.5)',.6);
+      for(const [h,rad] of [[4.6,r+.4],[6.25,r],[49.5,r+.35],[50.85,r+.75]]){
+        oval(c,x,y-h,rad,1.22,'#5f533b');
+        oval(c,x,y-h-.36,rad-.15,.95,'#a28b5d');
+        line(c,[[x-rad+.45,y-h-.42],[x-1.5,y-h-.97]],'#d3bd87',.63);
+      }
+      poly(c,[[x-r,y-51],[x-r*.87,y-52.6],[x-r*.55,y-54.2],[x-r*.16,y-55],[x+r*.21,y-55],[x+r*.66,y-54.12],[x+r*.9,y-52.59],[x+r,y-51]],'#76654b');
+      poly(c,[[x-r*.87,y-51.7],[x-r*.64,y-53.1],[x-r*.21,y-54.42],[x+r*.09,y-54.8],[x-.48,y-52]],'#b8a277');
+      line(c,[[x-r*.83,y-51.38],[x-r*.15,y-51.65],[x+r*.72,y-51.48]],'#cfb681',.61);
+      const [mx,my]=wall(u,3.85,markers[house]);
+      oval(c,mx,my,2.45,2.28,'#605a49');
+      oval(c,mx-.14,my-.16,1.98,1.83,'#79775e');
+      animal(mx-.05,my-.22,house);
+    }
+    rail(-32,32,-2.6,2.7,1.75);rail(-32,32,-2.6,47.8,1.2);
+    for(const u of [-31,32])for(const d of [-2.6,2.1])rod(u,d,.5,51,.82);
+    for(const u of [-29,30])rail(u-2.5,u+2.5,-2.7,.25,3);
+    // A chain hangs clear of the glass at the winding end.
+    for(const u of [-30.4,-24.9]){
+      const [x,y]=wall(u,.7,0);
+      line(c,[[x,y-47],[x,y-11]],'#4c463b',1.13);
+      for(let z=12;z<47;z+=2.15)oval(c,x,y-z,.51,.74,'#a08a60');
+    }
+    cog(-27.6,.7,47.4,3.8);cog(-27.6,.7,10.6,3);
+    for(const [i,u] of [-17.65,-4.8,8.05,20.9].entries()){
+      rod(u,3.85,6.2,48.1,.43);
+      vessel(u,i);
+    }
+    rail(-31,32,2.3,3.2,1.5);
+    for(const u of [-31,32])rod(u,2.25,2,50.2,.82);
+    return canvas;
+  }
+  function draw(c,x,y,displayWidth=width){
+    if(!sprite)sprite=makeSprite(c.canvas.ownerDocument);
+    const scale=displayWidth/width;
+    c.drawImage(sprite,x-originX*scale,y-originY*scale,sprite.width/density*scale,sprite.height/density*scale);
+  }
+  return {draw};
+})();
+
+/* Paired floor braziers. Registration is the centre of the stone footing in
+   the Entrance Hall floor plane. Both the carving and the fire use its scale. */
+const SchoolEntranceBraziers=(()=>{
+  'use strict';
+  const density=2, width=42, height=55, ox=21, oy=48;
+  const angles=[[-1,-.19],[-.62,-.93],[.53,-1],[1,-.30],[1,.21],[.58,1],[-.59,1],[-1,.27]];
+  const sprite=[],fireFrames=[];
+  const {poly,line,oval}=SchoolWorkshop;
+  function surface(doc){
+    const canvas=doc.createElement('canvas');canvas.width=width*density;canvas.height=height*density;
+    const c=canvas.getContext('2d');c.setTransform(density,0,0,density,ox*density,oy*density);
+    return [canvas,c];
+  }
+  function rim(r,z){return angles.map(([x,y])=>[x*r,y*r*.37-z]);}
+  const stone={top:'#b5aa8f',lit:'#a3977d',face:'#91866e',shade:'#756d5b',dark:'#5c564a'};
+  const bevel={top:'#c9b997',lit:'#b5a285',face:'#ac9d80',shade:'#91826e',dark:'#736959'};
+  const recess={top:'#9c8c74',lit:'#897b64',face:'#786b57',shade:'#675c4c',dark:'#504a41'};
+  function course(c,z0,r0,z1,r1,m){
+    const a=rim(r0,z0),b=rim(r1,z1);
+    poly(c,b,m.top);
+    for(const [i,ink] of [[3,m.dark],[4,m.shade],[5,m.face],[6,m.lit]]){
+      const j=(i+1)%8;
+      poly(c,[a[i],a[j],b[j],b[i]],ink);
+    }
+    if(z1-z0>1){line(c,[b[6],b[5]],m.top,.43);line(c,[b[7],b[6]],'#c4b79a',.46);}
+  }
+  function pointedPanel(c){
+    // A sunken trefoil tablet leaves the H on a single face. The lettering
+    // has cut serifs, a shaded return and a single lit upper-left arris.
+    const niche=[[-6.2,-3],[-6.2,-11.7],[-5.5,-13.7],[-3.9,-14.5],[-2.9,-14.4],[-2.3,-15.9],[0,-17.5],[2.3,-15.9],[2.9,-14.4],[3.9,-14.5],[5.5,-13.7],[6.2,-11.7],[6.2,-3]];
+    poly(c,niche,'#5a5143');
+    line(c,[...niche,niche[0]],'#b2a182',.78);
+    line(c,niche.slice(0,7),'#5c5447',1.04);
+    const cut=niche.map(([x,y])=>[x*.88,-3.55+(y+3)*.88]);
+    poly(c,cut,'#695d49');line(c,cut.slice(6),'#a08c69',.58);
+    const h=[[-4.1,-12.8],[-.65,-12.8],[-.65,-12.0],[-1.43,-11.57],[-1.43,-9],[1.44,-9],[1.44,-11.55],[.63,-12.02],[.63,-12.8],[4.12,-12.8],[4.12,-12.05],[3.22,-11.5],[3.22,-5.86],[4.13,-5.32],[4.13,-4.57],[.62,-4.57],[.62,-5.32],[1.44,-5.86],[1.44,-7.48],[-1.43,-7.48],[-1.43,-5.86],[-.65,-5.32],[-.65,-4.57],[-4.12,-4.57],[-4.12,-5.32],[-3.23,-5.86],[-3.23,-11.5],[-4.1,-12.04]];
+    poly(c,h.map(([x,y])=>[x+.55,y+.63]),'#403a32');poly(c,h,'#d4bb88');
+    for(const i of [0,7,9,18,22])line(c,[h[i],h[i+1]],'#e2d0a1',.51);
+    line(c,[[-3.04,-11.32],[-3.04,-6.1]],'#f0d8a2',.6);
+  }
+  function makeBody(doc,side){
+    const [canvas,c]=surface(doc);
+    // A stepped foundation, weathered base moulding, shaft, capital and iron
+    // mounting cup share section rings. All bevels turn each corner together.
+    course(c,-.35,14,1.45,14.45,stone);course(c,1.45,14.45,2.8,12.8,bevel);
+    course(c,2.8,12.8,3.9,12.4,recess);course(c,3.9,12.4,5.4,11.1,bevel);
+    course(c,5.4,11.1,19.2,11.35,stone);course(c,19.2,11.35,20.2,12.0,recess);
+    course(c,20.2,12,21.5,13.6,stone);course(c,21.5,13.6,23.0,13.65,bevel);
+    course(c,23,13.65,23.8,12.7,bevel);
+    pointedPanel(c);
+    for(const f of [-1,1]){
+      const xx=f*9.55;
+      line(c,[[xx,-2],[xx,-14.1],[xx-f*.86,-15.4],[xx,-16.65]],f<0?'#c1ae8c':'#685d4c',.65);
+      line(c,[[xx+f*.64,-3],[xx+f*.68,-13.7]],f<0?'#897b65':'#aa997a',.48);
+    }
+    const chips=side?[[8.7,-3.85],[10.2,-2.8],[-12.5,-19.9],[-8.6,-.25],[6,2.08],[-10.3,.8]]:[[-8.9,-2.3],[-12.2,-.3],[11,-18.8],[-10.5,-18.7],[9.1,.87],[-3.2,2.2]];
+    for(const [x,y] of chips){line(c,[[x,y],[x+.95,y-.18],[x+1.39,y+.22]],'#796e5a',.53);line(c,[[x+.12,y+.43],[x+.87,y+.37]],'#c3b292',.42);}
+    oval(c,0,-23.8,6.2,1.4,'#5d5346');oval(c,-.1,-24.35,5.7,1.25,'#403d39');
+    poly(c,[[-4.8,-24.3],[-4.0,-26.1],[-2.8,-26.7],[2.8,-26.7],[4.6,-24.3]],'#66574a');
+    line(c,[[-4.5,-24.6],[-3.1,-25.8],[1.1,-26.3]],'#bd9563',.69);
+    // The curved steel dish has a planished lower belly, visible rivets on
+    // curved bronze reinforcing straps and a rolled lip around the coal bed.
+    const bowl=[[-13.5,-31.5],[-13.25,-29.94],[-11.4,-28.0],[-8.9,-26.27],[-5.5,-24.99],[-2.5,-24.4],[2.1,-24.42],[5.6,-25.0],[8.9,-26.2],[11.4,-27.9],[13.1,-29.6],[13.5,-31.5]];
+    const metal=c.createLinearGradient(-13,0,13,0);
+    for(const [p,v] of [[0,'#4e4540'],[.17,'#8f7960'],[.37,'#655b52'],[.64,'#514942'],[.86,'#433e39'],[1,'#78604a']])metal.addColorStop(p,v);
+    poly(c,bowl,metal);line(c,bowl,'#494039',.8);
+    for(const f of [-1,1]){
+      const strap=[[f*9.95,-30.0],[f*9.1,-28.0],[f*7.1,-26.2],[f*4.65,-25.22]];
+      line(c,strap,'#494039',1.24);line(c,strap.map(([x,y])=>[x-.27,y-.2]),'#ad885d',.63);
+      for(const [x,y] of [strap[0],strap[2]]){oval(c,x,y,.66,.58,'#3e3a35');oval(c,x-.13,y-.17,.37,.32,'#c6a578');}
+    }
+    line(c,[[-6.7,-25.72],[-3.7,-24.9],[-.9,-24.71]],'#ab8661',.52);
+    oval(c,0,-31.5,13.82,3.5,'#5b4437');oval(c,0,-31.9,13.65,3.22,'#bf965f');
+    oval(c,.15,-32,12.63,2.56,'#48332d');oval(c,0,-31.78,11.63,2.2,'#82412d');
+    const coals=[[-10,.7,1.6],[-8.6,-.9,1.75],[-6.2,.4,2.0],[-3.8,-.85,1.45],[-1.65,.65,1.8],[.85,-.8,1.45],[3.3,.58,1.73],[5.7,-.8,1.7],[7.6,.47,1.6],[9.6,-.1,1.5]];
+    for(const [x,d,r] of coals){
+      const y=-31.65+d;poly(c,[[x-r,y],[x-r*.67,y-.8],[x+.17,y-1.11],[x+r,y-.3],[x+r*.54,y+.54],[x-.64,y+.76]],'#49372f');
+      line(c,[[x-r*.67,y+.35],[x-.42,y+.58],[x+r*.42,y+.3]],'#de7944',.55);
+      line(c,[[x-.5,y-.48],[x+.32,y-.73]],'#97745a',.5);
+    }
+    line(c,[[-13.45,-31.1],[-11.74,-29.94],[-8.2,-29.12],[-5.2,-28.94]],'#e1b784',.69);
+    line(c,[[6.9,-29.26],[10.65,-29.91],[13.31,-31.22]],'#9e744e',.66);
+    return canvas;
+  }
+  function tongue(c,x,y,w,h,lean,fold,colour){
+    c.fillStyle=colour;c.beginPath();c.moveTo(x-w,y);
+    c.bezierCurveTo(x-w*1.35,y-h*.27,x+w*fold*.8,y-h*.37,x+lean-w*.26,y-h*.6);
+    c.bezierCurveTo(x+lean-w*.6,y-h*.80,x+lean-w*.1,y-h*.9,x+lean,y-h);
+    c.bezierCurveTo(x+lean+w*.82,y-h*.68,x+w*.14,y-h*.52,x+w*.7,y-h*.37);
+    c.bezierCurveTo(x+w*1.47,y-h*.17,x+w*.8,y+.55,x,y+.63);c.closePath();c.fill();
+  }
+  function makeFire(doc,frame){
+    const [canvas,c]=surface(doc),phase=frame*Math.PI/12;
+    const waves=(offset)=>Math.sin(phase+offset)*.65+Math.sin(phase*2-offset*.72)*.35;
+    const haze=c.createRadialGradient(0,-34.5,1,0,-34.5,14);
+    haze.addColorStop(0,'rgba(246,154,75,.22)');haze.addColorStop(.66,'rgba(246,150,63,.07)');haze.addColorStop(1,'rgba(246,150,63,0)');
+    oval(c,0,-34.5,14,10,haze);
+    const bed=[[-7.25,2.12,5.0,1.4],[-4.15,3.18,8.5,3.2],[-.72,4.05,12.5,4.85],[3.1,2.63,6.0,.35],[6.1,2.28,8.65,2.3]];
+    oval(c,0,-32.64,9.65,1.65,'#c2683b');
+    for(const [x,w,average,offset] of bed){
+      const v=waves(offset),h=average*(1+v*.23),lean=x*.09+2*Math.sin(phase+offset*.79)+v*.85,fold=-.28+.74*Math.sin(phase-offset),y=-32+.27*Math.cos(x);
+      tongue(c,x,y,w,h,lean,fold,'#cc6135');
+      tongue(c,x-.2,y+.07,w*.79,h*.87,lean*.79,fold,'#ed944b');
+      tongue(c,x+.07,y+.15,w*.6,h*.61,lean*.51,-fold,'#f7c66d');
+      if(w>2)tongue(c,x-.17,y+.22,w*.37,h*.38,lean*.43,-fold,'#ffe7a1');
+    }
+    // The bright core joins at the fuel. A few dark embers in front of it
+    // keep the fire visibly down inside the lip, rather than perched on it.
+    oval(c,-.4,-32.04,6.3,.72,'#f8cc75');
+    for(const [x,y] of [[-8.8,-31.1],[-3.6,-30.8],[2.1,-30.5],[7.65,-31.0]]){
+      poly(c,[[x-1.14,y+.22],[x-.85,y-.39],[x+.19,y-.66],[x+1.12,y-.02],[x+.75,y+.43]],'#5a3b30');
+      line(c,[[x-.76,y+.24],[x+.05,y+.38],[x+.68,y+.19]],'#ce7141',.5);
+    }
+    for(const [delay,x] of [[0,-4.5],[.51,4.25]]){
+      const age=(frame/24+delay)%1;if(age>.8)continue;
+      const xx=x+age*1.2+Math.sin(phase+delay)*.7,yy=-35.0-age*9;
+      line(c,[[xx,yy],[xx+.35,yy-.75]],age<.42?'#e9a352':'#d68c53',.62);
+    }
+    return canvas;
+  }
+  function draw(c,x,y,side,t=0){
+    const i=side==='right'||side==='east'||side>0?1:0;
+    const frame=(Math.floor((Number.isFinite(t)?t:0)*13)+(i?11:0))%24,idx=(frame+24)%24;
+    const doc=c.canvas.ownerDocument;
+    if(!sprite[i])sprite[i]=makeBody(doc,i);
+    if(!fireFrames[idx])fireFrames[idx]=makeFire(doc,idx);
+    oval(c,x+1.2,y+1.7,15.3,4.9,'rgba(46,37,32,.20)');
+    oval(c,x+.35,y+.65,13.3,3.8,'rgba(37,31,28,.25)');
+    c.drawImage(sprite[i],x-ox,y-oy,width,height);
+    c.drawImage(fireFrames[idx],x-ox,y-oy,width,height);
+  }
+  function blocks(dx,dy,padding=0){
+    const x=Math.abs(dx)/(14.45+padding),y=Math.abs(dy)/(5.35+padding);
+    return x<1&&y<1&&x*.65+y*.42<.87;
+  }
+  return {draw,blocks};
+})();
+
 /* A three-sided vestibule. The canted end bay faces the player and the two
    long walls recede on the school's 2:1 axes. All thresholds are on one floor. */
 const SchoolEntranceHall=(()=>{
   'use strict';
   const spawn={x:305,y:254}, doors={practice:{x:174,y:209}};
-  const greatDoor={x:319,y:153};
-  const perimeter=[[268,144],[365,144],[610,266.5],[348,397.5],[272,397.5],[18,270.5]];
+  const greatDoor={x:319,y:153},courtyardDoor={x:310,y:318},exteriorArrival={x:321,y:289};
+  const perimeter=[[268,144],[365,144],[610,266.5],[481,331],[139,331],[18,270.5]];
   const west=(s,d,z=0)=>[268-s+d,144+(s+d)*.5-z];
   const east=(s,d,z=0)=>[365+s-d,144+(s+d)*.5-z];
-  const head=(s,d,z=0)=>[319+s,144+d-z];
+  const head=(s,d,z=0)=>[319+s,114+d-z];
   const tile=(u,v,z=0)=>[312+u-v,121+(u+v)*.5-z];
-  const [caseX,caseY]=east(81,8.5);
-  const display={x:caseX-14,y:caseY+7};
-  const sculptures=[[116,241,'west'],[526,250,'east']];
-  const trunk={x:426,y:294},seat={x:218,y:300},lamp={x:378,y:279};
+  const stairBottom=195,stairTop=150;
+  const points={x:507,y:234};
+  const torches=[{x:242,y:237,side:-1},{x:386,y:237,side:1}];
+  const cabinet={x:459,y:199};
+
+  function floorRise(x,y){
+    if(Math.abs(x-319)>46)return 0;
+    return 30*Math.max(0,Math.min(1,(stairBottom-y)/(stairBottom-stairTop)));
+  }
   function contains(x,y){
     if(!Number.isFinite(x+y))return false;
     for(let i=0;i<perimeter.length;i++){
       const a=perimeter[i],b=perimeter[(i+1)%perimeter.length],dx=b[0]-a[0],dy=b[1]-a[1];
       if(dx*(y-a[1])-dy*(x-a[0])<Math.hypot(dx,dy)*3.6)return false;
     }
-    // The stone shoes and projecting sill extend along the east wall.
-    const dx=x-caseX,dy=y-caseY;
-    if(Math.abs(dx*.5+dy)<54&&Math.abs(dy-dx*.5)<8)return false;
-    for(const [sx,sy] of sculptures)if(Math.abs(x-sx)/17+Math.abs(y-sy)/8<1)return false;
-    const bx=x-seat.x,by=y-seat.y;
-    if(Math.abs(bx*.5+by)<32&&Math.abs(by-bx*.5+1.5)<11)return false;
-    if(Math.abs(x-lamp.x)/7+Math.abs(y-lamp.y)/3.8<1)return false;
-    return Math.abs(x-trunk.x)/24+Math.abs(y-trunk.y)/11>=1;
+    if(y>320&&Math.abs(x-310)>31)return false;
+    if(torches.some(t=>SchoolEntranceBraziers.blocks(x-t.x,y-t.y,2.5)))return false;
+    if(Math.abs(x-cabinet.x)<35&&Math.abs(y-cabinet.y-(x-cabinet.x)*.5)<4.3)return false;
+    // The stair cheeks taper into the side walls at the upper landing.
+    const side=Math.abs(x-319);
+    return !(side>45&&side<53&&y>144&&y<195);
   }
   const fill=(c,pts,ink)=>SchoolArchitecture.fill(c,pts,ink);
   const pen=(c,pts,ink,width=.7)=>SchoolArchitecture.edge(c,pts,ink,width);
@@ -2981,63 +3742,94 @@ const SchoolEntranceHall=(()=>{
         }
       }
     }
-    // Only the two doorways carry the directional inlay.
-    for(const [point,end] of [[[313,241],[319,146]],[[275,246],[176,196.5]]]){
-      const [x,y]=point,[ex,ey]=end,dx=ex-x,dy=ey-y,len=Math.hypot(dx,dy);
-      const nx=-dy/len,ny=dx/len;
-      for(const side of [-1,1]){
-        const at=(x,y,n)=>[x+nx*n*side,y+ny*n*side*.58];
-        pen(c,[at(x,y,18),at(ex,ey,18)],'#756f62',4.15);
-        pen(c,[at(x,y,17.5),at(ex,ey,17.5)],'#888675',2.25);
-        pen(c,[at(x,y,19.3),at(ex,ey,19.3)],'#c5b694',.6);
-        for(let k=12;k<len-4;k+=15){
-          const xx=x+dx*k/len,yy=y+dy*k/len;
-          pen(c,[at(xx,yy,16.8),at(xx+.85,yy,19.2)],'#a6997a',.66);
-        }
-      }
-    }
-    const x=309,y=245,r=45,cy=.56;
-    const ring=(size,ink,lw)=>{const p=[];for(let j=0;j<=48;j++){const a=j*Math.PI/24;p.push([x+size*Math.cos(a),y+cy*size*Math.sin(a)]);}pen(c,p,ink,lw);};
-    eye(c,x,y,r+1,(r+1)*cy,'#837e6f');
-    for(let i=0;i<24;i++){
-      const at=(sz,a)=>[x+sz*Math.cos(a),y+cy*sz*Math.sin(a)];
-      const a=i*Math.PI/12,b=(i+1)*Math.PI/12;
-      fill(c,[at(r-.5,a),at(r-.5,b),at(r-5,b),at(r-5,a)],i%2?'#7b7770':'#a6997e');
-    }
-    eye(c,x,y,r-5.3,(r-5.3)*cy,'#909184');
-    for(let i=0;i<8;i++){
-      const angle=i*Math.PI/4, outer=i%2?26:36;
-      const ray=(sz,off)=>[x+sz*Math.cos(angle+off),y+cy*sz*Math.sin(angle+off)];
-      fill(c,[ray(outer,0),ray(9.6,.39),[x,y]],i%2?'#ac9875':'#c6b48d');
-      fill(c,[ray(outer,0),[x,y],ray(9.6,-.39)],i%2?'#71685b':'#79725f');
-      pen(c,[ray(outer,0),ray(9.6,.39)],'#c4b596',.42);
-    }
-    ring(r,'#776d5d',2.1);ring(r-.9,'#a39374',1.1);ring(r+1,'#d1c2a1',.7);ring(r-4,'#8c806a',.75);
-    for(let i=0;i<16;i++){
-      const a=i*Math.PI/8,t=[x+r*Math.cos(a),y+cy*r*Math.sin(a)];
-      pen(c,[t,[x+(r-3.25)*Math.cos(a),y+cy*(r-3.25)*Math.sin(a)]],'#756c5f',.8);
-    }
-
-    eye(c,x,y,3.3,1.8,'#665d4f');eye(c,x-.35,y-.42,2,1,'#c6b68f');
-    // Leaded daylight from the west windows crosses the flags beyond the display.
-    const pane=(u,v)=>[161+u+v*.58,214-u*.5+v*.45];
-    for(let col=0;col<3;col++)for(let row=0;row<5;row++){
-      const sx=col*7.6,sy=row*12.5;
-      fill(c,[pane(sx,sy+5.6),pane(sx+3.2,sy),pane(sx+6.4,sy+5.6),pane(sx+3.2,sy+11)],
-        ['rgba(224,205,147,.22)','rgba(171,210,199,.18)','rgba(227,177,137,.19)'][(col+row)%3]);
-    }
+    // The production still shows dressed rectangular flags under the stair.
+    // Keep the centre quiet; the change in height and the oak doors mark the route.
     c.restore();
+  }
+  function floorMedallion(c){
+    const cx=314,cy=221,ry=.5;
+    const at=(r,t)=>[cx+r*Math.cos(t),cy+r*ry*Math.sin(t)];
+    const sweep=(r,t,end,n)=>Array.from({length:n+1},(_,j)=>at(r,t+(end-t)*j/n));
+    const rim=(r,colour)=>eye(c,cx,cy,r,r*ry,colour);
+    rim(51.8,'#67665d');rim(51,'#b8ac91');rim(49.7,'#67665e');
+    const grey=['#8d8d80','#999485','#a29c89','#969587'];
+    const quarters=['#9a7467','#a59068','#788580','#747d87'];
+    const tau=Math.PI*2;
+    for(let i=0;i<32;i++){
+      const t=tau*(i/32-.25)+.006,u=t+tau/32-.012;
+      fill(c,[...sweep(49.25,t,u,5),...sweep(42.7,u,t,5)],grey[(i*3+Math.floor(i/4))%4]);
+      pen(c,sweep(48.9,t+.004,u-.01,4),'#bcb29b',.55);
+      if(i%8===0||i%8===7)fill(c,[...sweep(48.1,t+.025,u-.025,4),...sweep(44.1,u-.025,t+.025,4)],quarters[Math.floor((i+1)/8)%4]);
+    }
+    rim(42.6,'#b1a185');rim(41.6,'#6f726b');rim(40.4,'#a7a18f');
+    const faces=['#a29d8c','#a6a18f','#aba693','#a39f8e'];
+    for(let i=0;i<12;i++){
+      const t=i*tau/12,u=(i+1)*tau/12;
+      fill(c,[[cx,cy],...sweep(39.8,t,u,8)],faces[(i+Math.floor(i/3))%4]);
+      pen(c,[at(29,t),at(39.8,t)],'rgba(84,85,76,.37)',.58);
+    }
+    SchoolFurnishings.floorCrest(c,cx,cy+.3,61.5);
+    for(const dir of [-1,1]){
+      const x=cx+dir*31.4;fill(c,[[x-1.7,cy],[x,cy-1.3],[x+1.7,cy],[x,cy+1.3]],'#7b765f');
+    }
+  }
+  function hearthLight(c){
+    for(const t of torches){
+      c.save();c.translate(t.x,t.y-1);c.scale(1,.5);
+      const glow=c.createRadialGradient(-3,-1,3,0,0,40);
+      glow.addColorStop(0,'rgba(235,175,87,.24)');glow.addColorStop(.55,'rgba(224,167,88,.11)');glow.addColorStop(1,'rgba(214,160,86,0)');
+      c.fillStyle=glow;c.fillRect(-40,-40,80,80);c.restore();
+      eye(c,t.x+4.5,t.y+2.2,15.7,5.1,'rgba(50,46,39,.24)');
+    }
   }
   function wallShell(c,w,sign){
     const axis=sign<0?'x':'y',length=275;
     const project=(x,y,z)=>{const q=sign<0?w(y,x,z*1.12):w(x,y,z*1.12);return [q[0]*2,(q[1]+120)*2];};
     const skin=new SchoolJoinery.Surface(1280,860,project);
     SchoolJoinery.hem(skin,axis,0,0,length);
-    for(const s of (sign<0?[8,68,131,189,248]:[16,147,200,255]))SchoolJoinery.pilaster(skin,axis,0,s);
-    for(const s of (sign<0?[41,161,217]:[173,228]))SchoolJoinery.window(skin,axis,0,s,sign<0?27:32,sign<0?29:28);
+    for(const s of (sign<0?[6,63,134,199,267]:[6,53,151,205,267]))SchoolJoinery.pilaster(skin,axis,0,s);
     const im=c.canvas.ownerDocument.createElement('canvas');im.width=skin.w;im.height=skin.h;
     im.getContext('2d').putImageData(new ImageData(skin.buf,skin.w,skin.h),0,0);
     c.drawImage(im,0,-120,640,430);
+  }
+  function dressedCornice(c,w,isWest){
+    const random=seed(isWest?101:320),z=105.25;
+    // Travertine caps, an undercut ogee and a narrow bead follow the actual
+    // upper surface of the shared wall shell. Joints turn over its lip.
+    const tones=isWest?['#ac9d80','#ac9f85','#b1a387','#a99d85']:['#b6a688','#b9ab90','#bcac90','#b4a589'];
+    for(let a=0,i=0;a<275;i++){
+      const b=Math.min(275,a+26.8+random()*10.8),ink=tones[i%4];
+      fill(c,[w(a,-11.8,z),w(b,-11.8,z),w(b,6.1,z),w(a,6.1,z)],ink);
+      block(c,w,a,b,z-3.75,z,6.1,isWest?'#958570':'#a49174');
+      pen(c,[w(a+.5,5.8,z),w(b-.3,5.8,z)],isWest?'#c3b496':'#ccb99a',.87);
+      pen(c,[w(a,-11.8,z),w(a,6,z),w(a,6,z-3.85)],'#857d6b',.75);
+      for(let j=0;j<19;j++){
+        const u=a+.6+random()*(b-a-2),d=-10.8+random()*15.9;
+        pen(c,[w(u,d,z+.03),w(Math.min(b-.5,u+1.1+random()*2.3),d+.1,z+.03)],j%4?'rgba(100,89,72,.15)':'rgba(224,209,174,.35)',.5);
+      }
+      const chip=a+(b-a)*(.2+random()*.6);
+      pen(c,[w(chip,6.15,z),w(chip+1.3,6.2,z-.8),w(chip+2.7,6.1,z-.14)],'#8e826f',.59);
+      a=b;
+    }
+    for(const [depth,level,ink,weight] of [[6.1,101.36,'#766c5b',.9],[5.6,100.7,'#baab8c',.85],[4.8,98.35,'#776d5d',.76],[3.8,96.7,'#b5a589',.75]])
+      pen(c,[w(0,depth,level),w(275,depth,level)],ink,weight);
+  }
+  function counterMount(c){
+    const w=east,mid=98;
+    // A shallow ashlar recess separates the glass rims from the stone mortar.
+    // Its depth runs along the wall and matches the angle of the brass rails.
+    const backing=[w(mid-39,2,3),w(mid+39,2,3),w(mid+39,2,74),w(mid-39,2,74)];
+    fill(c,backing,'#777467');
+    const p=w(mid-32,2,66),q=w(mid+31,2,9),light=c.createLinearGradient(...p,...q);
+    light.addColorStop(0,'#716f63');light.addColorStop(.42,'#858271');light.addColorStop(1,'#908977');
+    block(c,w,mid-37.8,mid+37.8,4.5,72.5,2.2,light);
+    for(let j=0;j<5;j++){
+      const z=6.5+j*14.3;pen(c,[w(mid-37.5,2.3,z),w(mid+37.5,2.3,z)],'rgba(67,64,56,.34)',.7);
+      for(let u=mid-31+(j%2)*11;u<mid+37;u+=28)
+        pen(c,[w(u,2.3,z+.5),w(u,2.3,Math.min(72.4,z+13.9))],'rgba(67,64,56,.31)',.64);
+    }
+    mould(c,w,mid-40,mid+40,1.7,2.8,7.5,'#625c4f','#8a8171','#b3a790');
+    mould(c,w,mid-39,mid+39,72.8,2.3,3.4,'#6e6758','#988d77','#b5a78d');
   }
   function archline(w,s,d,r,spring,tip,bottom){
     const p=[w(s-r,d,bottom),w(s-r,d,spring)];
@@ -3070,13 +3862,32 @@ const SchoolEntranceHall=(()=>{
     fill(c,shape,fade);
     if(royal){
       // A glimpse along the dining aisle through two partially opened leaves.
-      for(let j=0;j<6;j++){
-        const y=6+j*5;pen(c,[b(-22,0,y),b(22,0,y)],'#76644e',.7);
-        for(const k of [-1,1])pen(c,[b(k*(20-j*1.8),0,y),b(k*(13-j),0,y+4)],'#b09669',1.1);
+      // Keep an open strip of floor between the table silhouettes. The centre
+      // of the opening stays dark enough to frame the carved oak leaves.
+      const distance=c.createLinearGradient(...b(0,0,20),...b(0,0,70));
+      distance.addColorStop(0,'#524c43');distance.addColorStop(.5,'#544b43');distance.addColorStop(1,'#3e3d3b');
+      fill(c,[b(-28,0,17),b(28,0,17),b(24,0,74),b(-24,0,74)],distance);
+      block(c,w,s-14,s+14,17,20,0,'#615544');
+      for(let i=-1;i<=1;i++){
+        const u=i*3.85;
+        fill(c,[b(u-1.55,0,23),b(u+1.55,0,23),b(u+1.55,0,37),b(u,0,39.5),b(u-1.55,0,37)],i?'#757c72':'#85877a');
+        pen(c,[b(u,0,23),b(u,0,38.4)],'#565c54',.55);
+        pen(c,[b(u-1.55,0,30),b(u+1.55,0,30)],'#5b5f55',.53);
       }
-      for(const k of [-1,1])for(let j=0;j<4;j++){
-        const x=k*(4.7+j*3.5),z=34-j*2.1;pen(c,[b(x,0,z),b(x,0,z+2.7)],'#f3d079',.95);
-        const [ex,ey]=b(x,0,z+3.2);eye(c,ex,ey,.68,1.15,'#fff4b9');
+      for(const si of [-1,1]){
+        pen(c,[b(si*23,0,59),b(si*10,0,40),b(si*10,0,20)],'#65594a',1.2);
+        pen(c,[b(si*24.4,0,59),b(si*10.8,0,40)],'#726450',.7);
+      }
+      fill(c,[b(-29,0,0),b(29,0,0),b(8.6,0,17),b(-8.6,0,17)],'#726c5c');
+      for(const side of [-1,1]){
+        const inner=[[23,1.6],[8.3,17.8],[12.8,17.8],[28.7,5.1]];
+        fill(c,inner.map(([u,z])=>b(side*u,0,z+2.6)),'#46352d');
+        fill(c,inner.map(([u,z])=>b(side*u,0,z+4.2)),'#94754e');
+        pen(c,[b(side*23,0,5.8),b(side*8.3,0,22)],'#b29368',.64);
+        for(const [u,z] of [[17,21.8],[11.5,27.1],[7.5,26.4]]){
+          pen(c,[b(side*u,0,z),b(side*u,0,z+2.5)],'#cab583',.74);
+          const [x,y]=b(side*u,0,z+3.1);eye(c,x,y,.53,.88,'#ffe8a5');
+        }
       }
       for(const sign of [-1,1]){
         const leaf=(u,z)=>b(sign*(29-u*.58),1.2+u*.21,z);
@@ -3158,7 +3969,7 @@ const SchoolEntranceHall=(()=>{
       block(c,w,s+.4,s+27.6,z+.45,z+14.6,-2.9,
         (westSide?['#6b6460','#696361','#716960']:['#877763','#817260','#8a7966'])[Math.floor(rand()*3)]);
     }
-    for(let s=16;s<284;s+=45){
+    for(let s=27;s<284;s+=90){
       const profile=archline(w,s,-2,11.5,127,141,108);
       fill(c,profile,'#4d5153');
       for(const side of [-1,1]){
@@ -3171,7 +3982,7 @@ const SchoolEntranceHall=(()=>{
       mould(c,w,s-13,s+13,105.8,1.9,1.9,'#4a4542',stone,'#a69980');
     }
     mould(c,w,-1,289,143.5,3.2,1.1,'#4e4641',stone,'#ac9979');
-    for(let s=1;s<296;s+=45){
+    for(let s=11;s<296;s+=90){
       const P=(u,z)=>w(s+u,-2.5+(z-147)*.15,z);
       for(const side of [-1,1]){
         const rib=[[0,143.1],[1.9,148.1],[4.8,154.5],[10.5,161.4],[18.2,167.6],[25,171.7]];
@@ -3213,18 +4024,7 @@ const SchoolEntranceHall=(()=>{
       pen(c,[head(s,1.3,138),head(s,1.3,152)],'#a09580',1.1);
       rim(c,head,s,2,6.1,146,156.2,137,2.15);
     }
-    // A dark wool-backed canopy sets Oscar's school shield apart from the limestone.
-    const cloth=[[-10.6,120.3],[10.5,120.3],[10.35,100.1],[4,99.4],[0,96.7],[-6.3,99.3],[-10.2,98.6]];
-    fill(c,cloth.map(([s,z])=>head(s,1.65,z)),'#444653');
-    pen(c,cloth.slice(1).map(([s,z])=>head(s,1.9,z)),'#a88e65',.65);
-    for(const u of [-8.6,-5.8,5.6,8.4]){
-      pen(c,[head(u,1.8,119.4),head(u-.5,1.8,112.6),head(u-.35,1.8,100.7)],'#56545a',.57);
-    }
-    // A stone canopy frames the original crest above the oak leaves.
-    mould(c,head,-13.7,13.7,94,3.1,3.7,'#6e6050','#ab987b','#d9c49f');
-    fill(c,[head(-15,1.4,119.4),head(0,2,129),head(15,1.4,119.4),
-      head(11.3,2,117.5),head(0,2,123.3),head(-11.4,2,117.5)],'#857660');
-    pen(c,[head(-15,1,120),head(0,2,129.9),head(15,1,120)],'#d1b995',1.15);
+    // The tall inner opening is reached from the wide return of the steps.
     reveal(c,head,0,'great');
   }
   function exterior(c){
@@ -3256,185 +4056,160 @@ const SchoolEntranceHall=(()=>{
       mould(c,w,0,len,-2.5,2.5,1.8,'#615e57','#9c9480','#bcae94');
     }
   }
-  function wallDado(c,w,westSide){
-    const light=westSide?'#a88560':'#997853', dark=westSide?'#4c413c':'#504238';
-    const shade=westSide?'#635449':'#715742',tone=westSide?'#76634c':'#83664a';
-    block(c,w,0,274,.6,20.2,2.2,dark);
-    for(let s=1;s<274;s+=15.3){
-      const a=s+1.5,b=s+13.2;
-      block(c,w,a,b,3,17.8,3,tone);
-      for(const off of [0,3.1,6.2]){
-        const x=a+1.1+off;
-        fill(c,[w(x,3.2,4),w(x+.28,3.2,14.3),w(x+1.2,3.2,16.3),w(x+2.4,3.2,14.8),w(x+2.3,3.2,4.3)],shade);
-        pen(c,[w(x+.2,3.45,4.5),w(x+.5,3.45,14.5),w(x+1.1,3.45,15.4)],light,.48);
-      }
-      pen(c,[w(a,3.2,3),w(b,3.2,3),w(b,3.2,17.3)],'#5b483a',.64);
+  function guardianWall(c,w,isWest){
+    // One guardian on each side marks the foot of the staircase. Larger quiet
+    // wall panels let their individual carving read on the smallest camera.
+    const mid=29,base=9,radius=24;
+    const pocket=archline(w,mid,-1.3,radius,base+61,base+82,base);
+    fill(c,pocket,isWest?'#454741':'#59584e');
+    c.save();clip(c,pocket);
+    const shade=c.createLinearGradient(...w(mid-12,0,base+65),...w(mid+15,0,base));
+    shade.addColorStop(0,isWest?'#333834':'#414139');
+    shade.addColorStop(.73,isWest?'#555850':'#656457');
+    shade.addColorStop(1,isWest?'#69695a':'#777363');
+    fill(c,pocket,shade);
+    const lip=archline(w,mid-2.2,-1,radius-1,base+60,base+78,base);
+    pen(c,lip,'#343a37',2.8);
+    for(let course=1;course<8;course++){
+      const z=base+course*9.4,joint=mid+(course%2?2:-11);
+      pen(c,[w(mid-radius,-1,z),w(mid+radius,-1,z)],'rgba(34,37,34,.25)',.55);
+      pen(c,[w(joint,-1,z),w(joint,-1,z+9.1)],'rgba(34,37,34,.22)',.55);
     }
-    mould(c,w,0,274,18.8,2,4.2,'#4a4037',tone,light);
-    mould(c,w,0,274,1,1.75,3.6,'#483f38',shade,light);
-    // The lamp is bracketed to a cut stone plate; the lamp stand and cup cast a joint shadow.
-    for(const s of (westSide?[132,220]:[16,149])){
-      const at=(u,d,z)=>w(s+u,d,z+39);
-      fill(c,[at(-3,.7,-6),at(0,.7,-8),at(3,.7,-6),at(3,.7,3.8),at(0,.7,6.3),at(-3,.7,3.8)],'#564c40');
-      pen(c,[at(0,1,-4.3),at(0,4,-4.8),at(0,8.2,.3),at(0,8.7,3.1)],'#504438',2.2);
-      pen(c,[at(.64,1,-4.2),at(.64,4,-4.25),at(.64,8.2,.7)],'#aa8f63',.66);
-      const [x,y]=at(0,9,3);
-      const glow=c.createRadialGradient(x,y-6,1,x,y-6,14);
-      glow.addColorStop(0,'rgba(244,185,91,.27)');glow.addColorStop(1,'rgba(235,169,76,0)');
-      c.fillStyle=glow;c.fillRect(x-14,y-20,28,28);
-      fill(c,[[x-1.6,y-8],[x-2.7,y-3.4],[x-1.2,y-1.1],[x+.7,y-.8],[x+2.1,y-3.3],[x+1.4,y-7.1],[x+.6,y-9.3],[x-.1,y-6.3]],'#dc9a51');
-      pen(c,[[x-.2,y-1.2],[x-.5,y-3.2],[x+.3,y-5.95]],'#ffe2a0',1.25);
-      fill(c,[[x-3.9,y-2],[x+3.9,y-2],[x+2.25,y+.4],[x+.6,y+1.45],[x-1.3,y+1.45]],'#715c42');
-      pen(c,[[x-3.7,y-1.9],[x-.8,y-1.55],[x+3.5,y-1.85]],'#cfb685',.75);
+    const reflected=w(mid+4,1,base+13),high=w(mid-7,1,base+63);
+    const bounce=c.createLinearGradient(...reflected,...high);
+    bounce.addColorStop(0,'rgba(157,135,96,.21)');bounce.addColorStop(1,'rgba(61,62,53,0)');
+    block(c,w,mid-22,mid+22,base+1,base+67,0,bounce);
+    const pick=seed(isWest?494:875);
+    for(let i=0;i<110;i++){
+      const u=mid-22+pick()*44,z=base+4+pick()*68;
+      pen(c,[w(u,.2,z),w(u+.3+pick()*1.3,.2,z+.2)],i%5?'rgba(41,43,39,.23)':'rgba(177,170,144,.24)',.48);
     }
-  }
-  const seatMaster=()=>SchoolFurnishings.objects('practice').find(f=>f.key==='settle');
-  function bench(c,player){
-    // The workshop settle already has the approved lamp direction, feet and
-    // cutaway mask. Keep that registration when installing it in the vestibule.
-    const master=seatMaster(),dx=seat.x-master.x,dy=seat.y-master.y;
-    c.save();c.translate(dx,dy);
-    if(player)SchoolFurnishings.drawPracticeSeat(c,master,{x:player.x-dx,y:player.y-dy});
-    else master.draw(c);
     c.restore();
-  }
-  function arrivalStandard(c,x,y,t){
-    const k=SchoolWorkshop;c.save();c.translate(x,y);
-    const iron={edge:'#353d3c',top:'#959687',front:'#626b61',side:'#4b5149',light:'#b3ad91'};
-    k.box(c,-4.5,-4.5,9,9,0,2.15,iron);k.box(c,-3.7,-3.7,7.4,7.4,2.1,1.75,k.brass);
-    k.turn(c,0,0,3.7,[[0,3.1],[2,2.7],[3.1,1.5],[6,2.1],[7,1.45],[28,.92],[29.5,1.9],[31,1.8],[32.8,3.3]],iron);
-    for(const d of [-1,1]){
-      pen(c,[[d*3.2,-6.2],[d*4.4,-8.7],[d*3.6,-10.7],[d*2,-10.1],[d*1.35,-9.2]],'#484c45',1.1);
-      pen(c,[[d*1.2,-12],[d*1.2,-18],[d*.65,-25.5]],d<0?'#b9a67a':'#55564c',.56);
+    rim(c,w,mid,.9,radius+.5,base+62,base+83,base,3);
+    // The plinth has a battered footing, a recessed face and a projecting cap.
+    const plinth=(width,z,depth)=>[w(mid-width,0,z),w(mid+width,0,z),w(mid+width,depth,z),w(mid-width,depth,z)];
+    const course=(width,z,height,depth,top,front,side)=>{
+      const a=plinth(width,z,depth),b=plinth(width,z+height,depth);
+      fill(c,[a[3],a[2],b[2],b[3]],front);
+      const j=isWest?1:0,k=isWest?2:3;
+      fill(c,[a[j],a[k],b[k],b[j]],side);fill(c,b,top);
+      pen(c,[b[3],b[2]],'#b1aa95',.75);
+    };
+    course(17.5,.4,2.6,9,'#989382','#7c7769','#69685e');
+    course(15.8,3,4.2,7.7,'#8d8978','#726e62','#5f6057');
+    course(17.7,7.2,2.65,9.2,'#a5a08b','#827d6d','#64655b');
+    for(const side of [-1,1]){
+      const end=mid+side*15.6;
+      pen(c,[w(end,7.85,3.7),w(end,7.85,6.65)],'#66665a',.68);
+      pen(c,[w(end-side*.9,7.8,3.7),w(end-side*.9,7.8,6.7)],'#aaa38b',.5);
     }
-    const z=36.5;const ledge=[[-6.7,-z],[0,-z-3],[6.7,-z],[2,-z+2.9],[-2,-z+2.9]];
-    fill(c,ledge,'#5f5541');pen(c,[ledge[0],ledge[1],ledge[2]],'#bfaa71',.78);
-    const q=[[0,-z-.45],[-5.6,-z-2],[-5.2,-z-12.3],[0,-z-14.5],[5.2,-z-12.3],[5.6,-z-2]];
-    fill(c,q,'#ac8860');fill(c,[q[0],q[1],q[2],q[3]],'#d3b879');
-    fill(c,[[-4.7,-z-3.1],[-4.2,-z-10.8],[-1.5,-z-12.2],[-2.3,-z-4.2]],'#e4cc8c');
-    fill(c,[[1.1,-z-2],[1.5,-z-10.1],[3.9,-z-11.6],[3.4,-z-3.5]],'#c7ad77');
-    const a=Math.sin(t*3.7)*.42;
-    fill(c,[[-1.6,-z-2.3],[-2.1,-z-5.4],[a-.25,-z-9.8],[.2,-z-6.4],[1,-z-7.7],[1.4,-z-4]],'#fff1b0');
-    pen(c,[q[0],q[3]],'#786749',.92);pen(c,[...q,q[0]],'#494b43',1.06);
-    pen(c,[[-5.2,-z-10.8],[-.1,-z-12.8],[5.3,-z-10.8]],'#e3c187',.62);
-    fill(c,[[-6.9,-z-12.1],[-3.5,-z-14.1],[-1.25,-z-16.4],[0,-z-18.1],[1.45,-z-16.4],[3.4,-z-14.2],[6.9,-z-12.1],[0,-z-9.85]],'#5a6056');
-    fill(c,[[-6.2,-z-12.15],[-2.9,-z-14],[0,-z-17.35],[0,-z-10.7]],'#849080');
-    pen(c,[[-6.4,-z-12.1],[0,-z-10.2],[6.3,-z-12.1]],'#9e9878',.7);
-    for(const u of [-2.45,-1.1,1.2,2.5])pen(c,[[u,-z-13.4],[u*.76,-z-14.4]],'#494d43',.56);
-    eye(c,0,-z-18.1,.9,1.35,'#bc9d68');c.restore();
+    for(const u of [-12.4,-2.4,10.7])
+      pen(c,[w(mid+u,9.1,7.85),w(mid+u,9.2,9.55),w(mid+u+.25,6.9,9.88)],'#7c7868',.52);
+    const [sx,sy]=w(mid,5.6,9.85);
+    eye(c,sx+.6,sy+.35,9.2,2.1,'rgba(39,40,36,.47)');
+    SchoolHallFurnishings.stoneGuardian(c,sx,sy,isWest?'west':'east',isWest?0:1);
+    mould(c,w,0,275,.2,2.3,2.1,'#5c5b53','#898a7d','#a8a798');
+  }
+  function stair(c){
+    const rand=seed(5107),cx=319;
+    const slab=['#a5a092','#9b998c','#a19d8f','#a7a293','#9b998b','#aaa596'];
+    for(let i=9;i>=0;i--){
+      const foot=stairBottom-i*7.5,edge=foot-3,back=foot-7.5;
+      const half=46+Math.max(0,3-i)*1.65,left=cx-half,right=cx+half;
+      const breaks=[left,left+18+(i%2)*10,right-25+(i%3)*4,right];
+      for(let j=1;j<breaks.length;j++){
+        const a=breaks[j-1],b=breaks[j],chipped=a+3+rand()*(b-a-8);
+        fill(c,[[a,edge],[b,edge],[b,foot],[a,foot]],['#777469','#827c70','#79776d'][(i+j)%3]);
+        fill(c,[[a,back],[b,back],[b,edge],[a,edge]],slab[(i*3+j*2)%slab.length]);
+        pen(c,[[a+.5,edge+.25],[chipped,edge+.22]],'#bab3a0',.74);
+        pen(c,[[chipped+2.6,edge+.26],[b-.45,edge+.22]],'#b6b09f',.7);
+        pen(c,[[a+.3,back+.2],[a+.68,edge],[a+.75,foot-.2]],'#706f65',.64);
+        pen(c,[[a+.9,back+.2],[a+1.25,edge-.2]],'#b6b09f',.5);
+        pen(c,[[chipped,edge+.34],[chipped+1.6,edge+.8],[chipped+2.7,edge+.31]],'#867f71',.55);
+        for(let n=0;n<7;n++){
+          const x=a+1+rand()*(b-a-4),y=back+rand()*3.8;
+          pen(c,[[x,y],[x+1+rand()*2.4,y+.18]],n%3?'rgba(88,83,74,.18)':'rgba(220,205,178,.35)',.48);
+        }
+      }
+      for(const dir of [-1,1]){
+        const x=cx+half*dir;
+        fill(c,[[x,back],[x+dir*4,back+.75],[x+dir*4,foot+.8],[x,foot]],dir<0?'#8a8576':'#6b685c');
+        pen(c,[[x,edge],[x+dir*3.8,edge+.7]],'#b1a994',.72);
+      }
+    }
+  }
+  function nearDoor(c,add){
+    // Only the low return of the porch survives the front cutaway. Both
+    // open leaves stand edge-on, framing the real walk back to the court.
+    const centre=310,y=326;
+    function fillLeaf(sign){
+      // The section through the gatehouse shows the hinges, reveals and the
+      // weight of the masonry on both sides of this open threshold.
+      const x=centre+sign*36,pt=(u,z,depth=0)=>[x+sign*u+depth*.32,y-depth-z];
+      const face=(a,b,lo,hi,d,ink)=>fill(c,[pt(a,lo,d),pt(b,lo,d),pt(b,hi,d),pt(a,hi,d)],ink);
+      const cap=(a,b,z,d,ink)=>fill(c,[pt(a,z),pt(b,z),pt(b,z,d),pt(a,z,d)],ink);
+      const end=(u,low,high,depth,colour)=>fill(c,[pt(u,low),pt(u,low,depth),pt(u,high,depth),pt(u,high)],colour);
+      const wing=[[9,23,32],[23,47,24],[47,77,17],[77,123,10]];
+      for(const [course,[a,b,h]] of wing.entries()){
+        face(a,b,0,h,0,'#7d786d');
+        for(let j=0;j<h/6.2;j++){
+          const z=j*6.2,upper=Math.min(h,z+6.2),shift=j%2?6.4:0;
+          for(let u=a-shift;u<b;u+=13.6){
+            const left=Math.max(a,u),right=Math.min(b,u+13.6);if(right-left<.5)continue;
+            face(left+.24,right-.15,z+.21,upper-.18,0,
+              ['#99917f','#a29a87','#948e7d','#9d9684'][(j+Math.floor((u-a+shift)/13.6)+course)%4]);
+          }
+        }
+        end(a,0,h,7,sign<0?'#7e796b':'#6a675e');cap(a-1,b+.55,h,7.8,'#b3aa94');
+        pen(c,[pt(a-1,h+.1),pt(b+.55,h+.1)],'#c5baa0',.74);
+      }
+      const jamb=(u,v)=>pt(u,v);
+      face(2.3,8.6,0,44,0,'#8b8373');end(2.3,0,44,8,sign<0?'#9d9581':'#6f6b61');
+      cap(2.1,10,44,8,'#b7ac94');
+      for(let z=5;z<44;z+=8.1){
+        pen(c,[jamb(2.2,z),jamb(8.7,z-.1)],'#68665b',.74);
+        pen(c,[pt(2.3,z),pt(2.3,z,8)],'#716e61',.62);
+      }
+      const hinge=(u,z)=>pt(1-u*.19,z,u*.72);
+      const profile=[[0,0],[15,0],[15,38],[7.6,43],[0,45]];
+      fill(c,profile.map(([u,z])=>hinge(u,z)),sign<0?'#70513c':'#5b4738');
+      for(let u=2;u<15;u+=3.8)pen(c,[hinge(u,1),hinge(u,43-u*.28)],u<7?'#9a7654':'#4b3a30',.72);
+      for(const z of [7,26,36]){
+        pen(c,[hinge(.3,z),hinge(14.5,z)],'#383a34',1.85);
+        pen(c,[hinge(1,z+.55),hinge(10,z+.55)],'#928368',.55);
+      }
+      pen(c,[hinge(15,1.5),hinge(15,37.6)],'#b08a60',.74);
+    }
+    fill(c,[[centre-36,y-3],[centre+36,y-3],[centre+36,y+3],[centre-36,y+3]],'#a09c8e');
+    pen(c,[[centre-36,y+2.5],[centre+36,y+2.5]],'#d0c9b1',1.3);
+    add(y+3,()=>{fillLeaf(-1);fillLeaf(1);});
   }
   function bake(c){
     const im=c.canvas.ownerDocument.createElement('canvas');im.width=1280;im.height=1260;
     const g=im.getContext('2d');g.setTransform(2,0,0,2,0,220);g.imageSmoothingEnabled=false;
-    exterior(g);floor(g);
+    exterior(g);floor(g);floorMedallion(g);hearthLight(g);
     for(const [w,side] of [[west,true],[east,false]]){
-      highGallery(g,w,side);wallShell(g,w,side?-1:1);wallDado(g,w,side);
+      highGallery(g,w,side);wallShell(g,w,side?-1:1);dressedCornice(g,w,side);guardianWall(g,w,side);
+      if(!side)counterMount(g);
       if(side)reveal(g,w,98,'practice');
     }
-    centralFront(g);
-    const glow=g.createRadialGradient(319,152,.5,319,151,27);
-    glow.addColorStop(0,'rgba(235,194,119,.19)');glow.addColorStop(1,'rgba(235,194,119,0)');
-    fill(g,[[294,145],[344,145],[343,156],[351,164],[288,164],[295,156]],glow);
+    centralFront(g);stair(g);
+    // Daylight from the open outer doors falls across the first flags.
+    const wash=g.createLinearGradient(0,328,0,222);wash.addColorStop(0,'rgba(238,226,189,.28)');wash.addColorStop(1,'rgba(238,226,189,0)');
+    fill(g,[[272,328],[348,328],[342,254],[321,216],[290,249]],wash);
     return im;
   }
   let architecture;
   function drawFloor(c){
     if(!architecture)architecture=bake(c);
     c.drawImage(architecture,0,-110,640,630);
-    // The school shield is the original A21, registered on the stone canopy.
-    SchoolFurnishings.crest(c,319,46,'school',16,0);
   }
-  function paintBaggage(c){
-    const k=SchoolWorkshop;
-    const p=k.P;
-    // A fork, axle and recessed spokes separate the tyres from the flatbed.
-    for(const [u,v] of [[9,-5],[-9,-5],[-9,6],[9,6]]){
-      const [xx,yy]=p(u,v,3.35);
-      pen(c,[p(u-1,v,5.4),p(u-.45,v,3.2),p(u+.4,v,3.1)],'#434847',1.5);
-      eye(c,xx,yy,2.45,3.25,'#3b3c3b');eye(c,xx-.25,yy-.16,1.83,2.4,'#716453');
-      eye(c,xx-.38,yy-.1,1.24,1.72,'#49433b');
-      for(let j=0;j<6;j++){
-        const a=j*Math.PI/3;
-        pen(c,[[xx-.25,yy-.06],[xx-.25+1.56*Math.cos(a),yy-.06+2.15*Math.sin(a)]],'#9a8060',.43);
-      }
-      eye(c,xx-.37,yy-.34,.62,.68,'#c1ac84');
-    }
-    k.box(c,-14,-7.6,28,15.2,3.9,1.8,k.walnut);
-    // An upright bent iron handle rises beyond the stacked cases.
-    for(const v of [-5.7,5.7]){
-      const bent=[p(11.8,v,4.9),p(14.4,v,12),p(15.9,v,24.9),p(14.4,v,27.3)];
-      pen(c,bent,'#4e4943',2);pen(c,bent.slice(1),'#a59a7c',.58);
-    }
-    pen(c,[p(14.4,-5.7,27.3),p(14.4,5.7,27.3)],'#4a3930',2.4);
-    pen(c,[p(14.2,-4.7,27.9),p(14.2,4.3,27.9)],'#ad8560',.9);
-    function caseAt(u,v,z,w,d,h,m,strap){
-      k.box(c,u,v,w,d,z,h,m);k.box(c,u-.2,v-.2,w+.4,d+.4,z+h-2.1,2.5,m);
-      for(const [start,end] of [[1,3.4],[5.5,8],[11,14.3],[18.4,20.4]]){
-        if(end>w-.5)continue;
-        pen(c,[p(u+start,v+d+.03,z+1.2),p(u+end,v+d+.03,z+1.2)],m.light,.47);
-      }
-      for(const corner of [u,u+w]) {
-        const sign=corner===u?1:-1;
-        const Q=(a,b)=>p(corner+sign*a,v+d+.3,z+b);
-        fill(c,[Q(0,.2),Q(2.25,.2),Q(2.25,.95),Q(.95,1.5),Q(.8,2.7),Q(0,2.95)],'#9e8256');
-        pen(c,[Q(2,.7),Q(.54,.7),Q(.4,2.5)],'#c6af80',.48);
-      }
-      for(const du of [2,w-3.4]){
-        k.box(c,u+du,v-.19,1.4,d+.5,z+h+.4,.34,strap);
-        fill(c,[p(u+du,v+d+.24,z+.7),p(u+du+1.4,v+d+.24,z+.7),p(u+du+1.4,v+d+.24,z+h+.4),p(u+du,v+d+.24,z+h+.4)],strap.front);
-        const [xx,yy]=p(u+du+.65,v+d+.32,z+h*.65);pen(c,[[xx-1.03,yy-.75],[xx+.72,yy-.13],[xx+.76,yy+1]],'#d4b681',.7);
-      }
-      const [xx,yy]=p(u+w*.5,v+d+.2,z+h*.62);
-      pen(c,[[xx-1.9,yy-.55],[xx-1.8,yy+.7],[xx+.9,yy+1.56],[xx+1.7,yy+.15]],'#3e342f',1.22);
-      pen(c,[[xx-1.28,yy+.56],[xx+.48,yy+1.18]],'#aa8765',.55);
-    }
-    caseAt(-12,-6.7,5.8,24,13.1,9.2,k.hide,k.walnut);
-    // A green travelling valise has sprung sides, a sewn gusset and a short
-    // rolled handle. The straps follow those shoulders and buckle on the face.
-    const Q=(u,v,z)=>p(u-1,v-.4,15.4+z);
-    const contour=[[-5,.1],[-5.35,3.4],[-4.7,6.7],[-3,8.4],[-1.1,9.15],[1.1,9.2],[3.4,8.25],[4.8,6.5],[5.25,3.15],[4.65,.2]];
-    fill(c,contour.map(([v,z])=>Q(8,v,z)),'#324e46');
-    for(let j=0;j<contour.length-1;j++){
-      const [v,z]=contour[j],[nv,nz]=contour[j+1];
-      fill(c,[Q(-9,v,z),Q(8,v,z),Q(8,nv,nz),Q(-9,nv,nz)],['#454f45','#576958','#697968','#81907a','#989b7c','#7e8c77','#6e8170','#586e5e','#485f50'][j]);
-      for(const u of [-6.6,5.2]) {
-        fill(c,[Q(u,v,z+.1),Q(u+1.25,v,z+.1),Q(u+1.25,nv,nz+.1),Q(u,nv,nz+.1)],j>=6?'#795c43':'#92704f');
-        pen(c,[Q(u,v,z+.17),Q(u,nv,nz+.17)],'#b69a69',.42);
-      }
-    }
-    pen(c,contour.slice(2).map(([v,z])=>Q(8.05,v,z)),'#455147',.82);
-    pen(c,contour.slice(2,8).map(([v,z])=>Q(7.1,v,z+.03)),'#b0ac86',.49);
-    for(const u of [-6.4,5.4]){
-      const b=[[u,4.95,6.3],[u+1.55,4.95,6.3],[u+1.6,5.25,4.6],[u,5.25,4.6]];
-      pen(c,[...b,b[0]].map(point=>Q(...point)),'#dbc087',.54);
-    }
-    const grip=[Q(-3.3,.3,9.1),Q(-2.7,.3,11.8),Q(.2,.3,12.25),Q(2.15,.3,11.4),Q(2.6,.3,9.1)];
-    pen(c,grip,'#423c35',1.52);pen(c,grip.slice(1,4),'#a17e54',.51);
-    const tag=[Q(.2,5.2,5.7),Q(2.8,5.35,5.1),Q(3.2,5.5,2.2),Q(.55,5.5,2.45)];
-    fill(c,tag,'#d2c19c');pen(c,[tag[0],tag[1]],'#8d7458',.6);
-    pen(c,[Q(1.5,3.3,8.4),tag[0]],'#c6b58c',.39);
+  function drawObjects(c,add,time){
+    add(cabinet.y,()=>SchoolPointCounter.draw(c,cabinet.x,cabinet.y,75));
+    for(const torch of torches)add(torch.y,()=>SchoolEntranceBraziers.draw(c,torch.x,torch.y,torch.side,time));
+    nearDoor(c,add);
   }
-  let baggagePlate;
-  function baggage(c,x,y){
-    if(!baggagePlate){
-      baggagePlate=c.canvas.ownerDocument.createElement('canvas');
-      baggagePlate.width=118;baggagePlate.height=116;
-      const ctx=baggagePlate.getContext('2d');ctx.setTransform(2,0,0,2,59,83);
-      paintBaggage(ctx);
-    }
-    c.drawImage(baggagePlate,x-29.5,y-41.5,59,58);
-  }
-  function drawObjects(c,add,time=0,frame,player){
-    const a=SchoolArchitecture;
-    a.ellipse(c,trunk.x+1,trunk.y+.5,22,5.8,'rgba(53,44,44,.24)');
-    fill(c,[[seat.x-37,seat.y-12],[seat.x-23,seat.y-21],[seat.x+37,seat.y+10],[seat.x+24,seat.y+18]],'rgba(53,44,44,.19)');
-    a.ellipse(c,lamp.x-1.2,lamp.y+.5,7.3,2.9,'rgba(44,40,38,.30)');
-    add(trunk.y,()=>baggage(c,trunk.x,trunk.y));
-    add(seat.y,()=>bench(c,player));add(lamp.y,()=>arrivalStandard(c,lamp.x,lamp.y,time));
-    add(caseY,()=>SchoolHallFurnishings.draw(c,caseX,caseY));
-    for(const [x,y,side] of sculptures)add(y,()=>SchoolHallFurnishings.armour(c,x,y,side));
-  }
-  return {spawn,doors,display,greatDoor,contains,drawFloor,drawObjects};
+  return {spawn,doors,greatDoor,courtyardDoor,exteriorArrival,points,contains,floorRise,drawFloor,drawObjects};
 })();
 
 /* Four House tables use the same longitudinal survey for drawing and feet.
@@ -3443,14 +4218,15 @@ const SchoolGreatHall=(()=>{
   const door={x:284,y:349}, spawn={x:308,y:337}, dais={x:972,y:5};
   const rows=[-94,-32,32,94], runs=[[43,235],[267,459],[491,635]];
   const P=(l,s,z=0)=>[284+l+s,349-l*.5+s*.5-z];
-  const schoolMark={foot:P(743,0,117),width:21};
-  // A21's 95 × 112 source is mounted on the end wall at a 1:2 screen slope.
-  const crestTop=schoolMark.foot[1]-schoolMark.width*(112/95+.25);
+  // The film set places the counter to the right of the tall mullioned window
+  // as seen from the aisle. Its inspection spot is beside the staff seats.
+  const [pointX,pointY]=P(717,125),points={x:pointX,y:pointY},windowTop=P(744,-47,124)[1];
   const LS=(x,y)=>{const dx=x-284,dy=y-349;return [dx/2-dy,dx/2+dy]};
   function contains(x,y){
     if(!Number.isFinite(x)||!Number.isFinite(y))return false;
     const [l,s]=LS(x,y);
     if(l< -17||l>720||Math.abs(s)>128)return false;
+    if(l< -14&&Math.abs(s)>26&&Math.abs(s)<82)return false;
     if(runs.some(([a,b])=>l>a-3&&l<b+3)&&rows.some(row=>Math.abs(s-row)<21))return false;
     return !(l>693&&Math.abs(s)<103);
   }
@@ -3486,54 +4262,25 @@ const SchoolGreatHall=(()=>{
     }
     c.restore();
   }
-  function lancetBay(c,span,height,end,variant){
-    // Bake the D97 splayed arch, projecting sill and diamond leadwork at the
-    // same native density as Harry. Project the adjoining course joints on
-    // the same plane so that the bases continue around the far corner.
-    const width=Math.ceil(span+34),h=Math.ceil(height+span/2+26);
-    const ox=width/2,oy=height+span/4+8,axis=end?'y':'x';
-    const surface=new SchoolJoinery.Surface(width*2,h*2,(x,y,z=0)=>{
-      const along=end?x:y,deep=end?y:x;
-      return [2*(ox+along+(end?-deep:deep)),2*(oy+(end?along:-along)*.5+deep*.5-z*height/94)];
-    });
-    const extent=span/2;
-    SchoolJoinery.hem(surface,axis,0,-extent,extent);
-    SchoolJoinery.pilaster(surface,axis,0,-extent+2.2);
-    if(end){
-      // The four armorial lights have their own low arcade. Their crowns
-      // clear the clerestory sill and the full-height wall piers carry the roof.
-      const projectWall=surface.p;
-      surface.p=(x,y,z=0)=>projectWall(x,y,5.1+z*.535);
-    }
-    const windowWidth=end?34:40;
-    SchoolJoinery.window(surface,axis,0,0,windowWidth,17);
-    const p=(along,z,d)=>end?[along,d,z]:[d,along,z];
-    // A few medieval pot-metal panes share the diamond-lead intersections.
-    // Leave the centre mullion and the cast reveal clear of the inlay.
-    const accents=[[0x8d5553,0x9f8453],[0x538173,0x8f9b89],[0x617b90,0xaa8e5a]];
-    const [jewel,edge]=accents[variant];
-    for(const sign of [-1,1])for(const row of [2,4]){
-      const u=sign*8.875,z=17+row*3.35+6.7,d=-1.02;
-      const corners=[p(u-3.87,z,d),p(u,z+6.04,d),p(u+3.87,z,d),p(u,z-6.04,d)];
-      surface.face(corners,row===2?jewel:edge);
-      surface.line(corners[0],corners[1],0x6b726b);surface.line(corners[2],corners[3],0x55615c);
-    }
-    const fillet=(points,r=.56)=>{
-      const depth=1.4;
-      for(let i=0;i<points.length-1;i++){
-        const [a,z]=points[i],[b,h]=points[i+1];
-        surface.face([p(a-r,z,depth),p(a+r,z,depth),p(b+r,h,depth),p(b-r,h,depth)],0x777b6e);
-        surface.line(p(a-r,z,depth+.2),p(b-r,h,depth+.2),0xc1b89d);
+  function masonry(c,w,begin,end,height){
+    const k=SchoolWorkshop,tones=['#918778','#9b8d7b','#968875','#a19480','#9b8f7e','#897e70'];
+    const rect=(a,b,z,h,tone,d=.3)=>k.poly(c,[w(a,z,d),w(b,z,d),w(b,h,d),w(a,h,d)],tone);
+    rect(begin,end,0,height,'#746e64');
+    const ink=['rgba(64,57,51,.19)','rgba(221,210,181,.27)'];
+    let seed=65537;
+    const random=()=>{seed=seed*48271%2147483647;return seed/2147483647;};
+    for(let row=0,z=0;z<height;row++,z+=11.3){
+      for(let left=begin-(row%2)*14.9;left<end;left+=29.8){
+        const a=Math.max(begin,left+.55),b=Math.min(end,left+29.4),h=Math.min(height,z+10.95);
+        if(b-a<1)continue;
+        rect(a,b,z+.28,h,tones[Math.floor(random()*tones.length)]);
+        k.line(c,[w(a+.28,z+.6,.5),w(a+.28,h-.22,.5),w(b-.2,h-.22,.5)],'#aea290',.52);
+        for(let i=0;i<9;i++){
+          const xx=a+random()*(b-a),zz=z+1+random()*(h-z-2);
+          k.line(c,[w(xx,zz,.51),w(Math.min(b,xx+random()*2.9),zz+.34,.51)],ink[i%2],.46);
+        }
       }
-    };
-    for(const sign of [-1,1])fillet([[sign*5.6,17.9],[sign*5.6,39.8]],.75);
-    for(const u of [-11.2,0,11.2]){
-      const apex=u===0?48.8:46.8;
-      for(const sign of [-1,1])fillet([[u+sign*5.6,39.5],[u+sign*5.2,41.8],[u+sign*3.6,43.8],[u,apex]],.53);
     }
-    const tile=c.canvas.ownerDocument.createElement('canvas');tile.width=surface.w;tile.height=surface.h;
-    tile.getContext('2d').putImageData(new ImageData(surface.buf,surface.w,surface.h),0,0);
-    return {tile,ox,oy,width,h};
   }
   function hammerbeam(c,w,at){
     const k=SchoolWorkshop;
@@ -3598,72 +4345,83 @@ const SchoolGreatHall=(()=>{
     c.restore();
   }
   function highWindow(c,w){
-    // A single five-light window rises behind the staff seats. Build the deep
-    // jambs before the leaded lights so the stone reads from the central aisle.
     const k=SchoolWorkshop;
-    const face=(points,col,d)=>k.poly(c,points.map(([s,z])=>w(s,z,d)),col);
-    const line=(points,col,width,d)=>k.line(c,points.map(([s,z])=>w(s,z,d)),col,width);
-    const arch=(centre,r,bottom,spring,rise)=>[
-      [centre-r,bottom],[centre-r,spring],[centre-r*.91,spring+rise*.27],
-      [centre-r*.66,spring+rise*.56],[centre-r*.35,spring+rise*.82],[centre,spring+rise],
-      [centre+r*.35,spring+rise*.82],[centre+r*.66,spring+rise*.56],
-      [centre+r*.91,spring+rise*.27],[centre+r,spring],[centre+r,bottom]];
-    const border=arch(0,43,23,78,47),opening=arch(0,36,27,76,41);
-    face(border,'#514f49',1.4);
-    for(let i=0;i<border.length-1;i++){
-      face([border[i],border[i+1],opening[i+1],opening[i]],['#a69a80','#a29780','#b2a58c','#968c78'][i%4],2.2);
-    }
-    line(border,'#d1bf9d',1.45,2.55);
-    line(opening,'#766e5e',2.1,2.65);
-    face(opening,'#5d6d70',2.72);
-    for(let n=-2;n<=2;n++){
-      const s=n*13.5,apex=97-Math.abs(n)*7.7;
-      const glass=arch(s,6.2,28,apex-10,10);
-      face(glass,['#82999a','#8faaa4','#a0b5ac','#8da29d','#809591'][n+2],2.9);
-      line(glass,'#545f5c',.78,3);
-      for(let j=0;j<6;j++){
-        const z=32+j*8.2;if(z+7.6>apex-4)break;
-        const diamond=[[s,z],[s-5.45,z+4.1],[s,z+8.2],[s+5.45,z+4.1],[s,z]];
-        face(diamond,['#a6b8ac','#879d9a','#a8aa8c','#9ea9a1','#8e9e97'][(j*3+n+3)%5],3.04);
-        line(diamond,'#647472',.65,3.08);
+    const f=(a,b,z,h,col,d)=>k.poly(c,[w(a,z,d),w(b,z,d),w(b,h,d),w(a,h,d)],col);
+    const line=(pts,col,weight,d)=>k.line(c,pts.map(([a,z])=>w(a,z,d)),col,weight);
+    f(-48,48,17,124,'#736e60',1.1);f(-45,45,20.2,121.4,'#cbc4ae',1.7);
+    f(-42.8,42.8,22,119.7,'#4f5b60',1.8);
+    // Three tall traceried bays, each with three narrow panes in each section.
+    for(let bay=0;bay<3;bay++)for(let light=0;light<3;light++){
+      const left=-42+bay*28.45+light*9.15,right=left+7.15;
+      for(let row=0;row<3;row++){
+        const bottom=22.5+row*32.0,top=bottom+29.2;
+        const a=w(left,bottom,2),b=w(right,top,2),glass=c.createLinearGradient(...a,...b);
+        glass.addColorStop(0,'#829195');glass.addColorStop(.5,light%2?'#637b85':'#73888b');glass.addColorStop(1,'#465b6a');
+        f(left,right,bottom,top,glass,2);
+        for(let i=0;i<5;i++){
+          const z=bottom+2.5+i*4.7,mid=(left+right)/2;
+          line([[left,z],[mid,z+2.25],[right,z],[mid,z-2.25],[left,z]],'#819296',.55,2.15);
+        }
+        line([[left,top-5],[left+1.2,top-2],[left+3.6,top],[right-1.2,top-2],[right,top-5]],'#b2b29e',.94,2.35);
       }
-      if(n<2){
-        const v=s+6.75;
-        line([[v,26],[v,apex-8],[v+2.6,apex-3]],'#655f55',2.35,3.55);
-        line([[v-.4,26],[v-.4,apex-7]],'#c3b69b',.82,3.75);
-      }
+      f(right,right+1.65,21.8,119.8,'#b3b09e',2.75);
+      line([[right,22],[right,119.4]],'#d0cbbb',.77,2.9);
     }
-    for(const [s,z,r] of [[0,103,5.8],[-10.3,94.1,3.1],[10.3,94.1,3.1]]){
-      const loop=[];for(let j=0;j<=28;j++){
-        const angle=j*Math.PI/14,radius=r*(.78+.22*Math.cos(4*angle));
-        loop.push([s+radius*Math.sin(angle),z+radius*Math.cos(angle)]);
-      }
-      face(loop,'#a59d83',3.35);line(loop,'#c6b596',1.55,3.5);
+    for(const z of [21.6,53.5,85.5,119.6]){
+      f(-44.3,44.3,z,z+1.9,'#aca995',3);
+      line([[-44,z+1.7],[44,z+1.7]],'#d5ceba',.77,3.3);
     }
-    face([[-43,22],[43,22],[43,25.3],[-43,25.3]],'#7d7462',3.7);
-    k.poly(c,[w(-43,25.4,1),w(43,25.4,1),w(43,25.4,6.2),w(-43,25.4,6.2)],'#c3b39a');
+    for(const s of [-47,-14.2,14.3,46.3]){
+      f(s-1.1,s+1.25,19.8,122.0,'#b3b09f',3.6);
+      line([[s-1,19.3],[s-1,121.8]],'#d7cfb6',1.03,3.85);
+    }
+    k.poly(c,[w(-48,19,2),w(48,19,2),w(48,19,7),w(-48,19,7)],'#c0b7a1');
+    const at=(u,z)=>w(-88+u,z,1.6);
+    const arch=[[-10,2],[-10,32],[-8,37],[-4.2,40],[0,42],[4.2,40],[8,37],[10,32],[10,2]];
+    k.poly(c,arch.map(p=>at(...p)),'#504a40');k.line(c,arch.map(p=>at(...p)),'#b4a88e',2.3);
+    for(const u of [-6.6,-3.3,0,3.3,6.6])k.line(c,[at(u,2),at(u,34.2-Math.abs(u)*.21)],'#75614c',.68);
   }
-  function fireBasket(c,w,along){
-    const k=SchoolWorkshop,[x,y]=w(along,52,8);
-    const anchor=w(along,53,1.3),boss=w(along,43,1.3);
-    k.line(c,[boss,[x-1,y+3],anchor],'#473e38',2.2);
-    k.line(c,[boss,[x-1,y+3]],'#a99573',.87);
-    for(const d of [-4.7,0,4.5]){
-      k.poly(c,[[x+d-1.6,y-.8],[x+d-2.4,y-4.9],[x+d-.3,y-8.7],[x+d+.2,y-12+(d===0?-2:3)],[x+d+1.8,y-7],[x+d+2.2,y-3.9],[x+d+1,y-.8]],'#cd824a');
-      k.poly(c,[[x+d-.9,y-1.8],[x+d-1.3,y-4.5],[x+d+.1,y-8],[x+d+.9,y-4.8],[x+d+1.2,y-2]],'#f3c984');
+  function fireBasket(c,w,along,variant){
+    const k=SchoolWorkshop;
+    const [x,y]=w(along,58,12),dir=1;
+    const f=(pts,col)=>k.poly(c,pts.map(([u,v])=>[x+u*dir,y+v]),col);
+    const l=(pts,col,w)=>k.line(c,pts.map(([u,v])=>[x+u*dir,y+v]),col,w);
+    // A carved animal sits on a corbel. Its projecting head carries three
+    // chains; the fire dish is visibly suspended clear of the stone support.
+    f([[-7,2],[-4,6],[0,8],[5,4],[7,0],[4,-1]],'#655849');
+    l([[-7,.3],[-2,2.7],[5,1],[7,-.6]],'#b1a385',1.5);
+    f([[-5,-1],[-7,-5],[-6,-11],[-8,-17],[-9,-25],[-6,-24],[-3,-18],[-1,-17],[2,-14],[5,-12],[6,-14],[9,-14],[11,-12],[13,-11],[12,-8.5],[8,-8],[6,-6],[5,-3],[6,-1],[2,.3]],'#776957');
+    f([[-6,-20],[-3,-16],[0,-15],[1,-10],[-1,-7],[-3,-6],[-4,-12]],'#968770');
+    f([[-3,-4],[0,-5],[1.4,-7.8],[4,-8],[6,-9],[5,-6],[2,-3],[3.4,-.7],[-2,-.5]],'#514b42');
+    l([[5.7,-13.2],[8.1,-14.0],[10,-12.4],[12.7,-11.4]],'#aa9c80',.94);
+    if(variant%2===0)f([[4.4,-12.7],[4.6,-16.4],[6.5,-14.2],[8.1,-16],[8.4,-12.5]],'#847764');
+    l([[-4.5,-19],[-2.3,-15.2],[-1.7,-11.2],[-3.2,-7.2]],'#a09378',.73);
+    k.oval(c,x+9,y-12,.6,.55,'#393a34');
+    for(const dx of [-6.4,1,8]){
+      l([[11.1,-8.8],[11+dx*.54,-.5],[11+dx,7.2]],'#4c473d',.86);
+      for(let i=1;i<=6;i++)k.oval(c,x+11+dx*i/7,y-8+i*2.35,.44,.68,i%2?'#928269':'#a39374');
     }
-    k.poly(c,[[x-7.7,y-2],[x+7.5,y-2],[x+5.5,y+2.2],[x+2.2,y+4.2],[x-2.5,y+4.2],[x-5.8,y+2]],'#49453f');
-    k.line(c,[[x-7.6,y-2.2],[x-2.1,y-.7],[x+3.2,y-.8],[x+7.6,y-2.2]],'#b19b72',1.25);
-    for(const d of [-4.5,-1,2.4])k.line(c,[[x+d,y-.4],[x+d*.69,y+2.85]],'#8f8168',.8);
+    for(const [u,height] of [[6.6,4.6],[10.1,7.2],[13.8,5.8],[15.6,4.1]]){
+      f([[u-1.6,7.3],[u-1.8,4.8],[u-.35,7-height],[u+.2,5.6-height],[u+1.15,5.1],[u+1.5,7.4]],'#d18a4a');
+      f([[u-.72,7.5],[u-.71,5.7],[u+.1,8-height],[u+.64,7.2]],'#f2c987');
+    }
+    f([[3.6,7],[18.9,7],[17.8,9],[14.8,11.1],[11.7,11.8],[8.1,11],[5.6,9.5]],'#48453f');
+    l([[3.6,7],[8.2,8.0],[14.3,8.2],[18.9,7]],'#b29d78',1);
   }
   function wall(c,w,begin,end,height,name){
-    const k=SchoolWorkshop, terminal=name==='end',count=terminal?4:9,span=(end-begin)/count,tiles=[];
-    for(let i=0;i<count;i++){
-      const along=begin+(i+.5)*span,variant=i%3;
-      const {tile,ox,oy,width,h}=tiles[variant]??=lancetBay(c,span,height,terminal,variant);
-      const [x,y]=w(along,0,0);c.drawImage(tile,x-ox,y-oy,width,h);
+    const k=SchoolWorkshop, terminal=name==='end',count=terminal?4:9,span=(end-begin)/count;
+    masonry(c,w,begin,end,height);
+    if(terminal)highWindow(c,w);
+    else for(let i=0;i<count;i++){
+      const s=begin+(i+.5)*span,r=span*.43,arch=[[s-r,18],[s-r,94],[s-r*.85,108],[s-r*.5,123],[s,137],[s+r*.5,123],[s+r*.85,108],[s+r,94],[s+r,18]];
+      const outline=arch.map(([u,z])=>w(u,z,2));
+      k.line(c,outline,'#746c60',2.9);k.line(c,arch.map(([u,z])=>w(u,z+.8,2.9)),'#afa28e',1.25);
+      const u=begin+i*span;
+      for(const [wide,bot,top,col] of [[4.4,0,7,'#948776'],[3,6.7,94,'#a09280'],[4.8,93.5,99,'#a59984']]){
+        k.poly(c,[w(u-wide,bot,2),w(u+wide,bot,2),w(u+wide,top,2),w(u-wide,top,2)],col);
+        k.line(c,[w(u-wide+.6,bot,2.2),w(u-wide+.6,top,2.2)],'#c0b19b',.85);
+      }
     }
-    if(terminal)highWindow(c,(s,z,d)=>w(s,61+(z-23)*.66,d+2.3));
     // The oak dado terminates under the window sill; each field is jointed
     // into stiles. The floor joint and narrow lip remain continuous.
     const panel=(a,b,low,high,d,col)=>k.poly(c,[w(a,low,d),w(b,low,d),w(b,high,d),w(a,high,d)],col);
@@ -3679,8 +4437,8 @@ const SchoolGreatHall=(()=>{
     if(!terminal)enchantedVault(c,begin,end);
     for(let i=0;i<=count;i++){
       const centre=begin+i*span+(i===count?-3:2.2);
-      if(!terminal||i!==count/2)hammerbeam(c,w,centre);
-      if(!terminal&&(i===2||i===5||i===8))fireBasket(c,w,centre);
+      if(!terminal)hammerbeam(c,w,centre);
+      if(!terminal&&i>0&&i<count)fireBasket(c,w,centre,i);
     }
   }
   function nightRoof(c){
@@ -3731,12 +4489,9 @@ const SchoolGreatHall=(()=>{
         k.line(c,[P(l+j*3,s,0),P(l+j*3,s+d,0)],j%2?'#6d655a':'#c3b49b',1.3);
       }
     }
-    for(let i=0;i<4;i++){
-      const [x,y]=P(743,-101.25+i*67.5,39);SchoolFurnishings.crest(c,x,y,houses[i],16,.5);
-      const l=-25+(2.5+i)*772/9;
-      SchoolFurnishings.crest(c,...P(l,-131,43),houses[i],14,-.5);
-    }
-    SchoolFurnishings.crest(c,...schoolMark.foot,'school',schoolMark.width,.5);
+    const [counterX,counterY]=P(739,83,1.7);
+    SchoolPointCounter.draw(c,counterX,counterY,64);
+
   }
   let back;const furniture=new Map();
   const origin={x:96,y:-345,w:1100,h:832};
@@ -3989,45 +4744,84 @@ const SchoolGreatHall=(()=>{
     // The existing seated-actor sheet registers the pelvis at (32,45).
     c.drawImage(im,dir*64,0,64,64,Math.round(x)-30,Math.round(y-10)-42,60,60);
   }
-  function entryStone(c){
-    const k=SchoolWorkshop;
-    const w=(s,z,d=0)=>P(-17+d,s,z);
-    // Look through the same two doors from the dining side. Each folded leaf
-    // sits beside its hinge and the arch keeps the middle clear above Harry.
-    function outline(radius,height){
-      const spring=height-24,p=[];
-      for(let i=0;i<=12;i++){
-        const t=i*Math.PI/24;
-        p.push([-radius*Math.cos(t),spring+22*Math.sin(t)]);
-      }
-      p.push([0,height+3]);
-      for(let i=12;i>=0;i--){
-        const t=i*Math.PI/24;
-        p.push([radius*Math.cos(t),spring+22*Math.sin(t)]);
-      }
-      return p;
+  const doorSides=new Map();
+  function doorSide(c,sign){
+    if(doorSides.has(sign))return doorSides.get(sign);
+    const k=SchoolWorkshop,[x,y]=P(-21,sign*30);
+    const left=x-(sign<0?68:11),top=y-73,w=83,h=112;
+    const tile=c.canvas.ownerDocument.createElement('canvas');
+    tile.width=w*2;tile.height=h*2;
+    const g=tile.getContext('2d');g.setTransform(2,0,0,2,-left*2,-top*2);
+    // The short return follows the near face of the hall. Its low outer
+    // courses join the cut floor edge, while the inner quoin carries a hinge.
+    const stone=(u,z,depth=0)=>P(-22+depth,sign*(28+u),z);
+    function course(a,b,z,h,colour){
+      const d=4.9,far=-2;
+      k.poly(g,[stone(a,z,far),stone(a,z,d),stone(a,z+h,d),stone(a,z+h,far)],'#766f64');
+      k.poly(g,[stone(b,z,far),stone(b,z,d),stone(b,z+h,d),stone(b,z+h,far)],'#7a7365');
+      k.poly(g,[stone(a,z,d),stone(b,z,d),stone(b,z+h,d),stone(a,z+h,d)],colour);
+      k.poly(g,[stone(a,z+h,far),stone(b,z+h,far),stone(b,z+h,d),stone(a,z+h,d)],'#b9ac92');
+      k.line(g,[stone(a,z+h,d),stone(b,z+h,d)],'#d1c3a8',.64);
     }
-    const outside=outline(26.5,73),inside=outline(21.9,68);
-    for(let i=0;i<outside.length-1;i++){
-      k.poly(c,[w(...inside[i],-1.5),w(...inside[i+1],-1.5),w(...inside[i+1],3.2),w(...inside[i],3.2)],'#625d55');
-      k.poly(c,[w(...outside[i],3.2),w(...outside[i+1],3.2),w(...inside[i+1],3.2),w(...inside[i],3.2)],['#a0937c','#a89b81','#998a75'][i%3]);
-    }
-    k.line(c,inside.map(([s,z])=>w(s,z,3.4)),'#d0bc98',1);
-    for(const sign of [-1,1]){
-      const s=24.3*sign,[x,y]=w(s,0);
-      c.save();c.translate(x,y);
-      k.box(c,-4.5,-4,9,8,0,3.3,k.walnut);
-      const ash={...k.walnut,top:'#c4b497',front:'#a0937e',side:'#77746a',edge:'#5e5a54',light:'#d5c29c'};
-      k.box(c,-3.3,-3.1,6.6,6.2,3.1,44.5,ash);k.box(c,-4.1,-3.7,8.2,7.4,46.8,3.2,ash);
-      c.restore();
-      const leaf=(l,z,d=0)=>P(-16+l,s+sign*d,z);
-      k.poly(c,[leaf(0,2),leaf(16,2),leaf(16,45),leaf(0,52)],'#785638');
-      for(const l of [1.6,6,10.5,15])k.line(c,[leaf(l,3),leaf(l,47-l*.2)],'#594331',.68);
-      for(const z of [9,32]){
-        k.poly(c,[leaf(0,z),leaf(13,z),leaf(15,z+1),leaf(12,z+2),leaf(0,z+2)],'#51504a');
-        for(const l of [2,8.6]){const [xx,yy]=leaf(l,z+1);k.oval(c,xx,yy,.67,.65,'#c9b17f');}
+    course(-1.5,52.8,-.3,2.6,'#898271');
+    const heights=[57,39,25,12],spans=[0,7.4,21.5,36.5,52.5];
+    const tones=['#968c78','#998e78','#a39780','#8d8576'];
+    for(let j=3;j>=0;j--){
+      const a=spans[j],b=spans[j+1],h=heights[j];
+      for(let z=0,i=0;z<h;z+=8,i++){
+        const t=Math.min(7.7,h-z),cut=(a+b)*.5+(i%2?2.5:-2.5);
+        if(j===0)course(a,b,z,t,tones[i%4]);
+        else {course(a,cut-.12,z,t,tones[(i+j)%4]);course(cut+.22,b,z,t,tones[(i+j+1)%4]);}
       }
+      course(a-.28,b+.3,h,1.4,'#ac9e85');
     }
+    // Seen from the dining side, each opened leaf folds back against its
+    // own stone return. The lower rail and the pintles sit above the sill.
+    const leaf=(u,z,thick=0)=>P(-21.6+u*.18+thick,sign*(30+u*1.17),z);
+    const face=(uv,ink,d=0)=>k.poly(g,uv.map(([u,z])=>leaf(u,z,d)),ink);
+    const line=(uv,ink,weight=.65,d=.1)=>k.line(g,uv.map(([u,z])=>leaf(u,z,d)),ink,weight);
+    const outline=[[0,1.8],[23.2,1.8],[23.2,48.8],[16.4,52.6],[9.1,54.7],[0,56]];
+    k.poly(g,[leaf(0,56,-1.8),leaf(9.1,54.7,-1.8),leaf(16.4,52.6,-1.8),leaf(23.2,48.8,-1.8),leaf(23.2,48.8,.3),leaf(16.4,52.6,.3),leaf(9.1,54.7,.3),leaf(0,56,.3)],'#aa8460');
+    k.poly(g,[leaf(23.2,1.8,-1.8),leaf(23.2,48.8,-1.8),leaf(23.2,48.8,.3),leaf(23.2,1.8,.3)],'#4b3d31');
+    face(outline,'#4b392e',.2);
+    for(let i=0;i<6;i++){
+      const u=.7+i*3.66,z=54.75-i*.95;
+      face([[u,3],[u+3.42,3],[u+3.42,z-.85],[u,z]],['#805a3b','#8d6745','#76553c'][i%3],.5);
+      line([[u+.6,5],[u+.72,16],[u+.43,32],[u+.74,z-2]],'#ac8057',.45,.56);
+    }
+    // The ledged inner face carries a long diagonal brace between its rails.
+    face([[2.1,13.2],[3.6,13.2],[20.9,35.8],[20.9,37.1],[19.8,37.1]],'#604934',.69);
+    line([[3.35,13.5],[20.75,36.25]],'#9f7955',.76,.73);
+    for(const u of [.7,21.7])face([[u,2.8],[u+1.16,2.8],[u+1.16,48.2],[u,49.2]],'#594433',.8);
+    for(const z of [10.5,37.4]){
+      face([[0,z-.6],[14,z-.5],[19.6,z+.5],[18,z+1.5],[0,z+2.4]],'#4c4940',1);
+      line([[1,z+1.9],[14.2,z+1.4],[18.1,z+.6]],'#93826a',.56,1.1);
+      for(const u of [2.1,7.7,14]){const [sx,sy]=leaf(u,z+.75,1.16);k.oval(g,sx,sy,.66,.64,'#b49d72');}
+      const [hx,hy]=leaf(0,z+1,1.2);
+      k.line(g,[[hx-1.6,hy+1],[hx-1.6,hy-2.2]],'#49443a',1.1);
+    }
+    face([[1,3],[22.3,3],[22.3,5.45],[1,5.45]],'#664b37',.8);
+    line([[1.2,5.4],[22.1,5.4]],'#a78056',.6,.9);
+    const [lx,ly]=leaf(19.3,23.3,1.15);k.oval(g,lx,ly,1.32,2.14,'#4c4437');
+    k.line(g,[[lx-.53,ly-1.4],[lx-.76,ly+.22],[lx-.15,ly+.83]],'#c1a273',.69);
+    const side={tile,left,top,w,h,depth:y+3};
+    doorSides.set(sign,side);return side;
+  }
+  let cutDoor;
+  function drawDoorSide(c,side,player){
+    const {tile,left,top,w,h,depth}=side;
+    const px=player&&player.x-left,py=player&&player.y-top;
+    if(!player||player.y>=depth||px < -13||px>w+13||py<0||py>h+51){
+      c.drawImage(tile,left,top,w,h);return;
+    }
+    if(!cutDoor){cutDoor=c.canvas.ownerDocument.createElement('canvas');cutDoor.width=tile.width;cutDoor.height=tile.height;}
+    const g=cutDoor.getContext('2d');
+    g.clearRect(0,0,tile.width,tile.height);g.drawImage(tile,0,0);
+    g.save();g.translate(px*2,(py-25)*2);g.scale(32,58);
+    const fall=g.createRadialGradient(0,0,.52,0,0,1);
+    fall.addColorStop(0,'#000');fall.addColorStop(.85,'rgba(0,0,0,.90)');fall.addColorStop(1,'transparent');
+    g.globalCompositeOperation='destination-out';g.fillStyle=fall;g.fillRect(-1,-1,2,2);g.restore();
+    c.drawImage(cutDoor,left,top,w,h);
   }
   function candle(c,x,y,t,i){
     const k=SchoolWorkshop,len=8+(i*7%5),rim=y+.95*Math.sin(t*.87+i*2)-len;
@@ -4040,7 +4834,7 @@ const SchoolGreatHall=(()=>{
     k.poly(c,[[x-1.05,rim-1.3],[x-1.1,rim-3],[x+lean,rim-5.5],[x+1.23,rim-2.8],[x+.55,rim-1]],'#e9a756');
     k.line(c,[[x,rim-1.6],[x+lean*.5,rim-3.4]],'#ffedbc',.8);
   }
-  function drawObjects(c,add,time,frame){
+  function drawObjects(c,add,time,frame,player){
     const visible=(x,y)=>!frame||x>frame.x-92&&x<frame.x+frame.w+60&&y>frame.y-30&&y<frame.y+frame.h+88;
     for(const [idx,s] of rows.entries())for(const [a,b] of runs)for(let l=a,i=0;l<b;l+=48,i++){
       const [x,y]=P(l,s);if(!visible(x,y))continue;
@@ -4052,13 +4846,21 @@ const SchoolGreatHall=(()=>{
       const [x,y]=P(l,rows[row]+side*16);
       if(visible(x,y))add(y,()=>drawPupil(c,x,y,side,id));
     }
-    add(367,()=>entryStone(c));
+    if(visible(...P(-20,0))){
+      plate(c,-24,-29,7,58,.35,'#a59c8b');
+      SchoolWorkshop.line(c,[P(-17,-29,.6),P(-17,29,.6)],'#c6bba3',.72);
+      for(const s of [-14,1,16])SchoolWorkshop.line(c,[P(-24,s,.6),P(-17,s,.6)],'#7c776d',.54);
+    }
+    for(const sign of [-1,1]){
+      if(!visible(...P(-21,sign*43)))continue;
+      const side=doorSide(c,sign);add(side.depth,()=>drawDoorSide(c,side,player));
+    }
     for(let i=0;i<30;i++){
       const l=30+i*23.2,s=([-96,-31,72,18,106,-67])[i%6],z=65+(i*17%34),[x,y]=P(l,s,z);
       if(visible(x,y))add(y+z,()=>candle(c,x,y,time,i));
     }
   }
-  return {spawn,door,dais,crestTop,contains,drawFloor,drawObjects,ready};
+  return {spawn,door,dais,points,windowTop,contains,drawFloor,drawObjects,ready};
 })();
 
 /* Character coordinates refer to the point where their feet meet the floor. */
@@ -4152,23 +4954,38 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot } = (
   }
   function framing(c,v,room,gate,p) {
     const aspect=v.viewportAspect;
-    if(room==='entrance'||room==='great'){
+    if(room==='courtyard'||room==='entrance'||room==='great'){
       const ratio=aspect||384/216,portrait=ratio<1.05;
       const height=portrait?Math.min(475,Math.max(305,211/ratio)):Math.min(316,Math.max(232,(c.canvas.clientHeight||390)/1.66));
-      const w=Math.round(height*ratio*2)/2,h=Math.round(height*2)/2,hub=room==='entrance';
+      const hub=room==='entrance';
+      const approach=hub&&!portrait?Math.max(height,254+36*Math.max(0,Math.min(1,(p.y-215)/62))):height;
+      const w=Math.round(approach*ratio*2)/2,h=Math.round(approach*2)/2;
+      if(room==='courtyard'){
+        const lead=portrait?65:78+17*Math.max(0,Math.min(1,(p.y-180)/66));
+        const cx=.85*p.x+.15*320,cy=p.y-lead;
+        return {x:cx-w/2,y:cy-h*.48,w,h};
+      }
       // The long hall follows the actual floor, straight through to High Table.
-      const cx=hub?(portrait?p.x*.82+307*.18:p.x*.63+306*.37):p.x+(portrait?9:34);
       // Lift the view as the player reaches the staff dais so the high school
-      // crest stays inside a landscape frame while Harry's feet remain visible.
+      // window stays inside a landscape frame while Harry's feet remain visible.
       const dais=SchoolGreatHall.dais;
       const alongDais=(p.x-dais.x)*.5-(p.y-dais.y);
-      const cy=hub?p.y-(portrait?55:75):p.y-(portrait?46:55);
+      const acrossDais=(p.x-dais.x)*.5+(p.y-dais.y);
+      const towardsCounter=Math.max(0,Math.min(1,(alongDais+130)/85))*Math.max(0,Math.min(1,(acrossDais-35)/65));
+      const cx=hub?(portrait?p.x*.82+307*.18:p.x*.63+306*.37):
+        p.x+(portrait?9:34)-(portrait?28:107)*towardsCounter;
+      const cy=hub?p.y-SchoolEntranceHall.floorRise(p.x,p.y)-(portrait?63:84):p.y-(portrait?46:55);
       let top=cy-h*.48;
+      if(hub&&portrait)top=Math.max(-65,top);
+      if(hub&&!portrait){
+        const feet=p.y-SchoolEntranceHall.floorRise(p.x,p.y);
+        top=Math.max(feet+14-h,Math.min(top,9+Math.max(0,Math.abs(p.x-310)-74)*.17));
+      }
       if(!hub&&!portrait){
         const blend=Math.max(0,Math.min(1,(alongDais+110)/70));
-        const crestClearance=Math.max(0,top-(SchoolGreatHall.crestTop-8));
+        const windowClearance=Math.max(0,top-(SchoolGreatHall.windowTop-8));
         const feetClearance=Math.max(0,top+h-p.y-9);
-        top-=blend*Math.min(crestClearance,feetClearance);
+        top-=blend*Math.min(windowClearance,feetClearance);
       }
       return {x:cx-w/2,y:top,w,h};
     }
@@ -4400,15 +5217,17 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot } = (
     cameraFrames.set(c.canvas,frame);
     c.setTransform(1,0,0,1,0,0);c.fillStyle='#262831';c.fillRect(0,0,w,h);
     c.setTransform(a.density,0,0,a.density,-frame.x*a.density,-frame.y*a.density);
-    if(room==='entrance'||room==='great'){
+    if(room==='courtyard'||room==='entrance'||room==='great'){
       if(assetShadowsReady){
-        const space=room==='entrance'?SchoolEntranceHall:SchoolGreatHall;
+        const space=room==='courtyard'?SchoolCourtyard:room==='entrance'?SchoolEntranceHall:SchoolGreatHall;
         const figures=[];
         space.drawFloor(c);
-        characterShadow(c,p,'harry',.22);
+        const rise=space.floorRise?.(p.x,p.y)||0;
+        const actor=rise?{...p,y:p.y-rise}:p;
+        characterShadow(c,actor,'harry',.22);
         const add=(y,draw)=>figures.push({y,draw});
-        space.drawObjects(c,add,t,frame,p);
-        add(p.y,()=>castMember(c,p,'harry',t));
+        space.drawObjects(c,add,t,frame,p,v.gateOpen);
+        add(p.y,()=>castMember(c,actor,'harry',t));
         figures.sort((a,b)=>a.y-b.y).forEach(figure=>figure.draw());
       }
       c.setTransform(1,0,0,1,0,0);return;
@@ -4749,7 +5568,7 @@ const SchoolPracticeFloor = {
     return u>=6 && v>=6 && u<=this.end-5 && v<=(u<=this.returnAt-5?this.apron:this.front)-5;
   }
 };
-function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null } = {}) {
+function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, replayArrival = false } = {}) {
   const entrance = entry === 'front' ? 'front' : 'side';
   const key = 'friday.hogwarts.other-school-map.v1' + (entry === null ? '' : '.entry.' + entry);
   const compass = ['north', 'east', 'south', 'west'];
@@ -4781,7 +5600,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
     targetHit:false,notch:1,gateTurn:0,lastPush:'',bridgeLatched:false,gateCleared:false,armourHits:0,guardX:0,guardY:1,
     defenceTrial:false,defendedBeats:0,
     gearRoom:'machinery',galleryFar:true,gallerySeal:false,galleryCheckpoint:'entry',
-    campusX:0,campusY:0,campusFacing:'north',campusMonth:'sep',parkedGear:null
+    campusX:0,campusY:0,campusFacing:'north',campusMonth:'sep',housePointsSeen:false,parkedGear:null
   };
   let albumOpen=false, walking=false, canStore=true, unsaved=false, travelSinceSave=0;
   let traceFeedback='', practiceSnapshot=null, bolt=null, now=0, serial=0, feedback='', feedbackUntil=0;
@@ -4791,8 +5610,13 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
   const inGallery=()=>s.practice==='gate'&&s.gearRoom==='pendulum';
   const galleryMoveThreshold=.12;
   let flight=null,slide=1,galleryTime=0,legacyGrille=false,campusNotice='';
-  function onCampus(){return s.room==='entrance'||s.room==='great'}
-  function campusPlan(){return s.room==='great'?SchoolGreatHall:SchoolEntranceHall}
+  let gateElapsed=null;
+  const gateDuration=.85;
+  function onCampus(){return s.room==='courtyard'||s.room==='entrance'||s.room==='great'}
+  function campusPlan(){
+    if(s.room==='courtyard')return SchoolCourtyard;
+    return s.room==='great'?SchoolGreatHall:SchoolEntranceHall;
+  }
   let bridgeAmount=0,latchAmount=0,grilleAmount=0;
   const grilleGoal=()=>works.open(s.notch,s.bridgeLatched)?1:s.notch===0?.12:0;
   const cart=()=>works.cart(s.notch);
@@ -4824,8 +5648,9 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
       for (const name of ['muted','learned','won','swapped']) s[name]=d[name]===true;
       const retiredRoom=d.room==='bell';
       if (retiredRoom) s.room='entrance';
-      else if (['practice','entrance','great'].includes(d.room)) s.room=d.room;
+      else if (['practice','courtyard','entrance','great'].includes(d.room)) s.room=d.room;
       s.hasHengistCard=d.hasHengistCard===true||d.bell==='done';
+      s.housePointsSeen=d.housePointsSeen===true;
       if(d.campusMonth==='nov')s.campusMonth='nov';
       if(onCampus()){
         const plan=campusPlan();
@@ -4890,8 +5715,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
   if(entry==='training'||entry==='practice-bay')Object.assign(s,{bayX:267,bayY:225,bayFacing:'north-west'});
   if(entry==='counterweight')Object.assign(s,{practice:'gate',bayX:278,bayY:230,bayFacing:'east',targetHit:true,learned:true});
   if(entry==='counterweight-v2'||entry==='pendulum')Object.assign(s,{practice:'gate',gearRoom:'pendulum',bayX:entry==='pendulum'?249:218,bayY:212,bayFacing:'east',targetHit:true,learned:true,notch:0,bridgeLatched:true});
-  if(entry==='campus')Object.assign(s,{room:'entrance',campusX:SchoolEntranceHall.spawn.x,campusY:SchoolEntranceHall.spawn.y});
-  if (restore()) save();
+  function courtyardStart(){
+    Object.assign(s,{room:'courtyard',campusX:SchoolCourtyard.spawn.x,campusY:SchoolCourtyard.spawn.y,campusFacing:'north'});
+  }
+  if(entry==='campus'||entry==='courtyard')courtyardStart();
+  const migrated=restore();
+  if(entry==='courtyard'&&replayArrival){
+    courtyardStart();save();
+  }else if(migrated)save();
   const t=(en,ja)=>s.lang==='ja'?ja:en;
   const choice=(id,en,ja)=>({id,text:t(en,ja)});
   function direction(i) {return t(['north ↑','east →','south ↓','west ←'][i],['北 ↑','東 →','南 ↓','西 ←'][i])}
@@ -5141,33 +5972,42 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
   }
   const campusLabels={
     practice:['Enter Armour Practice Bay','鎧の練習場へ入る'],
-    display:['Inspect House hourglasses','寮の砂時計を調べる'],great:['Enter Great Hall','大広間へ入る'],
+    points:['House Point Counter','寮の得点を見る'],great:['Enter Great Hall','大広間へ入る'],
+    mainDoors:['Push open the castle doors','城の正面扉を押し開ける'],
+    courtyard:['Go out to the courtyard','中庭へ出る'],
     dais:['Examine the High Table','教職員席を調べる'],entrance:actionNames.entrance
   };
   const campusNotes={
-    display:['Rubies, emeralds, sapphires and yellow stones lie in the lower bulbs. Each glass keeps the points of one House.',
-      '下のガラスにルビー、エメラルド、サファイア、黄色い石がたまっている。四つの砂時計はそれぞれの寮の得点を示している。'],
-    dais:['The High Table is set for the next meal. Its chairs look down the four long House tables.',
-      '教職員席には次の食事の支度が整っている。ここからは四つの寮の長テーブルが見渡せる。']
+    entrancePoints:['The four brass-capped hourglasses hold the House points. Each pile of gems stands at a different height.',
+      '真鍮の蓋がついた四つの砂時計が、寮ごとの得点を示している。底に積もった宝石の高さはそれぞれ違う。'],
+    points:['Behind the High Table, coloured gems fill four glass hourglasses, one for each House.',
+      '教職員席の後ろには寮別得点計がある。四つの砂時計には、それぞれの寮の得点を表す色とりどりの宝石が入っている。'],
+    dais:['The headmaster’s chair stands at the centre of the High Table, facing the students.',
+      '教職員席の中央には校長の椅子があり、生徒たちのほうを向いている。']
   };
   function campusNearest(){
     const plan=campusPlan();
-    const sites=s.room==='great'?[['entrance',plan.door,22],['dais',plan.dais,31]]:
-      [['practice',plan.doors.practice,23],['great',plan.greatDoor,24],['display',plan.display,31]];
+    if(gateElapsed!==null)return '';
+    const sites=s.room==='courtyard'?[['mainDoors',plan.door,23]]:s.room==='great'?
+      [['entrance',plan.door,22],['dais',plan.dais,31],['points',plan.points,14]]:
+      [['practice',plan.doors.practice,23],['great',plan.greatDoor,24],['courtyard',plan.courtyardDoor,23],['points',plan.points,12]];
     return sites.find(([,p,r])=>Math.hypot(s.campusX-p.x,s.campusY-p.y)<=r)?.[0]||'';
   }
   function campusView(){
-    const great=s.room==='great',selected=campusNearest();
-    return {room:s.room,place:great?t('Great Hall','大広間'):t('Entrance Hall','玄関ホール'),
-      chapter:t('Hogwarts','ホグワーツ'),season:s.campusMonth,mode:'wander',role:'harry',canWalk:true,canCast:false,
+    const great=s.room==='great',outside=s.room==='courtyard',selected=campusNearest();
+    return {room:s.room,place:outside?t('Entrance Courtyard','正面の中庭'):great?t('Great Hall','大広間'):t('Entrance Hall','玄関ホール'),
+      chapter:t('Hogwarts','ホグワーツ'),season:s.campusMonth,mode:'wander',role:'harry',canWalk:gateElapsed===null,canCast:false,
+      gateOpen:gateElapsed===null?0:Math.min(1,gateElapsed/(gateDuration-.12)),
       player:{x:s.campusX,y:s.campusY,facing:s.campusFacing,walking},
-      objective:great?t('Follow the House tables to the High Table.','寮の長テーブルに沿って教職員席まで進もう。'):
-        t('The oak doors lead to the Great Hall. The arch to their left opens onto the Armour Practice Bay.','樫の扉の先は大広間。その左のアーチは鎧の練習場に通じている。'),
-      dialogue:campusNotice&&campusNotice===selected?t(...campusNotes[campusNotice]):'',
-      selected,actionLabel:selected?t(...campusLabels[selected]):'',canAct:!!selected,choices:[],landmarks:[],visited:[]};
+      objective:outside?t('Cross the courtyard to the main doors.','中庭を渡って城の正面扉へ向かおう。'):
+        great?t('Follow the House tables to the High Table.','寮の長テーブルに沿って教職員席まで進もう。'):
+        t('Walk through the Entrance Hall to the oak doors of the Great Hall.','玄関ホールを進み、大広間の樫の扉へ向かおう。'),
+      dialogue:campusNotice&&campusNotice===selected?
+        t(...campusNotes[!great&&campusNotice==='points'?'entrancePoints':campusNotice]):'',
+      selected,actionLabel:selected?t(...campusLabels[selected]):'',canAct:!!selected&&campusNotice!==selected,choices:[],landmarks:[],visited:[]};
   }
   function changeBranch(room){
-    combat.leaveRoom();s.room=room;walking=false;flight=null;bolt=null;feedback='';campusNotice='';
+    combat.leaveRoom();s.room=room;walking=false;flight=null;bolt=null;feedback='';campusNotice='';gateElapsed=null;
   }
   function enterCampus(room,point,facing){
     changeBranch(room);
@@ -5184,7 +6024,10 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
   function campusAct(){
     const id=campusNearest();
     if(!id)return;
-    if(id==='entrance')returnToEntrance();
+    if(id==='mainDoors'){
+      walking=false;s.campusFacing='north';gateElapsed=0;
+    }else if(id==='courtyard')enterCampus('courtyard',SchoolCourtyard.returnPoint,'south');
+    else if(id==='entrance')returnToEntrance();
     else if(id==='great')enterCampus('great',SchoolGreatHall.spawn,'north-east');
     else if(id==='practice'){
       // The bay door always opens onto the training floor. A suspended
@@ -5195,15 +6038,23 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
         s.parkedGear={x,y:s.bayY,facing:s.bayFacing};s.practice='target';
       }
       changeBranch('practice');s.bayX=494;s.bayY=237;s.bayFacing='south-west';
-    }else campusNotice=id;
+    }else {
+      campusNotice=id;
+      if(id==='points'){
+        s.housePointsSeen=true;
+        s.campusFacing='north-west';
+      }
+    }
     beep('step');changed();
   }
   function view() {
+    const journalDialogue=s.housePointsSeen?t('House points are counted in four glass hourglasses, one for each House.',
+      '四つの砂時計に積もった宝石で、それぞれの寮の得点が分かる。'):'';
     if (s.room === 'practice') {
       if (!practiceSnapshot) practiceSnapshot = { ...practiceView(), room: s.room, lang: s.lang, muted: s.muted, albumOpen, cards: cards() };
-      return {...practiceSnapshot,combat:combat?.view()};
+      return {...practiceSnapshot,combat:combat?.view(),journalDialogue};
     }
-    return { ...campusView(), room:s.room,lang:s.lang,muted:s.muted,albumOpen,cards:cards() };
+    return { ...campusView(), room:s.room,lang:s.lang,muted:s.muted,albumOpen,cards:cards(),journalDialogue };
   }
   function choose(id) {
     if (albumOpen || !view().choices.some(item=>item.id===id)) return;
@@ -5315,6 +6166,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
   }
   function move(dx,dy,dt) {
     if (albumOpen || !Number.isFinite(dx+dy+dt)) return;
+    if(gateElapsed!==null){
+      gateElapsed+=Math.max(0,Math.min(dt,.05));
+      if(gateElapsed>=gateDuration){
+        enterCampus('entrance',SchoolEntranceHall.exteriorArrival,'north');
+        changed();
+      }
+      return;
+    }
     if (dt>0) combat.tick(Math.min(dt,.05));
     if (s.room==='practice') {
       if (!live()) return;
@@ -5951,13 +6810,13 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
     write(el.audioText, view.muted ? t.muted : t.sound); el.audio.setAttribute('aria-label', t.toggleSound);
     el.audio.setAttribute('aria-pressed', String(!view.muted));
     write(el.place, view.place); write(el.season, t.seasons[view.season === 'nov' ? 1 : 0]);
-    write(el.chapter, view.chapter); write(el.objective, view.objective); write(el.dialogue, view.dialogue);
+    write(el.chapter, view.chapter); write(el.objective, view.objective); write(el.dialogue, view.dialogue || view.journalDialogue || '');
     write(el.actLabel, view.actionLabel || t.act); write(el.castLabel, t.cast);
     el.act.hidden = !(view.canAct ?? (view.canWalk && !!view.selected));
     el.cast.hidden = !view.canCast;
     el.controls.hidden = el.act.hidden && el.cast.hidden;
     el.scene.setAttribute('aria-label', view.place);
-    const exploring = view.room === 'entrance' || view.room === 'great';
+    const exploring = view.room === 'courtyard' || view.room === 'entrance' || view.room === 'great';
     let instructions = coarse.matches ? t.touchChoice : t.choice;
     if (exploring) instructions = coarse.matches ? t.touchExplore : t.explore;
     else if (view.canWalk) instructions = coarse.matches ? t.touchWalk : t.walk;
@@ -5979,13 +6838,17 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null }
     enableSound(); game.cast(); update();
   }
   const entryParam = params.get('entry');
-  const entrances=['side','front','training','practice-bay','counterweight','counterweight-v2','pendulum','campus'];
+  const entrances=['side','front','training','practice-bay','counterweight','counterweight-v2','pendulum','campus','courtyard'];
   let initialEntry=entrances.includes(entryParam)?entryParam:null;
   if(!entryParam){
     try{if(!localStorage.getItem('friday.hogwarts.other-school-map.v1'))initialEntry='campus';}
     catch{initialEntry='campus';}
   }
-  game = createSchoolGame({onChange:update,beep,entry:initialEntry});
+  // The dedicated arrival link starts another walk on a new navigation.
+  // Reload and browser history keep the visitor's place in its separate save.
+  const arrivalNavigation=performance.getEntriesByType('navigation')[0];
+  const replayArrival=initialEntry==='courtyard'&&(!arrivalNavigation||arrivalNavigation.type==='navigate');
+  game = createSchoolGame({onChange:update,beep,entry:initialEntry,replayArrival});
   el.journalToggle.addEventListener('click', () => toggleJournal(true));
   el.closeJournal.addEventListener('click', () => toggleJournal(false));
   el.journal.addEventListener('cancel', event => {event.preventDefault(); toggleJournal(false)});
