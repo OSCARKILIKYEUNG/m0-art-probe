@@ -3271,7 +3271,7 @@ const SchoolEntranceHall=(()=>{
     const pane=(u,v)=>[161+u+v*.58,214-u*.5+v*.45];
     for(let col=0;col<3;col++)for(let row=0;row<5;row++){
       const sx=col*7.6,sy=row*12.5;
-      fill(c,[pane(sx,sy+5.6),pane(sx+3.2,sy),pane(sx+6.4,sy+5.6),pane(sx+3.2,sy+11)], 
+      fill(c,[pane(sx,sy+5.6),pane(sx+3.2,sy),pane(sx+6.4,sy+5.6),pane(sx+3.2,sy+11)],
         ['rgba(224,205,147,.22)','rgba(171,210,199,.18)','rgba(227,177,137,.19)'][(col+row)%3]);
     }
     c.restore();
