@@ -3631,7 +3631,7 @@ const SchoolEntranceHall=(()=>{
 /* Four House tables use the same longitudinal survey for drawing and feet.
    l runs from the entrance towards High Table; s runs across the aisles. */
 const SchoolGreatHall=(()=>{
-  const spawn={x:284,y:349}, door={...spawn}, dais={x:972,y:5};
+  const door={x:284,y:349}, spawn={x:308,y:337}, dais={x:972,y:5};
   const rows=[-94,-32,32,94], runs=[[43,235],[267,459],[491,635]];
   const P=(l,s,z=0)=>[284+l+s,349-l*.5+s*.5-z];
   const LS=(x,y)=>{const dx=x-284,dy=y-349;return [dx/2-dy,dx/2+dy]};
