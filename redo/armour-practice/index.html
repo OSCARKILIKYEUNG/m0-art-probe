@@ -3443,6 +3443,9 @@ const SchoolGreatHall=(()=>{
   const door={x:284,y:349}, spawn={x:308,y:337}, dais={x:972,y:5};
   const rows=[-94,-32,32,94], runs=[[43,235],[267,459],[491,635]];
   const P=(l,s,z=0)=>[284+l+s,349-l*.5+s*.5-z];
+  const schoolMark={foot:P(743,0,117),width:21};
+  // A21's 95 × 112 source is mounted on the end wall at a 1:2 screen slope.
+  const crestTop=schoolMark.foot[1]-schoolMark.width*(112/95+.25);
   const LS=(x,y)=>{const dx=x-284,dy=y-349;return [dx/2-dy,dx/2+dy]};
   function contains(x,y){
     if(!Number.isFinite(x)||!Number.isFinite(y))return false;
@@ -3733,7 +3736,7 @@ const SchoolGreatHall=(()=>{
       const l=-25+(2.5+i)*772/9;
       SchoolFurnishings.crest(c,...P(l,-131,43),houses[i],14,-.5);
     }
-    SchoolFurnishings.crest(c,...P(743,0,117),'school',21,.5);
+    SchoolFurnishings.crest(c,...schoolMark.foot,'school',schoolMark.width,.5);
   }
   let back;const furniture=new Map();
   const origin={x:96,y:-345,w:1100,h:832};
@@ -4055,7 +4058,7 @@ const SchoolGreatHall=(()=>{
       if(visible(x,y))add(y+z,()=>candle(c,x,y,time,i));
     }
   }
-  return {spawn,door,dais,contains,drawFloor,drawObjects,ready};
+  return {spawn,door,dais,crestTop,contains,drawFloor,drawObjects,ready};
 })();
 
 /* Character coordinates refer to the point where their feet meet the floor. */
@@ -4159,9 +4162,15 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot } = (
       // crest stays inside a landscape frame while Harry's feet remain visible.
       const dais=SchoolGreatHall.dais;
       const alongDais=(p.x-dais.x)*.5-(p.y-dais.y);
-      const lift=hub||portrait?0:16*Math.max(0,Math.min(1,(alongDais+85)/80));
-      const cy=hub?p.y-(portrait?55:75):p.y-(portrait?46:55)-lift;
-      return {x:cx-w/2,y:cy-h*.48,w,h};
+      const cy=hub?p.y-(portrait?55:75):p.y-(portrait?46:55);
+      let top=cy-h*.48;
+      if(!hub&&!portrait){
+        const blend=Math.max(0,Math.min(1,(alongDais+110)/70));
+        const crestClearance=Math.max(0,top-(SchoolGreatHall.crestTop-8));
+        const feetClearance=Math.max(0,top+h-p.y-9);
+        top-=blend*Math.min(crestClearance,feetClearance);
+      }
+      return {x:cx-w/2,y:top,w,h};
     }
     if(!(aspect>0)){
       const extra=Math.max(0,Math.min(256,Math.round(v.sceneExtraWidth||0)));
