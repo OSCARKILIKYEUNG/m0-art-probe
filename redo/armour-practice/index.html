@@ -4155,7 +4155,12 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot } = (
       const w=Math.round(height*ratio*2)/2,h=Math.round(height*2)/2,hub=room==='entrance';
       // The long hall follows the actual floor, straight through to High Table.
       const cx=hub?(portrait?p.x*.82+307*.18:p.x*.63+306*.37):p.x+(portrait?9:34);
-      const cy=hub?p.y-(portrait?55:75):p.y-(portrait?46:55);
+      // Lift the view as the player reaches the staff dais so the high school
+      // crest stays inside a landscape frame while Harry's feet remain visible.
+      const dais=SchoolGreatHall.dais;
+      const alongDais=(p.x-dais.x)*.5-(p.y-dais.y);
+      const lift=hub||portrait?0:16*Math.max(0,Math.min(1,(alongDais+85)/80));
+      const cy=hub?p.y-(portrait?55:75):p.y-(portrait?46:55)-lift;
       return {x:cx-w/2,y:cy-h*.48,w,h};
     }
     if(!(aspect>0)){
