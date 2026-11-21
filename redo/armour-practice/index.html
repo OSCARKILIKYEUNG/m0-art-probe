@@ -4212,10 +4212,301 @@ const SchoolEntranceHall=(()=>{
   return {spawn,doors,greatDoor,courtyardDoor,exteriorArrival,points,contains,floorRise,drawFloor,drawObjects};
 })();
 
+/* The High Table seats share the room's two-to-one projection. Each solid is
+   scan-converted onto the native half-world-pixel grid once per chair. */
+const SchoolHighTableChairs=(()=>{
+  'use strict';
+  const native=2,width=108,height=152,originX=54,originY=129;
+  const cache=new Map();
+  const oak=[117,80,52],turning=[130,88,55],endGrain=[111,72,47];
+  const walnut=[91,60,42],dark=[64,46,37],honey=[165,118,65],bead=[185,141,81];
+  const piping=[110,128,94];
+  const frontFeet=5.8,backFeet=-5.75;
+  const halfWidth=place=>place===0?9.05:Math.abs(place)===39?7.65:7.15;
+
+  function makeChair(doc,place){
+    const central=place===0,inner=Math.abs(place)===39;
+    const im=doc.createElement('canvas');im.width=width;im.height=height;
+    const ctx=im.getContext('2d'),out=ctx.createImageData(width,height),pixels=out.data;
+    const depth=new Float32Array(width*height).fill(-Infinity);
+    const seed=place+83;
+
+    // Invert the projection on each surface plane. This keeps grain, carving
+    // and occlusion fixed to the piece when two parts cross the same pixel.
+    function face(points,material,grain=0){
+      const a=points[0],b=points[1],e=points[2];
+      const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=e[0]-a[0],vy=e[1]-a[1],vz=e[2]-a[2];
+      let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+      const norm=Math.hypot(nx,ny,nz);if(norm<.0001)return;
+      nx/=norm;ny/=norm;nz/=norm;
+      if(nx+ny+nz<0){nx=-nx;ny=-ny;nz=-nz;}
+      const denom=nx+ny+nz;if(denom<.0001)return;
+      const plane=nx*a[0]+ny*a[1]+nz*a[2];
+      const screen=points.map(([x,y,z])=>[originX+native*(x-y),originY+native*(.5*(x+y)-z)]);
+      const first=Math.max(0,Math.ceil(Math.min(...screen.map(p=>p[1]))-.5));
+      const last=Math.min(height-1,Math.floor(Math.max(...screen.map(p=>p[1]))-.5));
+      const diffuse=Math.max(-.8,Math.min(1,-.30*nx+.50*ny+.82*nz));
+      const light=.79+.31*diffuse+(nz>.15?.05*nz:0);
+      for(let py=first;py<=last;py++){
+        const v=(py+.5-originY)/native,hits=[];
+        for(let i=0;i<screen.length;i++){
+          const l=screen[i],r=screen[(i+1)%screen.length],dy=r[1]-l[1];
+          if((l[1]<=py+.5&&r[1]>py+.5)||(r[1]<=py+.5&&l[1]>py+.5))
+            hits.push(l[0]+(py+.5-l[1])*(r[0]-l[0])/dy);
+        }
+        hits.sort((a,b)=>a-b);
+        for(let i=1;i<hits.length;i+=2){
+          const left=Math.max(0,Math.ceil(hits[i-1]-.5)),right=Math.min(width-1,Math.floor(hits[i]-.5));
+          for(let px=left;px<=right;px++){
+            const u=(px+.5-originX)/native,sum=(2*plane-(nx-ny)*u+2*nz*v)/denom;
+            const d=1.5*sum-v,idx=py*width+px;
+            if(d<depth[idx]-.002)continue;
+            depth[idx]=d;const x=(sum+u)*.5,y=(sum-u)*.5,z=sum*.5-v;
+            let wear=0;
+            if(grain>=1&&grain<=3){
+              const along=grain===1?z:grain===2?x:y;
+              const across=grain===1?x+.7*y:grain===2?z+.61*y:z+.68*x;
+              const ring=Math.sin(across*3.1+.8*Math.sin(along*.24+seed)+.32*Math.sin(along*.58+across));
+              wear=ring>.73?-7:ring<-.75?4:0;
+              if(z<3)wear-=7;
+            }else if(grain===4||grain===5){
+              // The hide is stretched over a shallow stuffing roll. Its main
+              // light crosses the crown and dies under the posts and back rail.
+              const u=x/w;
+              if(grain===4){
+                const v=(y+.25)/6.2;
+                wear=10*(1-u*u)-8*u-11*Math.max(0,-v)-9*Math.max(0,u*u+v*v-.72);
+              }else{
+                const v=(z-19.1)/(crown-21.5);
+                wear=16*Math.max(0,1-1.45*(u+.22)**2-3.45*(v-.63)**2)-
+                  7*Math.max(0,1-v*4)-6*u*u-3*u;
+              }
+              wear+=1.5*Math.sin(1.8*x+2.7*y+.68*z);
+            }else if(grain===6){
+              // Broken gilding shows the ochre undercoat at the uprights.
+              // Colour moves in broad worn patches instead of long oak grain.
+              const patch=Math.sin(.41*x+.15*z)+.55*Math.sin(.63*x-.31*z);
+              wear=6*Math.sin(.17*z-.12*x)+4*patch-9*Math.max(0,Math.abs(x)/w-.65);
+              if(patch>1.29&&Math.sin(1.65*x+.77*z)>.6)wear-=8;
+            }else if(grain===7){
+              const centre=(Math.abs(x)-w);
+              wear=7*(1-Math.min(1,Math.abs(centre+.38)))-5*centre-
+                Math.max(0,1.25-(y-back))*3;
+            }
+            const off=4*idx;
+            for(let channel=0;channel<3;channel++)
+              pixels[off+channel]=Math.round((material[channel]*light+wear)/3)*3;
+            pixels[off+3]=255;
+          }
+        }
+      }
+    }
+    function ring(cx,cy,z,rx,ry,count=8){
+      return Array.from({length:count},(_,i)=>{
+        const t=(i+.5)*2*Math.PI/count;
+        return [cx+rx*Math.cos(t),cy+ry*Math.sin(t),z];
+      });
+    }
+    function loft(rings,material,grain){
+      for(let j=1;j<rings.length;j++){
+        const a=rings[j-1],b=rings[j];
+        for(let i=0;i<a.length;i++){const k=(i+1)%a.length;face([a[i],a[k],b[k],b[i]],material,grain);}
+      }
+      face(rings[rings.length-1],material,grain);
+    }
+    function turned(x,y,levels,material,grain=1,n=10){
+      loft(levels.map(([h,r])=>ring(x,y,h,r,r,n)),material,grain);
+    }
+    function rail(x0,x1,y0,y1,base,thick,material,grain,bev=.45){
+      const rect=(z,margin)=>[[x0+margin,y0+margin,z],[x1-margin,y0+margin,z],
+        [x1-margin,y1-margin,z],[x0+margin,y1-margin,z]];
+      const edge=Math.min(bev,(x1-x0)*.26,(y1-y0)*.26,thick*.31);
+      loft([rect(base,edge),rect(base+edge,0),rect(base+thick-edge,0),rect(base+thick,edge)],material,grain);
+    }
+    function board(outline,y,thickness,material,grain=1){
+      const back=outline.map(([u,h])=>[u,y-thickness,h]),front=outline.map(([u,h])=>[u,y,h]);
+      loft([back,front],material,grain);
+    }
+    function quatrefoil(cx,cz,halfW,halfH,hole,project){
+      const slices=32,outer=[],inner=[],reveal=[];
+      for(let i=0;i<slices;i++){
+        const angle=i*Math.PI*2/slices,dx=Math.cos(angle),dz=Math.sin(angle);
+        const extent=Math.min(halfW/(Math.abs(dx)||.001),halfH/(Math.abs(dz)||.001));
+        const radius=hole*(.75+.25*Math.cos(4*angle));
+        outer.push(project(cx+extent*dx,cz+extent*dz,0));
+        inner.push(project(cx+radius*dx,cz+radius*dz,0));
+        reveal.push(project(cx+(radius-.24)*dx,cz+(radius-.24)*dz,-.62));
+      }
+      for(let i=0;i<slices;i++){
+        const j=(i+1)%slices;
+        face([outer[i],outer[j],inner[j],inner[i]],honey,1);
+        face([inner[i],inner[j],reveal[j],reveal[i]],bead);
+      }
+    }
+    // A ridge has two solid flanks. The lit and shadowed halves follow its
+    // moulding profile, including around the curved crown and arm openings.
+    function ridge(path,y,r,material){
+      for(let i=1;i<path.length;i++){
+        const [x0,z0]=path[i-1],[x1,z1]=path[i],len=Math.hypot(x1-x0,z1-z0);
+        if(!len)continue;
+        const dx=-(z1-z0)*r/len,dz=(x1-x0)*r/len;
+        face([[x0-dx,y,z0-dz],[x1-dx,y,z1-dz],[x1,y+r*.76,z1],[x0,y+r*.76,z0]],material);
+        face([[x0,y+r*.76,z0],[x1,y+r*.76,z1],[x1+dx,y,z1+dz],[x0+dx,y,z0+dz]],material);
+      }
+    }
+    function pad(x0,x1,y0,y1,z,h,m,edge){
+      const corners=[[x0+.8,y0],[x1-.8,y0],[x1,y0+.8],[x1,y1-.9],
+        [x1-.85,y1],[x0+.85,y1],[x0,y1-.85],[x0,y0+.8]];
+      const cx=(x0+x1)/2,cy=(y0+y1)/2;
+      const band=(a,b,level)=>corners.map(([x,y])=>[cx+(x-cx)*a,cy+(y-cy)*b,level]);
+      loft([band(.96,.96,z),band(1,1,z+.62)],edge,0);
+      loft([band(1,1,z+.63),band(.91,.88,z+h-.37),band(.77,.72,z+h)],m,4);
+    }
+    const w=halfWidth(place),f=frontFeet,back=backFeet;
+    const seat=14.2,arm=central?25:23,crown=central?57.5:inner?42.4:40.5;
+    const frame=central?honey:oak;
+    const frontLeg=[[.05,1.06],[.7,1.49],[1.85,1.3],[2.22,.90],[6.1,.77],[7.1,1.21],
+      [8.06,1.49],[8.75,1.15],[9.18,.96],[10,1.32],[12.5,1.35],[13,1.1],[14.2,1.14]];
+    for(const x of [-w,w]){
+      turned(x,f,frontLeg,central?honey:turning);
+      rail(x-1.05,x+1.05,back-1.05,back+1.05,.1,seat+.7,frame,1);
+      // Low runners join all four legs and carry a single cross stretcher.
+      rail(x-.55,x+.55,back+.25,f-.2,4.35,1.2,endGrain,3);
+    }
+    rail(-w+.5,w-.5,-.25,.65,4.4,1.05,walnut,2,.2);
+    if(central){
+      for(const x of [-w,w])rail(x-1.3,x+1.3,f-1.1,f+1.15,0,13.5,honey,1);
+      for(const x of [-w*.5,w*.5])
+        quatrefoil(x,8,w*.48,3.7,2.7,(u,z,d)=>[u,f+.5+d,z]);
+      for(const x of [-w,w])
+        quatrefoil(.1,8,4.7,3.7,2.7,(u,z,d)=>[x+Math.sign(x)*(.45+d),u,z]);
+    }
+    rail(-w-.55,w+.55,f-.3,f+.8,10.65,2.0,frame,2);
+    rail(-w-1.35,w+1.35,back-1.15,f+1.6,12.55,1.3,dark,2);
+    rail(-w-1.45,w+1.45,back-1.2,f+1.75,13.35,.94,central?bead:turning,2);
+    pad(-w-.15,w+.15,back+.1,f+.62,seat,central?2.0:1.75,
+      central?[69,101,84]:inner?[65,80,67]:[67,81,67],central?piping:[99,100,77]);
+
+    const panelY=back+.6,postY=back;
+    for(const x of [-w,w]){
+      // Split-column stiles, distinct collars and stepped bases frame the back.
+      const shoulder=central?46.0:crown-6.3;
+      rail(x-1.32,x+1.32,postY-1.24,postY+1.24,13.1,shoulder-13,frame,1,.38);
+      turned(x,postY+.78,[[15,1.05],[16,1.5],[17.1,1.43],[17.6,.9],[shoulder-2.15,.89],
+        [shoulder-1.65,1.4],[shoulder-.72,1.35],[shoulder,1.04]],central?bead:turning);
+      ridge([[x-.55,18.25],[x-.52,shoulder-3.1]],postY+1.62,.26,central?bead:[162,117,77]);
+      const top=central?crown-7.2:crown-3.65;
+      if(central){
+        turned(x,postY,[[top-7.8,1.15],[top-7.3,1.75],[top-6.4,1.85],
+          [top-5.85,1.22],[top-4.8,1.07],[top-4.4,1.35],[top-.75,.4],[top+.25,.1]],bead);
+      }else{
+        turned(x,postY,[[top-4.3,1.05],[top-3.65,1.45],[top-3.35,1.25],[top-2.8,.72],
+          [top-2.1,1.4],[top-1.2,1.55],[top-.35,1.04],[top+.15,.28]],turning);
+      }
+    }
+    if(central){
+      const gable=[[-w+.55,16.9],[w-.55,16.9],[w-.55,47.4],[0,crown],[-w+.55,47.4]];
+      board(gable,panelY,1.65,frame,6);
+      const arch=[[-8.5,47.25],[0,57.15],[8.5,47.25]];
+      ridge(arch,panelY+.1,.85,bead);
+      ridge([[-7.2,48.65],[-3.05,53.55],[-.3,56.73]],panelY+.54,.34,[220,181,117]);
+      const innerArch=[[-7,19],[-7,46.1],[0,54.5],[7,46.1],[7,19]];
+      board(innerArch,panelY+.12,.2,[177,136,81],6);
+      ridge(innerArch,panelY+.34,.64,[195,151,91]);
+      ridge([[-6.5,20.5],[-6.5,45.95],[-1.1,52.78]],panelY+.64,.32,[126,96,64]);
+      // The worn painted panel reads as a foliated device in the recess;
+      // concentric mouldings leave the crest distinct from the upright posts.
+      const leaf=(path,m)=>board(path,panelY+.66,.19,m,0);
+      for(const sign of [-1,1]){
+        leaf([[.5,36],[2.15,38.6],[3.95,39.8],[4.25,42.8],[5.7,44],
+          [5.1,40],[5.75,40.5],[4.85,37.7],[2.7,36.8]].map(([x,z])=>[sign*x,z]),[94,83,59]);
+        leaf([[1.3,38],[2.55,39.4],[3.63,40.1],[3.6,42.8],[4.9,44.2],
+          [4.1,41.1],[4.4,40.4],[3.9,39.2],[2,37.75]].map(([x,z])=>[sign*x,z]),[193,154,91]);
+      }
+      leaf([[-2.4,39.3],[0,40.8],[2.4,39.3],[2.0,35.9],[0,32.9],[-2,35.9]],[93,89,64]);
+      leaf([[-1.74,39.03],[-.75,39.8],[-.3,37.9],[1.45,37.0],[.75,35.45],[-.22,36.7],[-1.25,36.78]],[176,138,81]);
+      ridge([[-2.4,39.3],[0,40.8],[2.4,39.3],[2.0,35.9],[0,32.9],[-2,35.9],[-2.4,39.3]],panelY+.99,.36,honey);
+      for(const sign of [-1,1]){
+        const slip=[[.6,32.8],[1.35,30.35],[3.25,29.55],[4.9,30.6],[5.55,32.2]];
+        ridge(slip.map(([x,z])=>[sign*x,z]),panelY+.38,.55,honey);
+      }
+      rail(-w+.95,w-.95,panelY-.45,panelY+.72,18.1,1.1,bead,2);
+    }else{
+      const top=[[-w+.65,crown-6.7],[0,crown],[w-.65,crown-6.7]];
+      const closed=[[-w+.65,17.2],...top,[w-.65,17.2]];
+      board(closed,panelY,1.5,frame);
+      ridge(top,panelY+.18,.72,[157,106,66]);
+      const edge=w-2.05;
+      const padShape=[[-edge,19],[-edge,crown-7.4],[0,crown-2.3],[edge,crown-7.4],[edge,19]];
+      board(padShape,panelY+.50,.38,[49,58,48],0);
+      const cloth=inner?[69,83,69]:[65,80,68];
+      // A convex face lets the window pick up the left shoulder of the pad.
+      // The darker leather return and nail strip survive tabletop occlusion.
+      function upholstery(u,v){
+        const xx=u*(edge-.24),base=19.28,high=crown-2.7-Math.abs(u)*4.95;
+        const crownDepth=1.55*(1-u*u)*(1-(v*2-1)**4);
+        return [xx,panelY+.64+crownDepth,base+v*(high-base)];
+      }
+      for(let j=0;j<6;j++)for(let i=0;i<8;i++){
+        const u=i*.25-1,v=j/6;
+        const a=upholstery(u,v),b=upholstery(u+.25,v),c=upholstery(u+.25,v+1/6),d=upholstery(u,v+1/6);
+        face([a,b,c],cloth,5);face([a,c,d],cloth,5);
+      }
+      for(const sign of [-1,1]){
+        for(let z=20.25;z<crown-8.2;z+=2.8)
+          board([[sign*edge-.29,z],[sign*edge,z+.45],[sign*edge+.28,z+.12],[sign*edge,z-.24]],panelY+.79,.17,[170,143,97],0);
+        ridge([[sign*(edge-.23),crown-7.43],[0,crown-2.5]],panelY+.82,.34,[146,138,98]);
+      }
+      rail(-w+1,w-1,back-.12,panelY+.65,17.1,2.15,frame,2);
+    }
+    for(const x of [-w,w]){
+      // The top of the shoulder turns onto the near arm, with a negative gap
+      // above the seat and a turned support fixed into the front rail.
+      const post=[[14.1,.78],[14.8,1.1],[15.75,.98],[16.15,.64],[18.15,.58],[19.1,1.1],
+        [20.0,1.23],[20.8,.84],[arm-1.05,.87]];
+      turned(x,f-.4,post,central?honey:turning);
+      const curve=central?[[back+.75,arm+7.3],[back+2,arm+6.3],[-1.6,arm+3.55],[.6,arm+1.7],[3.1,arm+.82],[f+.42,arm+.68]]:
+        [[back+.65,arm+.35],[-1,arm+.2],[f+.45,arm+.45]];
+      for(let j=1;j<curve.length;j++){
+        const [ya,za]=curve[j-1],[yb,zb]=curve[j];
+        const section=(y,z)=>[[x-1.45,y,z-.29],[x-.97,y,z+.25],[x+.95,y,z+.25],[x+1.45,y,z-.29],
+          [x+1.33,y,z-1.2],[x-1.34,y,z-1.2]];
+        loft([section(ya,za),section(yb,zb)],central?[76,116,96]:frame,central?7:3);
+        if(central)
+          face([[x-1.34,ya,za-1.17],[x+1.34,ya,za-1.17],[x+1.34,yb,zb-1.17],[x-1.34,yb,zb-1.17]],bead);
+      }
+      if(central)
+        quatrefoil(-2.1,22.7,2.6,2.65,2.1,(u,z,d)=>[x+Math.sign(x)*(.45+d),u,z]);
+      turned(x,f+.25,[[arm-.07,1.15],[arm+.48,1.31],[arm+.91,.89]],central?bead:turning);
+    }
+    ctx.putImageData(out,0,0);
+    return im;
+  }
+  function draw(c,x,y,place){
+    let im=cache.get(place);
+    if(!im){im=makeChair(c.canvas.ownerDocument,place);cache.set(place,im);}
+    c.drawImage(im,Math.round(x*native)/native-originX/native,
+      Math.round(y*native)/native-originY/native,width/native,height/native);
+  }
+  function drawFeetShadow(c,x,y,place){
+    const w=halfWidth(place),k=SchoolWorkshop;
+    const footprint=(u,v)=>[x+u-v,y+.5*(u+v)];
+    k.poly(c,[footprint(-w+.25,backFeet+.45),footprint(w+1.0,backFeet+.75),
+      footprint(w+.75,frontFeet+.95),footprint(-w-.7,frontFeet+.35)],'rgba(48,39,38,.13)');
+    for(const u of [-w,w])for(const v of [frontFeet,backFeet]){
+      const [fx,fy]=footprint(u,v);
+      k.oval(c,fx+.48,fy+.34,1.9,.88,'rgba(47,36,34,.30)');
+      k.oval(c,fx+.17,fy+.07,1.23,.53,'rgba(42,34,33,.30)');
+    }
+  }
+  return {draw,drawFeetShadow};
+})();
+
 /* Four House tables use the same longitudinal survey for drawing and feet.
    l runs from the entrance towards High Table; s runs across the aisles. */
 const SchoolGreatHall=(()=>{
   const door={x:284,y:349}, spawn={x:308,y:337}, dais={x:972,y:5};
+  const staffSeats=[-77,-39,0,39,77];
   const rows=[-94,-32,32,94], runs=[[43,235],[267,459],[491,635]];
   const P=(l,s,z=0)=>[284+l+s,349-l*.5+s*.5-z];
   // The film set places the counter to the right of the tall mullioned window
@@ -4489,6 +4780,7 @@ const SchoolGreatHall=(()=>{
         k.line(c,[P(l+j*3,s,0),P(l+j*3,s+d,0)],j%2?'#6d655a':'#c3b49b',1.3);
       }
     }
+    for(const s of staffSeats)SchoolHighTableChairs.drawFeetShadow(c,...P(725,s),s);
     const [counterX,counterY]=P(739,83,1.7);
     SchoolPointCounter.draw(c,counterX,counterY,64);
 
@@ -4646,22 +4938,6 @@ const SchoolGreatHall=(()=>{
     }
     const [x,y]=P(l,s);c.drawImage(furniture.get(key),x-22,y-65,96,79);
   }
-  function throne(c,s){
-    const k=SchoolWorkshop,[x,y]=P(725,s),tall=s===0?46:32,w=s===0?8.3:6.7;
-    c.save();c.translate(x,y);
-    for(const u of [-w,w]){k.turn(c,u*.5,-u*.5,0,[[0,1.6],[2,1.65],[3,1.1],[8,.9],[10,1.4],[12,1.25]],k.walnut);}
-    k.poly(c,[[-w-1,-9],[0,-12],[w+1,-9],[w-1,-6.5],[0,-5.8]],'#9c7050');
-    for(const u of [-w,w]){
-      k.line(c,[[u,-7],[u,-tall+3]],'#513e35',2.65);
-      k.line(c,[[u-.6,-11],[u-.6,-tall+5]],'#b28a5d',.78);
-      k.oval(c,u,-tall+2,2,2.7,'#95744f');k.oval(c,u-.35,-tall+1.3,.7,.86,'#c5a273');
-    }
-    k.poly(c,[[-w,-tall+8],[-w+2,-tall+5],[0,-tall],[w-2,-tall+5],[w,-tall+8],[w,-tall+12],[0,-tall+8],[-w,-tall+12]],'#896747');
-    k.line(c,[[-w,-tall+8],[-w+2,-tall+5],[0,-tall],[w-2,-tall+5]],'#c5a073',.85);
-    k.poly(c,[[-w+2,-10],[-w+2,-tall+14],[0,-tall+10],[w-2,-tall+14],[w-2,-10]],s===0?'#704449':'#715746');
-    if(s===0){k.poly(c,[[-3,-30],[0,-34],[3,-30],[0,-26]],'#997643');k.line(c,[[-2,-30],[0,-32.5],[2,-30]],'#d2b480',.68);}
-    c.restore();
-  }
   function staffSection(c,start,part){
     const k=SchoolWorkshop,[x,y]=P(700,start);
     c.save();c.translate(x,y);
@@ -4711,11 +4987,15 @@ const SchoolGreatHall=(()=>{
     }
     c.restore();
   }
-  function highTable(add){
-    for(const s of [-77,-39,0,39,77])add(P(725,s)[1],c=>throne(c,s));
+  function highTable(c,add,visible){
+    for(const s of staffSeats){
+      const [x,y]=P(725,s);
+      if(visible(x,y))add(y,()=>SchoolHighTableChairs.draw(c,x,y,s));
+    }
     for(let part=0;part<5;part++){
       const s=-103+part*41.2;
-      add(P(700,s+20.6)[1],c=>staffSection(c,s,part));
+      const [x,y]=P(700,s+20.6);
+      if(visible(x,y))add(y,()=>staffSection(c,s,part));
     }
   }
   const pupils={};
@@ -4841,7 +5121,7 @@ const SchoolGreatHall=(()=>{
       SchoolWorkshop.oval(c,x+15,y-4,28,5.7,'rgba(55,43,38,.19)');
       add(y-10,()=>table(c,l,s,idx,i));
     }
-    if(visible(...P(704,0)))highTable((depth,draw)=>add(depth,()=>draw(c)));
+    highTable(c,add,visible);
     for(const [l,row,side,id] of places){
       const [x,y]=P(l,rows[row]+side*16);
       if(visible(x,y))add(y,()=>drawPupil(c,x,y,side,id));
@@ -5715,13 +5995,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   if(entry==='training'||entry==='practice-bay')Object.assign(s,{bayX:267,bayY:225,bayFacing:'north-west'});
   if(entry==='counterweight')Object.assign(s,{practice:'gate',bayX:278,bayY:230,bayFacing:'east',targetHit:true,learned:true});
   if(entry==='counterweight-v2'||entry==='pendulum')Object.assign(s,{practice:'gate',gearRoom:'pendulum',bayX:entry==='pendulum'?249:218,bayY:212,bayFacing:'east',targetHit:true,learned:true,notch:0,bridgeLatched:true});
-  function courtyardStart(){
-    Object.assign(s,{room:'courtyard',campusX:SchoolCourtyard.spawn.x,campusY:SchoolCourtyard.spawn.y,campusFacing:'north'});
+  function campusStart(){
+    const staffEnd=entry==='high-table',position=staffEnd?SchoolGreatHall.dais:SchoolCourtyard.spawn;
+    Object.assign(s,{room:staffEnd?'great':'courtyard',campusX:position.x,campusY:position.y,campusFacing:staffEnd?'north-east':'north'});
   }
-  if(entry==='campus'||entry==='courtyard')courtyardStart();
+  if(entry==='campus'||entry==='courtyard'||entry==='high-table')campusStart();
   const migrated=restore();
-  if(entry==='courtyard'&&replayArrival){
-    courtyardStart();save();
+  if((entry==='courtyard'||entry==='high-table')&&replayArrival){
+    campusStart();save();
   }else if(migrated)save();
   const t=(en,ja)=>s.lang==='ja'?ja:en;
   const choice=(id,en,ja)=>({id,text:t(en,ja)});
@@ -6838,16 +7119,16 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     enableSound(); game.cast(); update();
   }
   const entryParam = params.get('entry');
-  const entrances=['side','front','training','practice-bay','counterweight','counterweight-v2','pendulum','campus','courtyard'];
+  const entrances=['side','front','training','practice-bay','counterweight','counterweight-v2','pendulum','campus','courtyard','high-table'];
   let initialEntry=entrances.includes(entryParam)?entryParam:null;
   if(!entryParam){
     try{if(!localStorage.getItem('friday.hogwarts.other-school-map.v1'))initialEntry='campus';}
     catch{initialEntry='campus';}
   }
-  // The dedicated arrival link starts another walk on a new navigation.
+  // Dedicated review links return to their subject on a new navigation.
   // Reload and browser history keep the visitor's place in its separate save.
   const arrivalNavigation=performance.getEntriesByType('navigation')[0];
-  const replayArrival=initialEntry==='courtyard'&&(!arrivalNavigation||arrivalNavigation.type==='navigate');
+  const replayArrival=(initialEntry==='courtyard'||initialEntry==='high-table')&&(!arrivalNavigation||arrivalNavigation.type==='navigate');
   game = createSchoolGame({onChange:update,beep,entry:initialEntry,replayArrival});
   el.journalToggle.addEventListener('click', () => toggleJournal(true));
   el.closeJournal.addEventListener('click', () => toggleJournal(false));
