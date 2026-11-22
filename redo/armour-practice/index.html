@@ -11710,7 +11710,7 @@ const SchoolThreeTrials=(()=>{
       }else if(op==='cord'){
         const [path,r,,close]=args;b.tube(g,n,P,path,r,tex,6,!!close);
       }else if(op==='pin'||op==='rod'){
-        const [a,c,r,d,,count]=args;
+        const [a,c,r,d]=args;
         if(op==='pin')b.tube(g,n,P,[a,c],r,tex,args[4]||12);
         else b.tube(g,n,P,[a,c],r/Math.SQRT2,tex,4,false,r/Math.SQRT2,d/r);
       }else if(op==='turn'){
@@ -11724,7 +11724,7 @@ const SchoolThreeTrials=(()=>{
       if(op==='block'){
         const [a,d,z,w,l,h]=args;b.block(g,'Winding frame masonry and oak',P,a,d,z,w,l,h,tex);
       }else if(op==='ring'){
-        const [sections,,segments=40,,phase=0]=args,[d,z]=kwargs.central||[0,17];
+        const [sections,,segments=40]=args,[d,z]=kwargs.central||[0,17];
         const local=(v,w,l)=>P(l,d+v,z+w);
         b.lathe(g,'Turned sheave, flange, axle or fastener',local,0,0,0,sections,tex,segments);
       }else if(op==='beam'){
@@ -12046,7 +12046,7 @@ const SchoolThreeTrials=(()=>{
       if(vs[j]===vs[j-1]||(i===2&&(vs[j]+vs[j-1])*.5<hv+10))continue;
       b.block(rug,'Bound medallion carpet and fringe',floor,us[i-1],vs[j-1],.01,us[i]-us[i-1],vs[j]-vs[j-1],.10,'skin');
     }
-    const {x:dummyX,y:dummyY}={x:230,y:216},station=b.group('Teaching mannequin and bogie');
+    const [dummyX,dummyY]=SchoolRoomStudy.props.target.anchorPx,station=b.group('Teaching mannequin and bogie');
     const bogie=b.paint(rect(213,193,35,28),c=>SchoolFurnishings.targetPart(c,'bogie',0));
     carved(b,station,'Bogie wheel, hub, fork and axle',bogie,()=>[dummyY,4.0,0,20],1);
     const poses=[];
@@ -12193,7 +12193,7 @@ const SchoolThreeTrials=(()=>{
     let turn,from,to,last,started;
     b.updates.push((v,t)=>{
       const gate=v.gate,goal=240+gate.notch*80;
-      if(turn===undefined||gate.turn===0&&turn!==0){from=to=last=goal;started=t-1;}
+      if(turn===undefined||gate.turn===0&&turn!==0||gate.turn===turn&&goal!==to){from=to=last=goal;started=t-1;}
       else if(gate.turn!==turn){from=last;to=goal;started=t;}
       turn=gate.turn;
       const age=t-started,k=clamp(age/.36);last=from+(to-from)*(1-(1-k)**2);
@@ -12219,14 +12219,16 @@ const SchoolThreeTrials=(()=>{
       b.rod(g,'Strap and rivets',w(i,z+.9),w(i+4.05,z+.9),1.13,art);
       crossbars.push({g,z,cap});
     }
-    const p=w(-27,38),weight=b.mobile('Descending grille weight',frame),rope=b.mobile('Counterweight chain',frame);
-    const pulley=b.mobile('Grille drive pulley',frame),local=(a,v,z)=>[p[0]+a,p[1]+v,p[2]+z];
-    b.block(frame,'Oak sheave bearing',P,156,2,31,10,4,14,'#76583f');
+    const gear=b.group('Drive gear on the face of the oak bearing',frame);
+    gear.position.copy(b.api.point(0,4.4,4.4));
+    const p=w(-27,38),weight=b.mobile('Descending grille weight',gear),rope=b.mobile('Counterweight chain',gear);
+    const pulley=b.mobile('Grille drive pulley',gear),local=(a,v,z)=>[p[0]+a,p[1]+v,p[2]+z];
+    b.block(frame,'Oak sheave bearing',P,156,2,31,10,4,14,art);
     const circ=Array.from({length:24},(_,i)=>[-.3+4.7*Math.cos(tau*i/24),0,4.7*Math.sin(tau*i/24)]);
     b.tube(pulley,'Open brass-edged sheave',local,circ,.75,'#ada186',8,true);
     for(let i=0;i<7;i++)b.tube(pulley,'Drive spoke',local,[[0,0,0],circ[Math.floor(i*24/7)]],.55,'#827d6c');
     b.tube(pulley,'Bronze sheave axle',local,[[0,-1,0],[0,1.2,0]],1.35,'#baaa82');
-    b.rod(frame,'Branch to grille',local(3.1,-.3,2.8),w(-17,46),.6,'#928775');
+    b.rod(gear,'Branch to grille',local(3.1,-.3,2.8),w(-17,46),.6,'#928775');
     const a=local(-4.7,0,0),q=local(-4.7,0,-11);
     b.rod(rope,'Hanging iron chain',a,q,.62,'#675f51');
     for(let i=0;i<6;i++)b.rod(rope,'Bright chain link',local(-4.8,.2,-i*1.9),local(-4.8,.2,-i*1.9-.64),.38,'#ad9d7f');
@@ -12260,14 +12262,23 @@ const SchoolThreeTrials=(()=>{
     const linksTex=b.paint(rect(114,152,345,120),c=>SchoolBridgeArt.linkages(c,{notch:1,latched:false}));
     const routes=[[[159.5,187.5],[155.7,194.1],[154.9,198.9],[155.7,200.5],[168.7,207.1],[170.8,207.9],[173.2,207.7],[187.4,200.9],[205.5,192.15],[231.5,178.1]],
       [[409,255.5],[421,249.5],C(384,477),C(384,415)],[[249,176],[266,184.5],[274,180.5]],[C(427,413),[426.5,211.2],[437,206]]];
-    for(const r of routes)b.tube(wire,'Winding rope or iron pull rod',(...v)=>v,r.map(([x,y])=>[x,y,1.0]),.85,linksTex);
+    for(const r of routes)b.tube(wire,'Winding rope or iron pull rod',(...v)=>v,r.map(([x,y])=>[x,y+1,1]),.85,linksTex);
     for(const [x,y] of [[154.8,198.8],[172.4,207],[420.8,249.6],[274,180.5],[436.3,206.3],[416.3,253],[256.6,173.1]])
       b.block(wire,'Sheave or register',iso(x,y),-2.7,-2.1,0,5.4,4.2,1.5,linksTex);
     const plates=[];
     for(const [notch,x,y] of [[0,240,176],[2,400,256]]){
       const g=b.mobile('Weight plate at notch '+notch),p=iso(x,y);
-      b.block(g,'Bevelled pressure plate',p,-11,-8,0,22,16,1.9,'#aa967a');
-      b.block(g,'Brass inset',p,-7,-4,1.9,14,8,.4,'#b6a173');plates.push([g,notch]);
+      const bounds=rect(x-22,y-14,44,29);
+      const face=(c,pressed)=>{
+        if(notch===2){SchoolBridgeArt.linkages(c,{notch:pressed?2:1,latched:false});return;}
+        const pr=(a,d,z=0)=>{const q=p(a,d,z);return [q[0],q[1]-q[2]]},s=SchoolArchitecture;
+        const h=pressed?.55:2.2;
+        s.prism(c,pr,-11,-8,22,16,0,h,{top:pressed?'#b3a064':'#b69b72',left:'#847963',right:'#746656'});
+        s.prism(c,pr,-7,-4,14,8,h,.3,{top:pressed?'#dfc674':'#a08864',left:'#837159',right:'#746854'});
+      };
+      const tex=b.paint(bounds,c=>face(c,false));
+      b.block(g,'Bevelled pressure plate',p,-11,-8,0,22,16,2,tex);
+      b.block(g,'Brass inset',p,-7.7,-4.7,2,15.4,9.4,.4,tex);plates.push({g,notch,tex,face});
     }
     const latch=b.group('Gallery ratchet'),lever=b.mobile('Pivoted locking lever',latch),pawl=b.mobile('Ratchet pawl',latch);
     const leverTex=b.paint(rect(430,174,32,41),c=>SchoolBridgeArt.ratchet(c,{latchAmount:0}));
@@ -12288,10 +12299,17 @@ const SchoolThreeTrials=(()=>{
       hinge(b,deck,anchor,[.5,.25,0],[-.5,.25,0],.66,a);
       if(a!==priorAngle){repaint(deckTex,c=>SchoolBridgeArt.deck(c,g));reproject(deck,deckTex);priorAngle=a;}
       stretch(b,chain,pin,toe,C(423-31*Math.cos(a),411.5,1+31*.66*Math.sin(a)));
-      for(const [plate,notch] of plates)plate.scale.y=g.notch===notch?.31:1;
-      b.spin(lever,axle,[0,1,0],1.2*clamp(g.latchAmount));pawl.position.copy(b.api.point(0,0,-2.3*g.latchAmount));
+      hinge(b,lever,axle,[0,1,0],[-1,0,0],1,1.2*clamp(g.latchAmount));
+      pawl.position.copy(b.api.point(0,0,-2.3*g.latchAmount));
       const now=g.notch+' '+g.latched;
-      if(now!==prev){repaint(linksTex,c=>SchoolBridgeArt.linkages(c,g));prev=now;}
+      if(now!==prev){
+        repaint(linksTex,c=>SchoolBridgeArt.linkages(c,g));
+        for(const plate of plates){
+          const pressed=g.notch===plate.notch;plate.g.scale.y=pressed?.31:1;
+          repaint(plate.tex,c=>plate.face(c,pressed));reproject(plate.g,plate.tex);
+        }
+        prev=now;
+      }
     });
   }
 
