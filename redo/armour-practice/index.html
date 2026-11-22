@@ -63,7 +63,7 @@ kbd {font:500 11px/1 var(--sans);border:1px solid currentColor;min-width:1.35em;
 #stick {position:fixed;width:104px;height:104px;margin:-52px 0 0 -52px;border:2px solid #f2ead876;border-radius:50%;background:#14121e30;pointer-events:none}
 #thumb {position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:#f2ead898}
 #lesson {position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:35px 10px max(70px,12vh);gap:7px;background:#101b16b8;pointer-events:auto}
-#slate {display:block;width:min(740px,96vw,calc(50dvh * 16/9));height:auto;aspect-ratio:16/9;image-rendering:pixelated;touch-action:none;cursor:crosshair}
+#slate {display:block;width:min(740px,96vw,calc(50dvh * 16/9));height:auto;aspect-ratio:16/9;image-rendering:pixelated;touch-action:none}
 #traceControls {text-align:center;max-width:min(720px,94vw)}
 .trace-buttons {display:flex;flex-wrap:wrap;justify-content:center;gap:3px}
 .trace-buttons button {min-width:44px;min-height:44px;background:#1e322adc;border:1px solid #a4ad8c;color:#f5ebd5;font:600 16px var(--sans)}
@@ -4677,7 +4677,7 @@ const SchoolCast = (() => {
     const canvas = document.createElement('canvas');
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d',{willReadFrequently:true});
     context.drawImage(image, 0, 0);
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
     const ink = pixels.data;
@@ -4711,6 +4711,9 @@ const SchoolCast = (() => {
     const seconds = Number.isFinite(age) && gesture ? age : time;
     const tick = Math.floor(Math.max(0, seconds) * sheet.fps);
     const frame = casting && Number.isFinite(age) ? Math.min(tick, sheet.frames - 1) : tick % sheet.frames;
+    if(who==='harry-ready'&&!casting){
+      SchoolActionPose.ready(ctx,x,y,direction,key,row,frame);return;
+    }
     const [width, height] = sheet.cell;
     const [footX, footY] = sheet.feet;
     ctx.imageSmoothingEnabled = false;
@@ -4726,7 +4729,110 @@ const SchoolCast = (() => {
     ctx.drawImage(image,frame*w,row*h,w,h,Math.round(x)-footX,Math.round(y)-footY,w,h);
     return true;
   }
-  return {draw,ready,drawFrame,sheet:key=>sheets[key]};
+  const bodies=new Map();
+  // Native resting right hand in each unarmed direction, in 80px sheet coordinates.
+  // In the west profile and rear three-quarter pose the far wrist is already occluded.
+  const restingHands=[31,30,null,null,49,50,44,35];
+  function registerCostume(key,row,frame,base,original,lean,sink){
+    const cel=original.getContext('2d').getImageData(frame*80,row*80,80,80).data;
+    // Register the source cel by the crown, glasses and cheeks, independently of
+    // its old weapon. Some high casts move the head by a full eye width.
+    const samples=[];
+    for(let y=13;y<35;y+=3)for(let x=26;x<=54;x+=3){
+      const i=(80*y+x)*4;
+      if(base[i+3]||x>=32&&x<=48)samples.push(i);
+    }
+    let best=Infinity,headX=0,headY=0;
+    for(let dy=-8;dy<=13;dy++)for(let dx=-11;dx<=11;dx++){
+      let cost=Math.abs(dx-lean)+Math.abs(dy-sink);
+      const offset=(dy*80+dx)*4;
+      for(const i of samples){
+        const j=i+offset;
+        if(Boolean(base[i+3])!==Boolean(cel[j+3]))cost+=80;
+        else if(base[i+3])cost+=Math.min(75,Math.abs(base[i]-cel[j])+Math.abs(base[i+2]-cel[j+2]));
+        if(cost>=best)break;
+      }
+      if(cost<best){best=cost;headX=dx;headY=dy;}
+    }
+    // These two source contacts borrow a reflected high wrist. Keep the face
+    // from Harry's actual northwest row so that its hair and identifying details stay sided.
+    const reflected=row===3&&((key.endsWith('lumos')&&[4,5].includes(frame))||
+      (key.endsWith('leviosa')&&[5,6].includes(frame)));
+    const warm=(data,k)=>data[k]>80&&data[k]-data[k+2]>17;
+    for(let y=9;y<58;y++){
+      const weight=Math.max(0,Math.min(1,(57-y)/23));
+      const offset=(Math.round(headY*weight)*80+Math.round(headX*weight))*4;
+      for(let x=23;x<=57;x++){
+        const i=(80*y+x)*4,j=i+offset;
+        if(!base[i+3]||!cel[j+3]||reflected&&y<34)continue;
+        // Keep the original actor's head, collar, chest and moving cloak folds.
+        // The free outer hand belongs to the clean costume and the right one to the rig.
+        if(y>=34&&Math.abs(x-40)>(y<47?7:9))continue;
+        if(warm(cel,j)&&!warm(base,i))continue;
+        base[i]=cel[j];base[i+1]=cel[j+1];base[i+2]=cel[j+2];
+      }
+    }
+  }
+  function drawBody(ctx,key,row,frame,lean,sink){
+    const stamp=[key,row,frame].join('/');
+    let body=bodies.get(stamp);
+    if(!body){
+      const isReady=key.startsWith('harry-ready'),baseKey=isReady?key.replace('-ready',''):'harry-idle';
+      const base=images.get(baseKey),original=images.get(key);
+      if(!base||!original)return;
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=80;
+      const c=canvas.getContext('2d',{willReadFrequently:true});
+      c.drawImage(base,isReady?frame*80:0,row*80,80,80,0,0,80,80);
+      const pixels=c.getImageData(0,0,80,80),rgba=pixels.data,hand=restingHands[row];
+      if(!isReady)registerCostume(key,row,frame,rgba,original,lean,sink);
+      if(hand!==null){
+        for(let y=44;y<57;y++)for(let x=hand-6;x<=hand+6;x++){
+          const i=(80*y+x)*4;
+          if(!rgba[i+3]||rgba[i]<73||rgba[i]-rgba[i+2]<12||rgba[i]-rgba[i+1]<8)continue;
+          // Replace the resting fingers with the neighbouring robe colour. Keeping
+          // the cloth underneath is important for the profile's overlapping sleeve.
+          const toward=x<40?1:-1;
+          let src=-1;
+          for(let n=1;n<=9;n++){
+            const j=i+toward*n*4;
+            if(rgba[j+3]&&rgba[j]<79&&Math.abs(rgba[j]-rgba[j+2])<12){src=j;break;}
+          }
+          if(src<0){rgba[i+3]=0;continue;}
+          rgba[i]=rgba[src];rgba[i+1]=rgba[src+1];rgba[i+2]=rgba[src+2];
+        }
+      }
+      c.putImageData(pixels,0,0);
+      if(isReady)body=canvas;
+      else{
+        body=document.createElement('canvas');body.width=body.height=80;
+        const out=body.getContext('2d');out.imageSmoothingEnabled=false;
+        // Register the original robe, face and scar by the feet. The boots and
+        // planted lower hem below them come directly from this technique's cel.
+        for(let y=0;y<58;y++){
+          const h=Math.min(1,(65-y)/49),next=Math.min(1,(64-y)/49);
+          const dest=y+Math.round(sink*h),end=y+1+Math.round(sink*next);
+          out.drawImage(canvas,0,y,80,1,Math.round(lean*h),dest,80,Math.max(1,end-dest));
+        }
+        out.drawImage(original,frame*80+19,row*80+57,43,10,19,57,43,10);
+      }
+      bodies.set(stamp,body);
+    }
+    ctx.imageSmoothingEnabled=false;ctx.drawImage(body,-40,-65);
+  }
+  const registered=new Map();
+  function sheet(key){
+    const source=sheets[key],id=key==='harry-cast'?'basic':key.replace('harry-action-','');
+    if(!source||!source.releaseTips||!SchoolWand.clips[id])return source;
+    if(!registered.has(key)){
+      const releaseTips=source.rows.map(name=>{
+        const tip=SchoolWand.arm(id,name,SchoolWand.forward(name)).tip;
+        return [Math.round(tip.x),Math.round(tip.y)];
+      });
+      registered.set(key,{...source,sourceReleaseTips:source.releaseTips,releaseFrame:SchoolWand.clips[id].snap,releaseTips});
+    }
+    return registered.get(key);
+  }
+  return {draw,ready,drawFrame,drawBody,sheet};
 })();
 
 /* Independently mounted props from Hogwarts' existing pixel-art catalog. */
@@ -4803,30 +4909,6 @@ const SchoolFurnishings = (() => {
     const [originX, originY, scale] = fitting[key];
     const left = x - originX * scale, top = y - originY * scale;
     c.drawImage(sprite, left, top, sprite.naturalWidth * scale, sprite.naturalHeight * scale);
-  }
-  let seatCutaway, pupilMask;
-  function drawPracticeSeat(c,seat,player) {
-    const sprite=textures.settle;
-    const dx=player.x-seat.x,dy=player.y-seat.y;
-    if(!sprite||dy>0||dy < -45||Math.abs(dx)>45){seat.draw(c);return;}
-    // Retain the carved ends and soften only the wood in front of Harry.
-    if(!seatCutaway){
-      seatCutaway=c.canvas.ownerDocument.createElement('canvas');
-      seatCutaway.width=sprite.width;seatCutaway.height=sprite.height;
-      pupilMask=c.canvas.ownerDocument.createElement('canvas');
-      pupilMask.width=68;pupilMask.height=110;
-      const mask=pupilMask.getContext('2d');mask.scale(34,55);
-      const fall=mask.createRadialGradient(1,1,.23,1,1,1);
-      fall.addColorStop(0,'rgba(0,0,0,.83)');fall.addColorStop(.65,'rgba(0,0,0,.72)');
-      fall.addColorStop(1,'transparent');mask.fillStyle=fall;mask.fillRect(0,0,2,2);
-    }
-    const ctx=seatCutaway.getContext('2d');
-    ctx.clearRect(0,0,sprite.width,sprite.height);
-    ctx.drawImage(sprite,0,0);
-    ctx.globalCompositeOperation='destination-out';
-    ctx.drawImage(pupilMask,Math.round(104+dx*2-34),Math.round(145+dy*2-96));
-    ctx.globalCompositeOperation='source-over';
-    c.drawImage(seatCutaway,seat.x-52,seat.y-72.5,104,92);
   }
   const byDepth = Object.fromEntries(Object.entries(rooms).map(([room, props]) =>
     [room, props.map(([key, x, y]) => ({ key, x, y, draw: c => furniture(c, key, x, y) }))]));
@@ -5030,7 +5112,7 @@ const SchoolFurnishings = (() => {
     if(part==='bogie')c.drawImage(textures.duellingBogie,anchorPx[0]-16,anchorPx[1]-21,32,24);
     else c.drawImage(textures.duellingFigure,frame*104,0,104,120,hingePx[0]-26,hingePx[1]-55,52,60);
   }
-  return { ready, drawPracticeSeat, objects: room => byDepth[room] || [], target, targetPart, targetFoot, armour, card, crest, floorCrest, rota, traversalStone, galleryWinch };
+  return { ready, objects: room => byDepth[room] || [], target, targetPart, targetFoot, armour, card, crest, floorCrest, rota, traversalStone, galleryWinch };
 })();
 
 /* The same foot-registered display harness worn in the Armour Practice Bay.
@@ -5113,65 +5195,74 @@ const SchoolHallFurnishings=(()=>{
   return {ready:SchoolFurnishings.ready,stoneGuardian};
 })();
 
-/* Original direction rows, one-shot timings and feet registrations come from the cast manifest. */
+/* The roll keeps all eight painted cels. Casting uses the same right-arm joints as the shot. */
 const SchoolActionPose = (() => {
-  const facings=['east','south-east','south','south-west','west','north-west','north','north-east'];
-  function select(p,id,aim){
-    const key=id==='basic'?'harry-cast':'harry-action-'+id,sheet=SchoolCast.sheet(key);
-    if(!sheet)return null;
-    let facing=p.facing||'south';
-    if(aim && Math.hypot(aim.x,aim.y)>.001){
-      const octant=Math.round(Math.atan2(aim.y,aim.x)/(Math.PI/4));
-      facing=facings[(octant+8)%8];
+  // Each painted tumble shifts within its source cell. Pin its silhouette centre
+  // and lowest opaque pixel to the travelled foot position as the eight cels play.
+  const rollCentre=[[37,37,37,36,37,36,36,36],[36,37,38,39,40,41,42,44],
+    [35,36,38,40,42,43,46,48],[40,41,42,42,43,44,44,45],
+    [44,43,44,44,43,43,43,43],[41,40,39,38,38,37,36,35],
+    [44,42,40,37,36,34,33,31],[41,40,38,37,37,36,34,33]];
+  const rollGround=[66,63,63,63,66,66,64,63];
+  function frameAt(sheet,action){
+    const progress=Math.max(0,Math.min(1,action.age/action.duration));
+    if(action.id==='basic'&&action.chained)return progress<.5?1:2;
+    let frame=0;
+    for(let i=1;i<sheet.onsets.length&&sheet.onsets[i]<=progress+1e-6;i++)frame=i;
+    return frame;
+  }
+  function stroke(c,start,end,width,color){
+    const dx=end.x-start.x,dy=end.y-start.y,steps=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))));
+    c.fillStyle=color;
+    for(let i=0;i<=steps;i++)c.fillRect(Math.round(start.x+dx*i/steps)-Math.floor(width/2),
+      Math.round(start.y+dy*i/steps)-Math.floor(width/2),width,width);
+  }
+  function sleeve(c,j){
+    const {shoulder,elbow,grip}=j;
+    for(const [a,b] of [[shoulder,elbow],[elbow,grip]]){
+      stroke(c,a,b,5,'#211c23');stroke(c,a,b,3,'#39363c');
+      stroke(c,{x:a.x,y:a.y-1},{x:b.x,y:b.y-1},1,'#48444b');
     }
-    return {key,sheet,row:Math.max(0,sheet.rows.indexOf(facing))};
+  }
+  function wand(c,{grip,tip}){
+    const x=Math.round(grip.x),y=Math.round(grip.y);
+    stroke(c,grip,tip,2,'#37281f');stroke(c,grip,tip,1,'#ac8264');
+    c.fillStyle='#4e3230';c.fillRect(x-2,y-1,5,3);c.fillRect(x-1,y-2,3,5);
+    c.fillStyle='#b88974';c.fillRect(x-1,y-1,3,3);
+    c.fillStyle='#e3b9a1';c.fillRect(x-1,y-1,2,1);
+    c.fillStyle='#d6ae80';c.fillRect(Math.round(tip.x),Math.round(tip.y),1,1);
+  }
+  function paint(c,x,y,name,j,body){
+    const far=name==='west'||name==='north-west'||name==='south-west';
+    c.save();c.translate(Math.round(x),Math.round(y));
+    if(far)sleeve(c,j);
+    body();
+    if(!far)sleeve(c,j);
+    wand(c,j);c.restore();
+  }
+  function ready(c,x,y,name,key,row,frame){
+    const d=SchoolWand.forward(name);
+    // Harry carries the point down and outward from his right hip at rest.
+    const side=name==='north'||name==='north-east'||name==='east'?1:-1;
+    const dx=side*(.52+Math.abs(d.x)*.24),dy=.82,n=Math.hypot(dx,dy);
+    const j=SchoolWand.arm('ready',name,{x:dx/n,y:dy/n});
+    const bob=key.endsWith('walk')&&[1,2,5,6].includes(frame)?-1:0;
+    for(const p of Object.values(j))p.y+=bob;
+    paint(c,x,y,name,j,()=>SchoolCast.drawBody(c,key,row,frame,0,0));
   }
   function draw(c,p,action){
     if(!action)return false;
-    const pose=select(p,action.id,action.aim);
-    if(!pose)return false;
-    const progress=Math.max(0,Math.min(1,action.age/action.duration));
-    const chained=action.id==='basic'&&action.chained;
-    let frame=0;
-    if(chained)frame=progress<.5?1:2;
-    else for(let i=1;i<pose.sheet.onsets.length && pose.sheet.onsets[i]<=progress+1e-6;i++)frame=i;
-    return SchoolCast.drawFrame(c,p.x,p.y,pose.key,pose.row,frame);
+    const key=action.id==='basic'?'harry-cast':'harry-action-'+action.id,sheet=SchoolCast.sheet(key);
+    if(!sheet)return false;
+    const name=action.facing||(action.aim?SchoolWand.facing(action.aim):p.facing)||'south';
+    const row=Math.max(0,sheet.rows.indexOf(name)),frame=frameAt(sheet,action);
+    if(action.id==='roll')return SchoolCast.drawFrame(c,p.x+40-rollCentre[row][frame],p.y+64-rollGround[row],key,row,frame);
+    const j=SchoolWand.arm(action.id,name,action.aim||SchoolWand.forward(name),action.scale??1,frame);
+    const b=SchoolWand.body(action.id,name,frame);
+    paint(c,p.x,p.y,name,j,()=>SchoolCast.drawBody(c,key,row,frame,b.x,b.y));
+    return true;
   }
-  const trails=new WeakMap();
-  function rollTrail(c,p,combat,add){
-    const age=combat?.rollAge;
-    if(!(age>=0&&age<.50)){trails.delete(c.canvas);return;}
-    let trail=trails.get(c.canvas);
-    if(!trail||age<trail.age){
-      const buffer=c.canvas.ownerDocument.createElement('canvas');
-      buffer.width=80;buffer.height=80;
-      trail={age:-1,buffer,samples:[]};trails.set(c.canvas,trail);
-    }
-    const samples=trail.samples;
-    if(combat.rolling && age!==trail.age){
-      samples.push({age,x:p.x,y:p.y,progress:combat.rollProgress,aim:combat.rollDirection});
-    }
-    trail.age=age;
-    while(samples.length&&age-samples[0].age>=.20)samples.shift();
-    // F1 keeps every third displayed pose, up to three copies, for 0.20 s.
-    // Depth follows each historical foot position when a roll passes furniture.
-    for(let i=0;i<3;i++){
-      const sample=samples[samples.length-1-3*(i+1)];
-      if(!sample)continue;
-      const opacity=.42*(1-(age-sample.age)/.20)-i*.08;
-      if(opacity<=0)continue;
-      add(sample.y-1,()=>{
-        const mask=trail.buffer.getContext('2d');
-        mask.clearRect(0,0,80,80);
-        draw(mask,{x:40,y:65},{id:'roll',age:sample.progress,duration:1,aim:sample.aim});
-        mask.globalCompositeOperation='source-in';mask.fillStyle='#a8d8ff';
-        mask.fillRect(0,0,80,80);mask.globalCompositeOperation='source-over';
-        c.save();c.globalAlpha=opacity;
-        c.drawImage(trail.buffer,Math.round(sample.x)-40,Math.round(sample.y)-65);c.restore();
-      });
-    }
-  }
-  return {draw,rollTrail};
+  return {draw,ready,frameAt};
 })();
 
 /* Individual workshop pieces. The plane coordinates share the masonry's 2:1 projection.
@@ -6285,21 +6376,33 @@ const SchoolArchitecture = (() => {
     }
   }
   function cabinet(c,p,x,w,bottom=0) {
+    prism(c,p,x-.9,0,w+1.8,9.4,bottom+1,1.2,oak);
     prism(c,p,x,.75,w,7.5,bottom,21,oak);
-    for(let n=1;n<w-3;n+=12){
-      panel(c,p,x+n,8.3,bottom+3,9.5,15,'#302c2b');
-      panel(c,p,x+n+1.6,8.5,bottom+4,6.6,12.4,'#715239');
-      track(c,p,x+n,8.6,bottom+4,[[1,0],[1,12],[7.7,12]],'#987452',.7);
-      track(c,p,x+n,8.7,bottom+5,[[3,0],[3.2,5],[3,9]],'#614632',.55);
-      ellipse(c,...p(x+n+7.8,9,bottom+10),.7,.7,'#c9a269');
+    for(let i=0;i<3;i++){
+      const door=x+1.35+i*(w-2.2)/3,span=(w-2.2)/3-1.1;
+      panel(c,p,door,8.34,bottom+2.7,span,15.8,'#3f322c');
+      panel(c,p,door+.65,8.45,bottom+3.25,span-1.35,14.55,'#805e43');
+      const a=door+1.85,b=door+span-1.9;
+      polygon(c,p,[[a,8.55,5.1],[b,8.55,5.1],[b,8.55,15.3],[(a+b)/2,8.55,16.5],[a,8.55,15.3]],'#5d4233');
+      joint(c,p,[[b,8.68,5.4],[a+.35,8.68,5.4],[a+.35,8.68,15.1]],'#ad8456',.66);
+      const u=door+(i%2?2.4:span-2.3),[xx,yy]=p(u,8.97,bottom+10.2);
+      ellipse(c,xx,yy,.94,1.32,'#443c32');ellipse(c,xx-.12,yy-.38,.61,.57,'#c4a477');
+      const hinge=door+(i%2?span-.9:.8);
+      for(const h of [5.6,14.1])track(c,p,hinge,8.92,bottom+h,[[0,0],[i%2?-2.05:2.05,.1]],'#3c3833',.9);
     }
     prism(c,p,x-1.2,0,w+2.4,10.2,21+bottom,2.4,oak);
-    prism(c,p,x-.9,0,w+1.8,9.4,bottom+1,1.2,oak);
+    for(const [v,start,end] of [[2.3,.2,w-.5],[5.35,2.8,w-1.3],[8.2,5.4,w-2.5]]){
+      joint(c,p,[[x+start,v,bottom+23.45],[x+w*.48,v+.14,bottom+23.45],[x+end,v,bottom+23.45]],'#765138',.58);
+      joint(c,p,[[x+start+3,v+.55,bottom+23.47],[x+w*.44,v+.57,bottom+23.47]],'#b58c61',.46);
+    }
   }
   function book(c,p,x,v,z,w,d,h,col) {
     prism(c,p,x,v,w,d,z,h,{top:'#d2bd92',left:col,right:'#645342'});
     prism(c,p,x-.4,v-.2,w+.8,d+.4,z+h,.75,{top:col,left:col,right:'#453d36'});
     joint(c,p,[[x+1,v+d+.05,z+h*.48],[x+w-1,v+d+.05,z+h*.48]],'#c4b49a',.4);
+  }
+  function paintGateCabinet(c){
+    cabinet(c,onWall(projector('gate'),true),103,45);
   }
   function candlestick(c,p,x,v,z,lit=true) {
     const [sx,sy]=p(x,v,z);
@@ -6442,7 +6545,7 @@ const SchoolArchitecture = (() => {
       }
       if(room==='gate'){
         if(!side)portal(c,w,190,0,24,57);
-        else cabinet(c,w,103,45);
+        else paintGateCabinet(c);
       }else if(room==='gallery'){
         if(!side)portal(c,w,204,0,22,56);
         else SchoolGalleryFittings.outlet(c,w,117);
@@ -6580,7 +6683,7 @@ const SchoolArchitecture = (() => {
     }
     c.restore();
   }
-  return {density,backgroundY,backgroundHeight,viewWidth,viewHeight,background,objects,fill,edge,dot,ellipse,projector,prism,fromScreen,armour,shade,portal};
+  return {density,backgroundY,backgroundHeight,viewWidth,viewHeight,background,objects,fill,edge,dot,ellipse,projector,prism,fromScreen,armour,shade,portal,paintGateCabinet};
 })();
 
 /* A cut through the occupied upper floor reveals the gallery beneath it. The
@@ -6896,9 +6999,12 @@ const SchoolGalleryFittings=(()=>{
       const u=left+w*(i%2?.65:.31);
       line(c,[[u,y+z+(u-left)*.45],[u,y+z+5+(u-left)*.45]],'#4a504c',.65);
     }
-    line(c,[[left,heel],[x,heel+w*.45],[right,heel]],'#86918a',.85);
+    const waterLine=[[left,heel],[x,heel+w*.45],[right,heel]];
+    poly(c,[[left,heel-4],[x,heel+w*.45-4],[right,heel-4],...waterLine.slice().reverse()],'rgba(39,62,57,.46)');
+    line(c,waterLine,'#84958a',.75);
     for(let i=0;i<3;i++)line(c,[[left-5-i*3,heel+1+i*2],[left+1,heel+1.4+i*2],[x-1,heel+4+i*1.5]],'rgba(160,177,159,.3)',.62);
   }
+  const piers=[[132,221,8.1,27],[172,245,8.8,26],[228,223,8,26],[351,160,7.2,26],[409,205,7,26],[461,225,9.3,26]];
   function lower(c){
     // Window reflections fragment at the waterline. Keep the bright water
     // away from the brass face the player aims at from the entry quay.
@@ -6927,7 +7033,7 @@ const SchoolGalleryFittings=(()=>{
       const y=141+i*.94,x=185+Math.sin(i*.61)*12+i*.6,w=5+Math.sin(i*.73)*3.8;
       line(c,[[x-w,y],[x,y-.65],[x+w*1.8,y]],i%4?'rgba(190,200,171,.32)':'rgba(201,203,176,.59)',.75);
     }
-    for(const [x,y,w,d] of [[132,221,8.1,27],[185,231,11,32],[226,221,7,23],[351,156,8,22],[409,205,7,18],[463,204,10,26]]){
+    for(const [x,y,w,d] of piers){
       oval(c,x+3,y+d+5,w*1.9,3.2,'rgba(26,39,39,.23)');pier(c,x,y,w,d);
     }
     // Ties and bearing shoes locate the two ferry rails below its wet sill.
@@ -6999,7 +7105,7 @@ const SchoolGalleryFittings=(()=>{
     line(c,[[-4.85,1.3],[0,3.1],[4.3,1.4]],'#c2a56e',.6);
     c.restore();
   }
-  return {outlet,lower,approach,windingDrum,keeperSeal,bearing,swing};
+  return {outlet,lower,approach,windingDrum,keeperSeal,bearing,swing,piers};
 })();
 
 /* Floor polygons serve both the painter and the feet test. The ferry's top
@@ -7055,12 +7161,24 @@ const SchoolPendulumGallery=(()=>{
       if(b[0]>=a[0])continue;
       const side=[a,b,[b[0],b[1]+depth],[a[0],a[1]+depth]];
       poly(c,side,b[1]>a[1]?'#706357':'#544d4a');
-      line(c,[[a[0],a[1]+4],[b[0],b[1]+4]],'#857967',1.1);
-      const n=Math.max(1,Math.floor(Math.hypot(a[0]-b[0],a[1]-b[1])/19));
-      for(let j=1;j<=n;j++){
-        const f=j/n,x=a[0]+(b[0]-a[0])*f,y=a[1]+(b[1]-a[1])*f;
-        line(c,[[x,y+.5],[x,y+3.2],[x+1,y+4.4],[x+1,y+depth-1]],'#514b46',.8);
+      const along=(f,z)=>[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f+z];
+      const n=Math.max(1,Math.round(Math.hypot(a[0]-b[0],a[1]-b[1])/16));
+      for(let row=0;row<2;row++){
+        const top=row===0?.4:5.5,base=row===0?4.9:depth-.3;
+        for(let j=-1;j<n;j++){
+          const lo=Math.max(0,(j+row*.5)/n),hi=Math.min(1,(j+1+row*.5)/n);
+          if(hi<=lo)continue;
+          const f=lo+.007,g=hi-.007,cols=row===0?['#948777','#8c8071','#9a8d79']:['#746d60','#67665d','#68675e'];
+          poly(c,[along(f,top),along(g,top),along(g,base),along(f,base)],cols[(j+4+i)%3]);
+          line(c,[along(f,base-.4),along(f,top+.25),along(g-.01,top+.25)],row===0?'#ad9f89':'#8b8472',.58);
+          if(row===1){
+            poly(c,[along(f,base-2.8),along(g,base-4.3),along(g,base),along(f,base)],'rgba(46,61,54,.34)');
+            const k=(f+g)*.5;
+            line(c,[along(k,top+1.3),along(k+.018,top+2.8),along(k+.014,top+3.4)],'#575a52',.47);
+          }
+        }
       }
+      line(c,[along(0,4.9),along(1,4.9)],'#625d52',.72);
     }
     poly(c,pts,cap);line(c,[...pts,pts[0]],'#b2a184',1.25);
     c.save();c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.clip();
@@ -7071,6 +7189,10 @@ const SchoolPendulumGallery=(()=>{
       const tile=[[x+1,y],[x+15,y+7],[x+43,y-7],[x+29,y-14]];
       poly(c,tile,['#9d917c','#a49a86','#938a7a','#a49a84','#998d7c','#aaa08c','#9c9080','#a29887','#9e9283','#a39786','#9f9481'][d]);
       line(c,[tile[0],tile[1],tile[2]],'#b6ab94',.5);
+      if(d%3===0){
+        line(c,[[x+12,y+.4],[x+14,y-.8],[x+16.4,y-.85],[x+18.8,y-2.6]],'#897f6e',.51);
+        line(c,[[x+19,y-2.15],[x+20.5,y-3]],'#b4aa94',.5);
+      }
     }
     c.restore();
   }
@@ -7792,17 +7914,18 @@ const SchoolCourtyardGrounds=(()=>{
     }
     for(const isWest of [true,false]){
       eavesChannel(c,outline,isWest);
-      const transverse=isWest?3:2;
+      const gallery=SchoolCourtyardArcades.section,spring=SchoolCourtyardArcades.archHeight(1);
+      const transverse=isWest?2:1,span=isWest?98.4:68;
       for(let i=0;i<transverse;i++){
-        const x=320+(isWest?-1:1)*(56.8+i*32.1);
-        castFoot(x,154,2.35,31,'rgba(56,66,60,.23)');
+        const x=320+(isWest?-1:1)*(51+i*span/transverse);
+        castFoot(x,154,2.75,spring,'rgba(56,66,60,.23)');
       }
-      const bays=isWest?[[outline[0],outline[6],5]]:[[outline[1],outline[2],2],[outline[2],outline[3],4]];
+      const bays=isWest?[[outline[0],outline[6],gallery.westBays]]:[[outline[1],outline[2],gallery.eastBays[0]],[outline[2],outline[3],gallery.eastBays[1]]];
       for(let j=0;j<bays.length;j++){
         const [a,b,count]=bays[j];
         for(let i=j===0?0:1;i<=count;i++){
-          const t=i/count,[x,y]=lerp(a,b,t),height=!isWest&&j===0?30*(.72+.28*t):30;
-          castFoot(x,y,3.45,height,'rgba(65,72,65,.20)');
+          const t=i/count,[x,y]=lerp(a,b,t);
+          castFoot(x,y,3.8,spring,'rgba(65,72,65,.20)');
         }
       }
     }
@@ -7879,7 +8002,22 @@ const SchoolCourtyardGrounds=(()=>{
    along the arcade, d runs away from the courtyard, z is stone height. */
 const SchoolCourtyardArcades=(()=>{
   'use strict';
-  const pitch=43.2,span=16.5,spring=36.65,rise=23.35;
+  const pitch=43.2,span=16.8,spring=36.65,rise=23.35;
+  // Harry's upright sprite rises 49–51 units above his planted feet. Keep the
+  // plinth and capital in stone-sized courses while lengthening the shaft.
+  const section={pitch,span,westBays:4,eastBays:[1,3],depth:36,eave:114,roofPitch:.29,
+    endMid:18.4,endRadius:13.1,
+    cornices:[[105.4,107],[108.5,110.7],[112,114.2]]};
+  function elevation(h){
+    if(h<=0)return h;
+    if(h<=6.5)return h*1.05;
+    if(h<=32.9)return 6.825+(h-6.5)*(68-6.825)/26.4;
+    if(h<=spring)return 68+(h-32.9)*1.6;
+    return 74+(h-spring)*1.17;
+  }
+  // The coping and slate rise are set at surveyed absolute heights.
+  const atCrown=h=>spring+(h-74)/1.17;
+  const archHeight=t=>elevation(spring+Math.sqrt(Math.max(0,(span+centre)**2-(Math.abs(t)*span+centre)**2)));
   const centre=(rise*rise-span*span)/(2*span);
   const curve=(side,t,r=span)=>{
     const angle=Math.acos(centre/(r+centre))*t;
@@ -7887,7 +8025,7 @@ const SchoolCourtyardArcades=(()=>{
   };
   // Plan coordinates double screen y before measuring the ground normals.
   // The offset lines of adjoining slate roofs meet above the corner pier.
-  const bend=2*pitch,diagonalLength=Math.hypot(59,29);
+  const bend=section.eastBays[0]*pitch,diagonalLength=Math.hypot(59,29);
   const diagonal=[29/diagonalLength,-59/diagonalLength],long=[Math.SQRT1_2,-Math.SQRT1_2];
   function miter(a,b){
     const d=Math.SQRT2/(1+a[0]*b[0]+a[1]*b[1]);
@@ -7895,23 +8033,22 @@ const SchoolCourtyardArcades=(()=>{
   }
   const rearStart=miter([0,-1],diagonal),rearBend=miter(diagonal,long);
   function plan(side,u,d){
-    if(side<0)return [171-u-d,154+(u-d)*.5];
+    if(side<0){const run=u*216/(section.westBays*pitch);return [171-run-d,154+(run-d)*.5];}
     if(u<=bend){
       const t=u/bend;
       return [439+59*t+d*(rearStart[0]+(rearBend[0]-rearStart[0])*t),
         154+14.5*t+d*(rearStart[1]+(rearBend[1]-rearStart[1])*t)];
     }
-    const t=(u-bend)/(4*pitch),run=187*t;
+    const t=(u-bend)/(section.eastBays[1]*pitch),run=187*t;
     return [498+run+d*(rearBend[0]+(1-rearBend[0])*t),
       168.5+run*.5+d*(rearBend[1]+(-.5-rearBend[1])*t)];
   }
   function draw(c,side){
     const west=side<0;
-    const bays=west?5:6,length=pitch*bays;
-    const roofHeight=56.6,heightScale=.775;
+    const bays=west?section.westBays:section.eastBays[0]+section.eastBays[1],length=pitch*bays;
     const at=(u,d,z)=>{
       const [x,y]=plan(side,u,d);
-      return [x,y-(z>0?z*heightScale:z)];
+      return [x,y-elevation(z)];
     };
     function project(points,closed){
       if(west)return points.map(p=>at(...p));
@@ -7939,15 +8076,23 @@ const SchoolCourtyardArcades=(()=>{
       poly([[v,near,z],[v,far,z],[v,far,z+h],[v,near,z+h]],end);
       poly([[u,near,z+h],[v,near,z+h],[v,far,z+h],[u,far,z+h]],top);
     }
-    function ashlar(u,v,d,b,t,h,base,recess=false){
+    function ashlar(u,v,d,b,t,h,base){
       quad(u,v,d,b,t,color(base,-11));
       for(let z=b,row=0;z<t;z+=h,row++){
         for(let x=u-(row%2)*9;x<v;){
           const end=Math.min(v,x+13+random()*12),a=Math.max(u,x+.29),y=Math.min(t,z+h-.45);
           if(end>a+.7){
-            const tone=(random()-.45)*(recess?7:13);
+            const tone=(random()-.45)*13;
             quad(a,end-.12,d,z+.33,y,color(base,tone));
-            if(!recess&&random()>.15){
+            if(end-a>4){
+              for(let f=0;f<7;f++){
+                const x=a+.78+random()*(end-a-2),h=z+.67+random()*(y-z-1.2);
+                const chip=Math.min(.3+random()*1.6,end-x-.3);
+                edge([[x,d,h],[x+chip*.6,d,h+.13],[x+chip,d,h+.11]],color(base,tone+(f%3===0?8:-5)),.38);
+              }
+              if(random()>.48)edge([[end-.5,d,z+.55],[end-.46,d,y-.4]],color(base,tone-10),.37);
+            }
+            if(random()>.15){
               const hi=Math.min(end-.55,a+2+random()*9);
               edge([[a+.4,d,y-.12],[hi,d,y-.14]],color(base,tone+13),.42);
               if(random()>.59){
@@ -7969,9 +8114,42 @@ const SchoolCourtyardArcades=(()=>{
       for(let i=15;i>=0;i--)a.push(at(...arc(mid,1,i/16,span,d)));
       a.push(at(mid+span,d,0));return a;
     }
+    // Dress the far wall in physical-height courses. Mortar beds and upright
+    // joints keep the same visible weight above and below the window sill.
+    function rearWall(d){
+      const lo=-60,hi=length+54,stones=west?
+        [[99,104,95],[107,107,94],[95,102,94],[103,108,98]]:
+        [[107,106,90],[114,109,91],[98,104,93],[105,109,95]];
+      const h=z=>z<6.825?z/1.05:z<68?6.5+(z-6.825)*26.4/(68-6.825):z<74?32.9+(z-68)/1.6:atCrown(z);
+      const pt=(u,z)=>[u,d,h(z)],bed=[5.4,6.7,5.9,7.1,5.65,6.15];
+      quad(lo,hi,d,-1,atCrown(section.eave),west?'#515a52':'#585d50');
+      for(let low=0,row=0;low<section.eave;row++){
+        const high=Math.min(section.eave,low+bed[row%bed.length]);
+        for(let start=lo-(row%2)*5.1,col=0;start<hi;col++){
+          const width=7.3+random()*6.9,end=Math.min(hi,start+width);
+          const a=Math.max(lo,start+.23),b=end-.24,top=high-.16,bottom=low+.23;
+          if(b>a+.8){
+            const bank=Math.floor((a+86+row*3.4)/28)+Math.floor(row/3);
+            const pigment=stones[(bank+(col%4===1?1:0)+stones.length)%stones.length],shade=Math.round(random()*5)-2;
+            const nick=(col+row*2)%7===0?.65:.17;
+            poly([pt(a,bottom+nick),pt(a+nick,bottom),pt(b-.28,bottom),pt(b,bottom+.31),pt(b,top),pt(a,top)],color(pigment,shade));
+            if((row+col)%3!==1){
+              edge([pt(a+.14,bottom+.52),pt(a+.14,top-.19),pt(a+Math.min(width*.65,5.4),top-.19)],color(pigment,shade+8),.43);
+            }
+            if((row*3+col)%5===1){
+              const shoulder=a+(b-a)*.37;
+              poly([pt(a+.22,bottom+.65),pt(shoulder,bottom+.52),pt(a+(b-a)*.71,low+1.34),
+                pt(b-.3,low+1.53),pt(b-.3,bottom+.25),pt(a+.45,bottom+.25)],color(pigment,shade-5));
+            }
+          }
+          start+=width;
+        }
+        low=high;
+      }
+    }
     // The gallery stands on the same raised masonry terrace as the viaduct apron.
     // Its end wall continues the existing five bedding courses under the last bay.
-    const terraceEnd=length+1,outerD=26.3,join=-.25,depth=39;
+    const terraceEnd=length+1,outerD=section.depth+4.3,join=-.25,depth=39;
     const plinthPoint=(d,z)=>[terraceEnd,d,z];
     const plinthBase=west?[121,126,112]:[128,129,113];
     poly([plinthPoint(join,0),plinthPoint(outerD,0),plinthPoint(outerD,-depth),plinthPoint(join,-depth)],'#62695e');
@@ -8000,7 +8178,7 @@ const SchoolCourtyardArcades=(()=>{
       const u=i*pitch;
       poly([[u-4,0,.1],[u+4,0,.1],[u+8.4,-5.8,.1],[u+1.4,-6.6,.1]],'rgba(64,65,53,.13)');
     }
-    ashlar(0,length,0,0,73,7.35,limestone);
+    ashlar(0,length,0,0,atCrown(section.eave)-.2,4.65,limestone);
     // Real stone openings share one clipped interior. Each reveals the
     // neighbouring vault and its opposite wall from the actual camera angle.
     c.save();
@@ -8010,8 +8188,8 @@ const SchoolCourtyardArcades=(()=>{
       path.forEach(([x,y],j)=>j?c.lineTo(x,y):c.moveTo(x,y));c.closePath();
     }
     c.clip();
-    const rear=22,shadowStone=west?[78,85,79]:[83,85,73];
-    ashlar(-50,length+36,rear,-1,64,8.2,shadowStone,true);
+    const rear=section.depth;
+    rearWall(rear);
     for(let i=-1;i<=bays;i++){
       const mid=(i+.5)*pitch;
       // Place the rear pair on the sightline through this bay. The short
@@ -8020,35 +8198,61 @@ const SchoolCourtyardArcades=(()=>{
       const uScale=at(mid+1,rear,0)[0]-rearMid;
       const lightU=mid+(visibleMid-rearMid)/uScale;
       // Narrow external lancets admit cool sky light, under a deep splayed sill.
-      for(const off of [-3.25,3.25]){
-        const u=lightU+off,outline=[[u-2.25,rear,17],[u-2.25,rear,32],[u-.95,rear,35.3],
-          [u,rear,36.4],[u+1.1,rear,35],[u+2.25,rear,32],[u+2.25,rear,17]];
+      for(const off of [-3.7,3.7]){
+        const u=lightU+off,outline=[[u-2.7,rear,15.6],[u-2.7,rear,29.1],[u-1.3,rear,32.6],
+          [u,rear,34.5],[u+1.3,rear,32.6],[u+2.7,rear,29.1],[u+2.7,rear,15.6]];
         poly(outline,'#384542');
-        poly([[u-1.5,rear,18.2],[u-1.5,rear,31.8],[u+.12,rear,35.1],[u+1.2,rear,32.3],[u+1.2,rear,18.2]],west?'#91a59f':'#91a19a');
-        poly([[u-1.35,rear,18.2],[u-1.35,rear,24.6],[u-.3,rear,25.7],[u+1.15,rear,25.2],[u+1.15,rear,18.2]],'#70887f');
-        for(const z of [22.85,29.45])edge([[u-1.4,rear,z],[u+1.3,rear,z]],'#55675e',.65);
-        edge([[u+1.8,rear,17.7],[u+1.8,rear,32.2],[u,rear,35.6]],'#929484',.79);
+        poly([[u-1.95,rear,16.4],[u-1.95,rear,29.1],[u,rear,33.4],[u+1.8,rear,29.2],[u+1.8,rear,16.4]],west?'#94aaa4':'#899e95');
+        for(let row=0;row<5;row++){
+          const b=16.45+row*2.53,m=b+1.24,t=b+2.48;
+          const pane=[[u-1.85,rear,m],[u,rear,b],[u+1.8,rear,m],[u,rear,t]];
+          poly(pane,color(west?[133,153,147]:[121,143,135],(row*7+i*3)%9-3));
+          edge([...pane,pane[0]],'#586d64',.46);
+        }
+        edge([[u-1.98,rear,15.9],[u-1.98,rear,29.6],[u,rear,34.2]],'#495852',.84);
+        edge([[u+2.5,rear,15.95],[u+2.5,rear,29.3],[u,rear,34.5]],'#abaa95',.77);
+        for(const z of [20.2,25.4,30.35])edge([[u-1.75,rear,z],[u+1.65,rear,z]],'#57675f',.57);
       }
-      terrace(lightU-6.5,lightU+6.5,rear-2,rear,15.5,1.38,'#a2a38b','#646e62','#434f48');
+      const sill=(du,d,z)=>[lightU+du,rear+d,z];
+      if((i+(west?1:0))%3!==1){
+        const side=i%2===0?1:-1,run=(du,z)=>sill(du*side,0,z);
+        poly([run(2.7,14.2),run(6.96,14.2),run(7.12,11.75),run(6.27,10.6),
+          run(5.48,9.4),run(4.72,10.2),run(4.97,11.92),run(3.06,11.7)],'rgba(68,79,61,.21)');
+        poly([run(4.85,14.16),run(6.7,14.16),run(6.57,12.08),run(5.9,10.95),run(5.33,11.83)],'rgba(67,72,57,.14)');
+      }
+      poly([sill(-7.35,0,14.4),sill(7.7,0,14.45),sill(8.1,0,13.25),sill(-6.93,0,13.62)],'#596050');
+      poly([sill(-7.5,-2.65,14.15),sill(7.5,-2.65,14.15),sill(7.9,-2.95,15.12),sill(-7.9,-2.95,15.12)],'#7f8270');
+      poly([sill(7.5,-2.65,14.15),sill(7.5,0,14.38),sill(7.9,0,15.7),sill(7.9,-2.95,15.12)],'#616b5c');
+      poly([sill(-7.9,-2.95,15.12),sill(7.9,-2.95,15.12),sill(7.9,0,15.7),sill(-7.9,0,15.7)],'#a1a18a');
+      edge([sill(-7.74,-2.94,15.13),sill(7.61,-2.94,15.13)],'#b0ac93',.55);
+      edge([sill(-7.28,-2.68,14.21),sill(7.44,-2.68,14.21)],'#525d50',.65);
       // Two diagonals rise from each paired capital and meet at the crown.
       for(const sign of [-1,1]){
-        const rib=[[mid+sign*18.4,rear,29],[mid+sign*15,rear-2.8,36.7],[mid+sign*10.3,rear-6.6,42.4],[mid+sign*5,rear-9.2,47.7],[mid,rear-11,49]];
+        const rib=[[lightU+sign*19.5,rear,32],[lightU+sign*16,rear-2.8,37.9],[lightU+sign*10.3,rear-6.6,42.4],[lightU+sign*5,rear-9.2,47.7],[lightU,rear-11,49]];
         edge(rib,'#3d4b46',2.6);
         edge(rib.map(([u,d,z])=>[u-.35,d,z+.74]),'#7c8375',.95);
       }
-      edge([[mid-18.5,rear,1],[mid-18.5,rear,29.5]],'#404e45',2.3);
-      edge([[mid-18.9,rear,1],[mid-18.9,rear,29.5]],'#858a78',.8);
-      terrace(mid-20.25,mid-16.8,rear-1.45,rear,28.8,1.4,'#8c9180','#626c5e','#445047');
+      const respond=lightU-19.5;
+      terrace(respond-1.6,respond+1.45,rear-1.2,rear,3,29,'#7e8270','#666d60','#465248');
+      terrace(respond-2.1,respond+2,rear-1.8,rear,1.4,1.6,'#858876','#687063','#435148');
+      terrace(respond-2.1,respond+2,rear-1.45,rear,31.4,1.3,'#969a86','#626c5e','#445047');
+      for(const h of [9.6,16.3,23.4,29.4])edge([[respond-1.5,rear-1.2,h],[respond+1.45,rear-1.2,h]],'#505e52',.46);
     }
-    for(let row=0;row<4;row++){
-      const d=row*5.5;
+    for(let row=0;row<6;row++){
+      const d=row*6;
       for(let u=-45+(row%2)*5,j=0;u<length+25;u+=12,j++){
-        poly([[u,d,0],[u+12,d,0],[u+12,d+5.6,0],[u,d+5.6,0]],
+        poly([[u,d,0],[u+12,d,0],[u+12,d+6.1,0],[u,d+6.1,0]],
           color(west?[101,105,89]:[107,106,89],(j*17+row*11)%8));
-        edge([[u,d,0],[u,d+5.6,0],[u+12,d+5.6,0]],'#646a5c',.64);
+        edge([[u,d,0],[u,d+6,0],[u+12,d+6,0]],'#646a5c',.64);
       }
     }
-    quad(-35,length+22,rear,0,3.4,'#586255');
+    for(let u=-46,j=0;u<length+34;j++){
+      const end=Math.min(length+34,u+11.6+(j%3)*1.8);
+      terrace(u+.17,end-.16,rear-1.22,rear,0,5.1,west?'#737d6e':'#80836e',
+        ['#5a6559','#60695a','#5c6657'][j%3],'#505b4e');
+      edge([[u+.35,rear-1.24,4.96],[end-.41,rear-1.24,4.96]],'#878a75',.48);
+      u=end;
+    }
     for(let i=0;i<bays;i++){
       const u=i*pitch;
       poly([[u+7,0,0],[u+21,0,0],[u+16,rear-.4,0],[u-1,rear-.4,0]],'rgba(183,171,126,.19)');
@@ -8109,39 +8313,57 @@ const SchoolCourtyardArcades=(()=>{
       turned(u,.8,[[6.5,3.12],[32.9,3.0],[33.7,3.33],[34.35,3.25],[34.65,3.7],[36.3,4.25],[37,4.35],[37.45,4.78],[38.55,4.78],[39.1,4.35]],base);
       for(const ox of [-1.65,1.3])
         turned(u+ox,-1.40,[[5.5,1],[6.35,1.22],[7.10,.85],[32.3,.80],[32.7,1.14],[33.3,1.24],[34.4,1.1]],base);
+      // The carved water-leaves flare into the octagonal abacus. Each stem
+      // emerges from the bell rather than hanging down as a separate object.
+      for(const [i,dx] of [-2.55,-.75,1.28,2.72].entries()){
+        const d=-2.45+(Math.abs(dx)-.75)*.36,k=dx*.23;
+        poly([[u+dx,d,33.4],[u+dx-.62,d-.3,34.7],[u+dx-.78+k,d-.4,36.3],
+          [u+dx+k,d-.47,36.7],[u+dx+.67+k,d-.38,36.12],[u+dx+.55,d-.18,34.6]],color(base,i===2?2:-5));
+        edge([[u+dx,d-.1,33.8],[u+dx+.12,d-.48,35.4],[u+dx+k,d-.48,36.4]],color(base,22),.48);
+        edge([[u+dx-.58+k,d-.4,36.15],[u+dx+k,d-.47,36.66],[u+dx+.52+k,d-.38,36.14]],color(base,15),.45);
+      }
       edge([[u-.77,-2.03,7.3],[u-.74,-2.03,32.2]],'#667062',.76);
       edge([[u+.53,-2.05,7.3],[u+.54,-2.05,32.2]],light,.71);
       edge([[u-1.95,-2.09,7.3],[u-1.87,-2.09,32.2]],west?'#ada891':'#bfb295',.7);
-      for(const z of [11.7,21.7,30.2])
-        edge([[u-1.3,-1.92,z],[u+.7,-2.12,z+.04],[u+1.5,-1.85,z]],'rgba(85,85,69,.57)',.48);
+      for(const [j,z] of [8.9,12.8,16.6,20.6,24.7,28.7,32.15].entries()){
+        edge([[u-2.45,-1.13,z+.12],[u-1.42,-1.94,z],[u+.74,-2.13,z+.08],[u+2.23,-1.41,z]],'rgba(78,79,64,.63)',.54);
+        edge([[u-1.39,-1.93,z+.29],[u+.43,-2.12,z+.35]],light,.42);
+        for(let k=0;k<3;k++){
+          const dx=-1.93+((j*17+k*11)%28)*.135,base=z+.75+k*.6;
+          edge([[u+dx,-1.8,base],[u+dx+.25,-1.8,base+.39]],color(limestone,k%2?8:-11),.35);
+        }
+      }
     }
     for(let i=0;i<=bays;i++)pier(i*pitch);
-    const roofZ=d=>(roofHeight+d*.28)/heightScale;
+    const roofZ=d=>atCrown(section.eave+d*section.roofPitch);
     // The roof is one weatherproof pitch around both changes of direction.
     // Staggered slates meet a lead hip exactly above the angled pier.
-    for(let j=0;j<5;j++){
-      const d=j*4.4;
+    for(let j=0;j<8;j++){
+      const d=j*4.5;
       for(let x=-(j%2)*3.4,k=0;x<length;x+=7,k++){
         const a=Math.max(0,x),b=Math.min(length,x+6.97);if(b<=a)continue;
         const h=(u,v)=>[u,v,roofZ(v)];
-        poly([h(a,d),h(b,d),h(b,d+4.42),h(a,d+4.42)],color([77,92,98],(j*15+k*7)%10-4));
+        const trim=(j*13+k*7)%13===2?.58:.12;
+        poly([h(a,d+.06),h(b-trim,d+.06),h(b,d+trim),h(b,d+4.52),h(a,d+4.52)],color([77,92,98],(j*15+k*7)%14-6));
         edge([h(a+.15,d+.18),h(b-.12,d+.19)],'#838f89',.47);
+        if((j*3+k)%5===1)edge([h(a+.8,d+1.1),h(Math.min(a+3,b),d+1.24)],'#728183',.39);
       }
     }
-    for(const d of [.15,22])edge([[0,d,roofZ(d)],[length,d,roofZ(d)]],d>1?'#8c9895':'#4c595b',.75);
+    for(const d of [.15,rear])edge([[0,d,roofZ(d)],[length,d,roofZ(d)]],d>1?'#8c9895':'#4c595b',.75);
     if(!west){
-      edge([[bend,0,roofZ(0)],[bend,22,roofZ(22)]],'#485759',1.23);
-      edge([[bend+.35,0,roofZ(0)+.12],[bend+.35,22,roofZ(22)+.12]],'#a1a8a0',.65);
+      edge([[bend,0,roofZ(0)],[bend,rear,roofZ(rear)]],'#485759',1.23);
+      edge([[bend+.35,0,roofZ(0)+.12],[bend+.35,rear,roofZ(rear)+.12]],'#a1a8a0',.65);
     }
-    for(const [low,high,n,f,col] of [[49.3,50.9,-.35,.9,'#898672'],[52,54.3,-.75,1.2,'#a19981'],[54.7,56.8,-1.0,.35,'#a8a18b']]){
-      terrace(0,length,n,f,low/heightScale,(high-low)/heightScale,col,west?'#7a7b6a':'#8c856f','#686d61');
-      edge([[0,n,high/heightScale],[length,n,high/heightScale]],light,.65);
+    for(const [j,[low,high]] of section.cornices.entries()){
+      const [n,f,col]=[[-.35,.9,'#898672'],[-.75,1.2,'#a19981'],[-1,.35,'#a8a18b']][j];
+      terrace(0,length,n,f,atCrown(low),atCrown(high)-atCrown(low),col,west?'#7a7b6a':'#8c856f','#686d61');
+      edge([[0,n,atCrown(high)],[length,n,atCrown(high)]],light,.65);
     }
     // The last bay turns across the passage underneath the exposed end of
     // the slates. From a lateral approach both the soffit and end wall show.
-    const endU=length+.13,farD=22.45;
+    const endU=length+.13,farD=rear+.45;
     const end=(d,z)=>[endU,d,z];
-    const portal=(d,z)=>end(11.7+d,z);
+    const portal=(d,z)=>end(section.endMid+d,z);
     const endFace=[end(1.8,0),end(farD,0),end(farD,roofZ(farD)-.1),end(1.8,roofZ(1.8)-.1)];
     poly(endFace,color(limestone,-20));
     for(let j=0;j<10;j++){
@@ -8151,18 +8373,18 @@ const SchoolCourtyardArcades=(()=>{
         edge([end(d,z+.2),end(d,Math.min(roofZ(d)-.5,z+7.3))],seam,.57);
     }
     const endArch=r=>{
-      const shape=[portal(-r,.1),portal(-r,38.3)];
+      const shape=[portal(-r,.1),portal(-r,spring)];
       for(let i=1;i<=26;i++){
         const n=-1+i/13;
-        shape.push(portal(r*n,38.3+(13.1+(r-6.15))*Math.sqrt((1-Math.abs(n))*(1+.35*Math.abs(n)))));
+        shape.push(portal(r*n,spring+(15.4+r-section.endRadius)*Math.sqrt((1-Math.abs(n))*(1+.35*Math.abs(n)))));
       }
       shape.push(portal(r,.1));return shape;
     };
-    const out=endArch(8.05),mouth=endArch(6.15);
+    const out=endArch(section.endRadius+2.3),mouth=endArch(section.endRadius);
     poly(mouth,'#46544d');
     for(const z of [7,16,24.8,33])
-      edge([portal(-5.9,z),portal(5.9,z)],'#59625a',.65);
-    poly([portal(-6.1,.55),portal(6.1,.55),portal(6.1,3),portal(-.4,6.7),portal(-6.1,5.7)],'#777a68');
+      edge([portal(-12.8,z),portal(12.8,z)],'#59625a',.65);
+    poly([portal(-13,.55),portal(13,.55),portal(13,3),portal(-.4,6.7),portal(-13,5.7)],'#777a68');
     for(let i=0;i<out.length-1;i++)
       poly([out[i],out[i+1],mouth[i+1],mouth[i]],color(limestone,-3+(Math.floor(i/3)%3)*3));
     edge(out,west?'#a8a48d':'#b1a58d',.75);edge(mouth,'#555c51',.92);
@@ -8175,7 +8397,7 @@ const SchoolCourtyardArcades=(()=>{
     edge([end(1.55,roofZ(1.55)-1.4),end(farD,roofZ(farD)-1.4)],'#505e59',2.0);
     edge([end(1.55,roofZ(1.55)-.25),end(farD,roofZ(farD)-.25)],'#8f998f',.8);
   }
-  return {draw,plan};
+  return {draw,plan,section,archHeight,elevation};
 })();
 
 /* Intact Viaduct gatehouses. The F1114c plan gives a 14'7" by 24'6"
@@ -8319,46 +8541,18 @@ const SchoolCourtyardGatehouses=(()=>{
     }
     return {im,x:x0,y:y0,w,h};
   }
-  let figure,curtain;
-  function readable(c,tower,p,time){
-    // The opaque gatehouse masks the overlay down to the part of Harry it
-    // actually hides. His own directional pose supplies both robe and face.
-    const left=Math.round(p.x)-20,top=Math.round(p.y)-56;
-    if(left+40<tower.x||left>tower.x+tower.w||top+58<tower.y||top>tower.y+tower.h)return;
-    if(!curtain){
-      figure=c.canvas.ownerDocument.createElement('canvas');figure.width=80;figure.height=116;
-      curtain=c.canvas.ownerDocument.createElement('canvas');curtain.width=80;curtain.height=116;
-    }
-    const actor=figure.getContext('2d'),mask=curtain.getContext('2d');
-    actor.setTransform(1,0,0,1,0,0);actor.clearRect(0,0,80,116);actor.imageSmoothingEnabled=false;
-    actor.setTransform(2,0,0,2,-left*2,-top*2);
-    SchoolCast.draw(actor,p.x,p.y,'harry',p.facing||'south',time,p.walking,null);
-    actor.globalCompositeOperation='source-atop';actor.fillStyle='rgba(205,153,85,.32)';
-    actor.fillRect(left,top,40,58);actor.globalCompositeOperation='source-over';
-    mask.setTransform(1,0,0,1,0,0);mask.clearRect(0,0,80,116);mask.imageSmoothingEnabled=false;
-    for(const [dx,dy] of [[-2,0],[2,0],[0,-2],[0,2],[-1,-1],[1,-1],[-1,1],[1,1]])
-      mask.drawImage(figure,dx,dy);
-    mask.globalCompositeOperation='source-in';mask.fillStyle='#302d30';mask.fillRect(0,0,80,116);
-    mask.globalCompositeOperation='source-over';mask.drawImage(figure,0,0);
-    mask.setTransform(2,0,0,2,-left*2,-top*2);
-    mask.globalCompositeOperation='destination-in';mask.drawImage(tower.im,tower.x,tower.y,tower.w,tower.h);
-    mask.globalCompositeOperation='source-over';c.drawImage(curtain,left,top,40,58);
-  }
   function piece(c,side){
     if(!cached.has(side))cached.set(side,make(c,side));
     return cached.get(side);
   }
-  function drawObjects(c,add,player,time=0){
+  function drawObjects(c,add){
     const matrix=c.getTransform(),viewBottom=(c.canvas.height-matrix.f)/matrix.d;
     // The close doorway camera is north of the viaduct and cannot see its
     // foreground piers. The wider approach can put their gables on screen.
     if(viewBottom<231)return;
     for(const side of [-1,1]){
       const tower=piece(c,side);
-      add(front,()=>{
-        c.drawImage(tower.im,tower.x,tower.y,tower.w,tower.h);
-        if(player&&player.y<front)readable(c,tower,player,time);
-      });
+      add(front,()=>c.drawImage(tower.im,tower.x,tower.y,tower.w,tower.h));
     }
   }
   return {blocks,drawObjects,piece};
@@ -8685,14 +8879,15 @@ const SchoolCourtyard=(()=>{
     // Both transverse walks have a roof and an enclosed outer wall behind
     // their court-facing arcade. The long side walks join at the far piers.
     function crossWalk(dir){
-      const west=dir<0,start=51,bays=west?3:2,length=west?98.4:68,pitch=length/bays;
-      const q=(a,z)=>p(dir*(start+a),z-2),depth=22;
+      const section=SchoolCourtyardArcades.section;
+      const west=dir<0,start=51,bays=west?2:1,length=west?98.4:68,pitch=length/bays;
+      const q=(a,z)=>p(dir*(start+a),z-2),depth=section.depth;
       const backX=west?1:.329,backY=west?.5:Math.SQRT1_2;
       const at=(a,d,z)=>q(a+backX*d,z+backY*d);
       const wall=(a,z)=>at(a,depth,z);
       const floor=(a,d)=>at(a,d,1.3);
-      const radius=11.55,foot=7.1,spring=28.4,crown=46.5;
-      stoneFace(c,q,-.7,length+.6,-.65,57,west?1039:1153,west?-12:-6);
+      const radius=pitch*.382,foot=.5,spring=SchoolCourtyardArcades.archHeight(1),crown=SchoolCourtyardArcades.archHeight(0);
+      stoneFace(c,q,-.7,length+.6,-.65,section.eave,west?1039:1153,west?-12:-6);
       c.save();
       c.beginPath();
       for(let k=0;k<bays;k++){
@@ -8701,21 +8896,25 @@ const SchoolCourtyard=(()=>{
         c.closePath();
       }
       c.clip();
-      stoneFace(c,wall,-depth-3,length+4,0,54,west?383:535,-48);
-      wash(c,wall,[[-depth-3,0],[length+4,0],[length+4,54],[-depth-3,54]],0,3,0,48,
+      stoneFace(c,wall,-depth-3,length+4,0,section.eave,west?383:535,-48);
+      wash(c,wall,[[-depth-3,0],[length+4,0],[length+4,section.eave],[-depth-3,section.eave]],0,3,0,95,
         [[0,'rgba(32,42,39,.38)'],[.46,'rgba(39,44,40,.19)'],[1,'rgba(28,36,34,.70)']]);
       for(let k=0;k<bays;k++){
         const centre=(k+.5)*pitch,back=(u,z)=>wall(centre-backX*depth+3.3+u,z);
         // The small deep light leaves a broad band of shaded masonry under
         // the vault. Its sill and reveals catch light from different sides.
-        arch(c,back,3.15,10.7,20.1,24.9,'#373f3b');
-        arch(c,back,1.75,12.1,19.7,23.15,'#82958e');
-        shape(back,[[-1.55,12.2],[1.6,12.2],[1.6,14.9],[-1.55,16.3]],'#667972');
-        edge(back,[[.2,12.7],[.2,22.4]],'#4b5952',.66);
-        edge(back,[[-1.65,17.8],[1.7,17.8]],'#495b53',.62);
-        edge(back,[[-3.7,10.1],[3.8,10.1]],'#a3a28b',.94);
+        for(const offset of [-5.2,5.2]){
+          const light=(u,z)=>back(offset+u,z);
+          archBand(c,light,3.1,25,58,66.5,1.2,['#747d71','#909383','#677265']);
+          arch(c,light,2.9,25.8,58,65.7,'#38423c');
+          arch(c,light,2.0,26.9,57.6,64.5,'#84988f');
+          shape(light,[[-1.7,27],[1.8,27],[1.8,34],[-1.7,37.2]],'#647a70');
+          edge(light,[[.2,27.5],[.2,63.4]],'#46584e',.66);
+          for(const z of [34,44,55])edge(light,[[-2.1,z],[2.1,z]],'#485a4d',.66);
+          edge(light,[[-4.2,24.5],[4.2,24.5]],'#a3a28b',.94);
+        }
         for(const side of [-1,1]){
-          const rib=[[side*13,20],[side*11.9,25],[side*7.4,31],[0,36.2]];
+          const rib=[[side*17,66],[side*15.4,77],[side*9.1,84],[0,91]];
           edge(back,rib,'#46504b',2.0);
           edge(back,rib.map(([a,z])=>[a+.35,z+.52]),'#767c6b',.58);
         }
@@ -8739,36 +8938,37 @@ const SchoolCourtyard=(()=>{
       for(let k=0;k<bays;k++){
         const b=(x,z)=>q((k+.5)*pitch+x,z);
         archBand(c,b,radius,foot,spring,crown,1.65,['#a09982','#a79e88','#928c79','#9b947e']);
-        for(const s of [-1,1]){
-          const light=(x,z)=>b(s*5.3+x,z);
-          archBand(c,light,4.38,foot+.1,spring-2,crown-9.2,.86,['#787c6d','#8a8d7a','#818475']);
+        archBand(c,b,radius+1.65,foot,spring+.5,crown+1.85,1.7,['#b4aa92','#a99c82','#c0b59a']);
+        for(const j of [-1,1]){
+          const u=j*(radius+2.9);
+          for(const z of [6,18,32,46,60,70.5])edge(b,[[u-1,z],[u+1.15,z+.12]],'#787967',.6);
+          shape(b,[[u-2.4,71],[u+2.4,71],[u+3.1,74.2],[u-3.1,74.2]],'#a8a38c');
+          edge(b,[[u-3.1,74.4],[u+3.1,74.4]],'#c8bca0',.72);
         }
-        edge(b,[[0,foot],[0,spring-1.9]],'#9f9c86',1.02);
-        shape(b,[[-radius-1.45,foot-.23],[radius+1.4,foot-.23],[radius+.6,foot+1.2],[-radius+.4,foot+1.2]],'#afb097');
-        edge(b,[[-radius-1.4,foot-.7],[radius+1.5,foot-.7]],'#656a5d',.78);
       }
-      const roof=(a,d)=>at(a,d,56.6+d*.28);
+      const roof=(a,d)=>at(a,d,section.eave+d*section.roofPitch);
       slates(c,roof,[[-2,0],[length,0],[length,depth],[-2,depth]],length,0,depth+4,west?719:285,false);
       edge(roof,[[-2,depth],[length,depth]],'#86918a',1.1);
-      for(const [low,high,ink] of [[49.3,50.9,'#898672'],[52,54.3,'#a19981'],[54.7,56.8,'#a8a18b']]){
+      for(const [i,[low,high]] of section.cornices.entries()){
+        const ink=['#898672','#a19981','#a8a18b'][i];
         shape(q,[[-1,low],[length+.6,low],[length+1,high],[-1.4,high]],ink);
         edge(q,[[-1.4,high],[length+1,high]],dripColor,.72);
       }
       for(let u=3.3;u<length-1;u+=5.85){
-        shape(q,[[u,52],[u+2.8,52],[u+2.1,49.55],[u+.9,49]],'#717467');
-        edge(q,[[u+.2,51.65],[u+.6,50.0]],'#a9a68e',.53);
+        shape(q,[[u,108.5],[u+2.8,108.5],[u+2.1,105.8],[u+.9,105.2]],'#717467');
+        edge(q,[[u+.2,108.3],[u+.6,106]],'#a9a68e',.53);
       }
       for(let k=0;k<=bays;k++){
         const u=k*pitch,b=(a,z)=>q(u+a,z);
-        stoneFace(c,b,-1.65,1.65,.1,49.2,373+k,-11);
-        shape(b,[[1.4,.3],[2.8,1.6],[2.8,49.4],[1.4,49.1]],'#6c7164');
-        for(const z of [2.4,4.8,26.8,28.1,47.2])edge(b,[[-2.1,z],[2.1,z]],dripColor,.8);
+        stoneFace(c,b,-2.2,2.2,.1,105.3,373+k,-11);
+        shape(b,[[2.1,.3],[3.6,1.6],[3.6,105.4],[2.1,105.2]],'#6c7164');
+        for(const z of [2.4,5.4,71,74.2,103.9])edge(b,[[-2.65,z],[2.65,z]],dripColor,.8);
       }
       edge(q,[[-.8,.2],[length+1,.2]],'#626859',1.15);
     }
     // Keep the roof and upper masonry below the neighbouring drum as on the
     // studio model. The near porch and both walk roofs have their own grades.
-    const upperRise=.84,gradeShift=p(0,0)[1]*(1-upperRise);
+    const upperRise=1.02,gradeShift=p(0,0)[1]*(1-upperRise);
     c.save();c.transform(1,0,0,upperRise,0,gradeShift);
     hallNave(c);
     c.restore();
@@ -8998,7 +9198,7 @@ const SchoolCourtyard=(()=>{
   }
   function drawObjects(c,add,time,frame,player,gateOpen=0){
     const progress=Math.max(0,Math.min(1,gateOpen));
-    SchoolCourtyardGatehouses.drawObjects(c,add,player,time);
+    SchoolCourtyardGatehouses.drawObjects(c,add);
     add(151.5,()=>{
       if(progress>0&&progress<1){paintLeaves(c,progress);return;}
       if(!restLeaves.has(progress)){
@@ -9301,6 +9501,8 @@ const SchoolEntranceHall=(()=>{
   const points={x:507,y:234};
   const torches=[{x:242,y:237,side:-1},{x:386,y:237,side:1}];
   const cabinet={x:459,y:199};
+  // Both the cut stone and its painted reveal use the walking cast's floor scale.
+  const practiceOpening={centre:98,radius:22,spring:61,crown:79};
 
   function floorRise(x,y){
     if(Math.abs(x-319)>46)return 0;
@@ -9461,7 +9663,7 @@ const SchoolEntranceHall=(()=>{
     }
   }
   function reveal(c,w,s,kind){
-    const royal=kind==='great',r=royal?30:15.8,h=royal?53:37,tip=royal?83:54;
+    const royal=kind==='great',r=royal?30:practiceOpening.radius,h=royal?53:practiceOpening.spring,tip=royal?83:practiceOpening.crown;
     const b=(u,v,z)=>w(s+u,v,z),shape=archline(w,s,.4,r,h,tip,0);
     fill(c,shape,'#393738');c.save();clip(c,shape);
     const top=b(0,-1,tip),bot=b(0,1,0),fade=c.createLinearGradient(...top,...bot);
@@ -9533,7 +9735,7 @@ const SchoolEntranceHall=(()=>{
       fill(c,lane,'#774f43');pen(c,[lane[3],lane[0]],'#a28c65',.8);
       const inner=-6.3;
       fill(c,[b(-r,inner,0),b(-r,.2,0),b(-r,.2,h+1),b(-r,inner,h+1)],'#746954');
-      for(let row=0;row<5;row++){
+      for(let row=0;row*8.1<h;row++){
         const z=row*8.1;
         pen(c,[b(-r,inner,z),b(-r,1,z)],'#544f44',.72);
         const joint=row%2?-3.8:-1.3;
@@ -9798,7 +10000,7 @@ const SchoolEntranceHall=(()=>{
     for(const [w,side] of [[west,true],[east,false]]){
       highGallery(g,w,side);wallShell(g,w,side?-1:1);dressedCornice(g,w,side);guardianWall(g,w,side);
       if(!side)counterMount(g);
-      if(side)reveal(g,w,98,'practice');
+      if(side)reveal(g,w,practiceOpening.centre,'practice');
     }
     centralFront(g);stair(g);
     // Daylight from the open outer doors falls across the first flags.
@@ -9817,12 +10019,12 @@ const SchoolEntranceHall=(()=>{
     nearDoor(c,add);
   }
   const art={
-    perimeter, floor, floorMedallion, hearthLight, stair, exterior, centralFront,
+    perimeter, floor, floorMedallion, hearthLight, stair, exterior, centralFront, practiceOpening,
     side(c,isWest){
       const w=isWest?west:east;
       highGallery(c,w,isWest);wallShell(c,w,isWest?-1:1);dressedCornice(c,w,isWest);
       guardianWall(c,w,isWest,false);
-      if(isWest)reveal(c,w,98,'practice');else counterMount(c);
+      if(isWest)reveal(c,w,practiceOpening.centre,'practice');else counterMount(c);
     },
     porch(c){nearDoor(c,(_depth,draw)=>draw());}
   };
@@ -10172,6 +10374,41 @@ const SchoolGreatHall=(()=>{
     }
     c.restore();
   }
+  function landings(c){
+    const k=SchoolWorkshop;
+    // Broad slabs on the staff dais run across the hall. Their joints, worn
+    // nosings and table shadows stay fixed to the floor when Harry walks past.
+    for(const [l,s,w,d] of [[-17,-27,21,54],[668,-117,77,234]]){
+      plate(c,l,s,w,d,0,'#736d65');
+      const colours=['#a29b89','#9c9585','#a9a08c','#999386','#a39c8b'];
+      for(let i=0;i*16<w;i++){
+        const x=l+i*16+.24,span=Math.min(15.55,l+w-x);
+        for(let j=-1;j*34<d;j++){
+          const t=s+j*34+(i%2)*17,y=Math.max(s+.22,t+.26),end=Math.min(s+d-.22,t+33.78);
+          if(y>=end)continue;
+          const n=i*13+j*7+43;
+          plate(c,x,y,span,end-y,0,colours[Math.abs(n)%5]);
+          k.line(c,[P(x+span,y+.4),P(x,y+.4),P(x,end)],'#b9b09a',.46);
+          if(n%3===0&&end-y>8){
+            const mid=(y+end)/2;
+            k.line(c,[P(x+3,mid+2.8),P(x+5.3,mid+1.9),P(x+7.4,mid+2.1),P(x+9.8,mid)],'#908879',.52);
+          }
+        }
+      }
+      for(let i=0;i<3;i++){
+        const x=l+i*2.75;
+        k.line(c,[P(x,s),P(x,s+d)],'#736b60',1);
+        k.line(c,[P(x+.8,s+.35),P(x+.8,s+d-.35)],'#c5b9a0',.7);
+      }
+    }
+    for(const s of staffSeats)SchoolHighTableChairs.drawFeetShadow(c,...P(725,s),s);
+    const shadow=[[681,-103],[697,-107],[710,-104],[710,98],[697,105],[683,112]];
+    k.poly(c,shadow.map(([l,s])=>P(l,s)), 'rgba(49,41,39,.15)');
+    for(const start of [-103,-20.6,61.8])for(const u of [5.6,35.6]){
+      const [x,y]=P(701,start+u);
+      k.poly(c,[[x-5.8,y+.7],[x-9,y+3.3],[x-1,y+7.1],[x+4.9,y+3.5]],'rgba(51,39,35,.24)');
+    }
+  }
   function masonry(c,w,begin,end,height){
     const k=SchoolWorkshop,tones=['#918778','#9b8d7b','#968875','#a19480','#9b8f7e','#897e70'];
     const rect=(a,b,z,h,tone,d=.3)=>k.poly(c,[w(a,z,d),w(b,z,d),w(b,h,d),w(a,h,d)],tone);
@@ -10391,15 +10628,9 @@ const SchoolGreatHall=(()=>{
       k.line(c,[w(0,-4),w(len,-4)],'#b3a389',1.2);
     }
     pave(c);
+    landings(c);
     wall(c,(l,z,d)=>P(l,-135+d,z),-25,747,147,'side');
     wall(c,(s,z,d)=>P(747-d,s,z),-135,135,147,'end');
-    // The entry and High Table sit on shallow stone landings with individual nosings.
-    for(const [l,s,w,d] of [[-17,-27,21,54],[668,-117,77,234]]){
-      plate(c,l,s,w,d,0,'#8d8679');for(let j=0;j<3;j++){
-        k.line(c,[P(l+j*3,s,0),P(l+j*3,s+d,0)],j%2?'#6d655a':'#c3b49b',1.3);
-      }
-    }
-    for(const s of staffSeats)SchoolHighTableChairs.drawFeetShadow(c,...P(725,s),s);
     const [counterX,counterY]=P(739,83,1.7);
     SchoolPointCounter.draw(c,counterX,counterY,64);
 
@@ -10567,6 +10798,15 @@ const SchoolGreatHall=(()=>{
       }
     }
     k.box(c,0,-10,41.15,18.5,17.4,3.8,k.wood);
+    const top=(u,v)=>k.P(u,v,21.23);
+    const oak=['#9b7755','#a7835c','#94714f','#a58057'];
+    for(let n=0;n<4;n++){
+      const v=-10+n*4.62;
+      k.poly(c,[top(.25,v+.1),top(41.05,v+.1),top(41.05,v+4.51),top(.25,v+4.51)],oak[(n+part)%4]);
+      k.line(c,[top(.5,v+.28),top(40.75,v+.28)],'#765943',.48);
+      const u=2+(part*7+n*3)%12;
+      k.line(c,[top(u,v+1.9),top(u+5,v+1.6),top(u+12,v+2.15),top(u+20,v+1.8)],'#b39269',.55);
+    }
     const cloth=['#65414b','#71434c','#874b50','#72444d','#65414b'][part];
     const q=(u,z)=>k.P(u,8.6,z);
     const hem=u=>10.55+.75*Math.cos((start+u)*.44);
@@ -10579,6 +10819,10 @@ const SchoolGreatHall=(()=>{
     }
     for(const [z,col,weight] of [[1.4,'#ba9868',.87],[.0,'#654b44',.65]])
       k.line(c,edge.map(u=>q(u,hem(u)+z)),col,weight);
+    for(let u=3.1;u<40;u+=5.8){
+      const z=hem(u)+3.5;
+      k.line(c,[q(u-1.8,z),q(u,z+1.45),q(u+1.8,z),q(u,z-1.45),q(u-1.8,z)],'#b88f69',.55);
+    }
     if(part===2){
       const m=(u,z)=>q(20.55+u,z);
       k.poly(c,[m(-7.7,21.4),m(7.7,21.4),m(7.2,9.1),m(0,5.7),m(-7.1,9.1)],'#465454');
@@ -10591,14 +10835,24 @@ const SchoolGreatHall=(()=>{
     for(const u of [9,30]){const [gx,gy]=k.P(u,-1,21.5);goblet(c,gx,gy);}
     if(part===2){
       const [bx,by]=k.P(20,-3,21.6);
-      k.poly(c,[[bx-6.2,by-1],[bx-.2,by-3.8],[bx+6.7,by-.2],[bx+.4,by+3.1]],'#4d493b');
-      k.poly(c,[[bx-5.5,by-1.4],[bx-.4,by-3.4],[bx+5.7,by-.4],[bx+.1,by+2.4]],'#d6c59c');
-      k.line(c,[[bx-2.7,by-1.9],[bx+3.3,by+.7]],'#987e56',.72);
+      const page=(u,v,h=0)=>[bx+u-v,by+(u+v)*.5-h];
+      const face=(points,ink)=>k.poly(c,points.map(q=>page(...q)),ink);
+      face([[-4.3,-3],[4.85,-3.1],[5.15,3.35],[-4.45,3.55]],'#563f35');
+      face([[-4,-2.7,.9],[.05,-2.9,.65],[.1,3.1,.65],[-4.05,3.1,1.1]],'#c8b793');
+      face([[.05,-2.9,.65],[4.35,-2.7,1.35],[4.5,3.0,1.15],[.1,3.1,.65]],'#e2d5b7');
+      for(let j=0;j<4;j++)for(const [u,w] of [[-3.4,2.4],[.8,2.7]]){
+        const v=-1.8+j*1.12;k.line(c,[page(u,v,1),page(u+w,v,.98)],'#92816d',.4);
+      }
+      k.line(c,[page(.05,.7,.9),page(.05,3.7,.6),page(-.43,4.6)],'#8f4541',.56);
     }else if(part%2===0){
       const [gx,gy]=k.P(20,-1,21.5);
-      k.oval(c,gx,gy,5.7,2.3,'#b9aa8b');
-      k.poly(c,[[gx-4.8,gy],[gx-4.5,gy-2.6],[gx-2.7,gy-4.6],[gx,gy-5.6],[gx+3.2,gy-4.3],[gx+4.5,gy-1.6],[gx+4.8,gy]],'#90978a');
-      k.line(c,[[gx-4,gy-1.8],[gx-3.5,gy-3],[gx-1.5,gy-4.5]],'#e1d8bb',.8);k.oval(c,gx,gy-6.2,.9,1.1,'#c4ae79');
+      k.oval(c,gx+.65,gy+.48,6,2.2,'#625144');
+      k.oval(c,gx,gy-.1,5.7,2.15,'#c6b58c');
+      const silver=c.createLinearGradient(gx-4.8,gy,gx+4.8,gy);
+      for(const [t,col] of [[0,'#706e64'],[.22,'#a7af9f'],[.39,'#e9e6c9'],[.52,'#9aa396'],[.71,'#686e69'],[1,'#b5ad8c']])silver.addColorStop(t,col);
+      k.poly(c,[[gx-4.8,gy],[gx-4.5,gy-2.6],[gx-2.7,gy-4.6],[gx,gy-5.6],[gx+3.2,gy-4.3],[gx+4.5,gy-1.6],[gx+4.8,gy]],silver);
+      k.line(c,[[gx-4.75,gy-.24],[gx-2,gy+.6],[gx+1.7,gy+.6],[gx+4.6,gy-.18]],'#ece1b9',.68);
+      k.oval(c,gx,gy-5.35,1.45,.55,'#696857');k.oval(c,gx,gy-6.2,.9,1.1,'#c4ae79');
     }else{
       const [gx,gy]=k.P(20,-1,21.5);
       k.oval(c,gx,gy,2.7,1.2,'#9f885e');k.line(c,[[gx,gy],[gx,gy-8]],'#ccb17c',1.2);
@@ -10706,22 +10960,6 @@ const SchoolGreatHall=(()=>{
     const side={tile,left,top,w,h,depth:y+3};
     doorSides.set(sign,side);return side;
   }
-  let cutDoor;
-  function drawDoorSide(c,side,player){
-    const {tile,left,top,w,h,depth}=side;
-    const px=player&&player.x-left,py=player&&player.y-top;
-    if(!player||player.y>=depth||px < -13||px>w+13||py<0||py>h+51){
-      c.drawImage(tile,left,top,w,h);return;
-    }
-    if(!cutDoor){cutDoor=c.canvas.ownerDocument.createElement('canvas');cutDoor.width=tile.width;cutDoor.height=tile.height;}
-    const g=cutDoor.getContext('2d');
-    g.clearRect(0,0,tile.width,tile.height);g.drawImage(tile,0,0);
-    g.save();g.translate(px*2,(py-25)*2);g.scale(32,58);
-    const fall=g.createRadialGradient(0,0,.52,0,0,1);
-    fall.addColorStop(0,'#000');fall.addColorStop(.85,'rgba(0,0,0,.90)');fall.addColorStop(1,'transparent');
-    g.globalCompositeOperation='destination-out';g.fillStyle=fall;g.fillRect(-1,-1,2,2);g.restore();
-    c.drawImage(cutDoor,left,top,w,h);
-  }
   function candle(c,x,y,t,i){
     const k=SchoolWorkshop,len=8+(i*7%5),rim=y+.95*Math.sin(t*.87+i*2)-len;
     const radius=1.1+(i%3)*.21,base=rim+len,lean=.6*Math.sin(t*4+i);
@@ -10752,14 +10990,14 @@ const SchoolGreatHall=(()=>{
     }
     for(const sign of [-1,1]){
       if(!visible(...P(-21,sign*43)))continue;
-      const side=doorSide(c,sign);add(side.depth,()=>drawDoorSide(c,side,player));
+      const side=doorSide(c,sign);add(side.depth,()=>c.drawImage(side.tile,side.left,side.top,side.w,side.h));
     }
     for(let i=0;i<30;i++){
       const l=30+i*23.2,s=([-96,-31,72,18,106,-67])[i%6],z=65+(i*17%34),[x,y]=P(l,s,z);
       if(visible(x,y))add(y+z,()=>candle(c,x,y,time,i));
     }
   }
-  const art={pave,wall,nightRoof,plate,P,rows,runs,staffSeats,places,drawPupil,staffSection,table,
+  const art={pave,landings,wall,nightRoof,plate,P,rows,runs,staffSeats,places,drawPupil,staffSection,table,
     porch(c,sign){const a=doorSide(c,sign);c.drawImage(a.tile,a.left,a.top,a.w,a.h);}
   };
   return {spawn,door,dais,points,windowTop,contains,drawFloor,drawObjects,ready,art};
@@ -10860,21 +11098,18 @@ const SchoolThreeCourtyard=(()=>{
     const a=Math.min(1,Math.abs(t));
     return spring+rise*Math.sqrt((1-a)*(1+.5*a));
   }
-  function cloisterArch(t){
-    const half=16.5,rise=23.35,c=(rise*rise-half*half)/(2*half);
-    return .775*(36.65+Math.sqrt(Math.max(0,(half+c)**2-(Math.abs(t)*half+c)**2)));
-  }
   function arcade(api,parent,name,segments,paint,radius,spring,rise,foot,opening=archTop){
     const wall=masonry(api,parent,name+' arches and piers',paint);
     const roof=masonry(api,parent,name+' slated roof and coping',paint);
     const rear=masonry(api,parent,name+' covered floor, vaults and rear lights',paint);
-    const depth=22,crest=56.6,roofZ=d=>crest+d*.28;
+    const section=SchoolCourtyardArcades.section,depth=section.depth,crest=section.eave,roofZ=d=>crest+d*section.roofPitch;
     for(const {at,count,length} of segments){
       const bay=length/count;
       const plane=d=>[at(0,d,roofZ(d)),at(length,d,roofZ(d))];
       const [nf,ne]=plane(0),[rf,re]=plane(depth);
-      roof.solid([nf,ne,re,rf].map(([x,y,z])=>[x,y,z-1.3]),[nf,ne,re,rf]);
-      for(const [b,t,d] of [[49.3,50.9,.45],[52,54.3,.75],[54.7,56.8,1]]){
+      roof.solid([nf,ne,re,rf].map(([x,y,z])=>[x,y,z-2.4]),[nf,ne,re,rf]);
+      for(const [j,[b,t]] of section.cornices.entries()){
+        const d=[.45,.75,1][j];
         roof.block(at,0,length,-d,.42,b,t);
       }
       rear.block(at,0,length,0,depth,0,1.1);
@@ -10899,7 +11134,7 @@ const SchoolThreeCourtyard=(()=>{
         if(foot>0)wall.block(at,mid-r,mid+r,-.35,3.5,0,foot);
         const centre=at(mid,0,0),far=at(mid,depth,0),du=at(mid+1,depth,0)[0]-far[0];
         const rearMid=mid+(centre[0]-far[0])/du;
-        rear.block(at,rearMid-4.6,rearMid+4.6,depth-2.1,depth-.3,11.8,13);
+        rear.block(at,rearMid-5.4,rearMid+5.4,depth-2.1,depth-.3,24,25.2);
       }
       for(let i=0;i<=count;i++){
         const [x,y]=at(i*bay,0,0);
@@ -10912,52 +11147,62 @@ const SchoolThreeCourtyard=(()=>{
 
   function sideWalk(api,root,side){
     const west=side<0;
-    const paint=api.painted(west?{x:-77,y:69,w:251,h:245}:{x:436,y:74,w:282,h:238},
-      c=>SchoolCourtyardArcades.draw(c,side));
-    const counts=west?[5]:[2,4];
+    const paint=api.painted(west?{x:-93,y:6,w:273,h:300}:{x:430,y:-3,w:304,h:311},
+      c=>SchoolCourtyardArcades.draw(c,side),{filterWhenSmall:true});
+    const section=SchoolCourtyardArcades.section;
+    const counts=west?[section.westBays]:section.eastBays;
     const segments=counts.map((count,i)=>{
-      const length=count*43.2,offset=i*counts[0]*43.2;
+      const length=count*section.pitch,offset=i*counts[0]*section.pitch;
       const at=(u,d,h)=>[...SchoolCourtyardArcades.plan(side,u+offset,d),h];
       return {at,length,count};
     });
-    arcade(api,root,west?'West cloister':'East chamfered cloister',segments,paint,16.5/43.2,28.4,18.1,0,cloisterArch);
+    const opening=SchoolCourtyardArcades.archHeight,spring=opening(1),rise=opening(0)-spring;
+    arcade(api,root,west?'West cloister':'East chamfered cloister',segments,paint,section.span/section.pitch,spring,rise,0,opening);
     const terrace=masonry(api,root,west?'West end return':'East end return',paint);
     const last=segments.at(-1),u=last.length+.13,p=last.at;
-    terrace.block(p,u-1.3,u,0,23,-38,.3);
-    const cap=d=>56.6+.28*d-.15;
+    terrace.block(p,u-1.3,u,0,section.depth+4.3,-38,.3);
+    const cap=d=>section.eave+section.roofPitch*d-.15;
     const ring=(d,e,lo,hi,back)=>[p(back,d,lo(d)),p(back,e,lo(e)),p(back,e,hi(e)),p(back,d,hi(d))];
     const crown=d=>{
-      const t=Math.min(1,Math.abs((d-11.7)/6.15));
-      return .775*(38.3+13.1*Math.sqrt((1-t)*(1+.35*t)));
+      const t=Math.min(1,Math.abs((d-section.endMid)/section.endRadius));
+      return spring+1.17*15.4*Math.sqrt((1-t)*(1+.35*t));
     };
-    for(const [a,b] of [[0,5.55],[17.85,22.45]]){
+    const left=section.endMid-section.endRadius,right=section.endMid+section.endRadius;
+    for(const [a,b] of [[0,left],[right,section.depth+.45]]){
       terrace.solid(ring(a,b,()=>0,cap,u-1.5),ring(a,b,()=>0,cap,u));
     }
     for(let i=0;i<20;i++){
-      const a=5.55+i*12.3/20,b=5.55+(i+1)*12.3/20;
+      const a=left+i*(right-left)/20,b=left+(i+1)*(right-left)/20;
       terrace.solid(ring(a,b,crown,cap,u-1.5),ring(a,b,crown,cap,u));
     }
     terrace.finish();
   }
 
   function crossWalk(api,root,side,paint){
-    const west=side<0,length=west?98.4:68,count=west?3:2;
+    const west=side<0,length=west?98.4:68,count=west?2:1;
     const at=(u,d,z)=>[320+side*(51+u+(west?1:.329)*d),154-d*(west?.5:Math.SQRT1_2),z];
-    arcade(api,root,west?'West transverse gallery':'East transverse gallery',[{at,count,length}],paint,
-      11.55/(length/count),28.4,18.1,7.1);
+    const spring=SchoolCourtyardArcades.archHeight(1),rise=SchoolCourtyardArcades.archHeight(0)-spring;
+    arcade(api,root,west?'West transverse gallery':'East transverse gallery',[{at,count,length}],paint,.382,spring,rise,.5);
   }
 
   function greatHall(api,root){
-    const paint=api.painted({x:106,y:-130,w:347,h:294},c=>{
-      SchoolCourtyard.gable(c);SchoolCourtyard.gateSurround(c);
-    });
+    const paint=api.painted({x:103,y:-144,w:356,h:312},c=>{
+      SchoolCourtyard.gable(c);
+      // Through the first side arch the far wall belongs to the perpendicular
+      // walk. Carry its stone and glass around that visible inside corner.
+      SchoolCourtyardArcades.draw(c,-1);SchoolCourtyardArcades.draw(c,1);
+      SchoolCourtyard.gateSurround(c);
+    },{filterWhenSmall:true});
     crossWalk(api,root,-1,paint);crossWalk(api,root,1,paint);
     const shell=masonry(api,root,'Great Hall nave, clerestory and pitched roof',paint);
     const detail=masonry(api,root,'Great Hall buttresses, dormers and pinnacles',paint);
     const portal=masonry(api,root,'Pointed entrance porch and recessed rose',paint);
-    const depth=138,scale=.84;
+    const depth=138,scale=1.02;
     // The rear line recedes screen-left from the aligned front gable.
-    const at=(x,s,z)=>[320+x-s,152-s*.16*scale,z*scale];
+    const at=(x,s,z)=>{
+      const setback=s*22/depth;
+      return [320+x-s,152-s*.16*scale-setback,z*scale-setback];
+    };
     const side=(s,z)=>at(-53,s,z);
     const roof=(s,z)=>at(-53+(z-138)*53/59,s,z);
     // Model the longitudinal walls, underside of the ridge, both slopes and
@@ -11011,12 +11256,12 @@ const SchoolThreeCourtyard=(()=>{
     well.face([[320-doorHalf,128,-17],[320+doorHalf,128,-17],[320+doorHalf,128,70],[320-doorHalf,128,70]]);
     well.finish();
     for(let i=0;i<=7;i++){
-      const s=i*depth/7,[x,y]=side(s,0);
+      const s=i*depth/7,[x,y,bed]=side(s,0);
       for(const [low,high,half] of [[0,46,3.7],[46,92,3],[92,132,2.45],[132,143,1.8]]){
         const frontX=x-3.5;
-        detail.prism([[frontX-half,y-.7],[x+1.5,y-.7],[x+1.5,y+2.2],[frontX-half,y+2.2]],low*scale,high*scale);
+        detail.prism([[frontX-half,y-.7],[x+1.5,y-.7],[x+1.5,y+2.2],[frontX-half,y+2.2]],bed+low*scale,bed+high*scale);
       }
-      detail.lathe(x-3.7,y+1,[[142*scale,2,1.1],[145*scale,1.9,1.1],[(152+(i%2?0:2))*scale,.13,.12]],8);
+      detail.lathe(x-3.7,y+1,[[bed+142*scale,2,1.1],[bed+145*scale,1.9,1.1],[bed+(152+(i%2?0:2))*scale,.13,.12]],8);
     }
     for(const [s,r,shaft,needle] of [[depth-4,3.25,7.7,22],[depth*.51,4.4,10,48],[3,3.65,8.7,28]]){
       const [x,y,z]=roof(s,196.4);
@@ -11039,11 +11284,13 @@ const SchoolThreeCourtyard=(()=>{
   }
 
   function skyline(api,root){
-    const paint=api.painted({x:339,y:-305,w:537,h:559},c=>SchoolCourtyardSkyline.draw(c));
+    const paint=api.painted({x:339,y:-305,w:537,h:559},c=>SchoolCourtyardSkyline.draw(c),{filterWhenSmall:true});
     const range=masonry(api,root,'Link building and attached eastern range',paint);
     const wallY=x=>142-.32*(x-483);
     const heights=x=>1-(x-483)*.00155;
-    const e=(x,d,z,shift)=>[x+shift,wallY(x)-d,z*heights(x)];
+    // The range stands behind the full depth of the attached east gallery.
+    // Its floor and eaves share the same elevation reference as its atlas.
+    const e=(x,d,z,shift)=>[x+shift,wallY(x)-32-d,z*heights(x)-32];
     const eastEnd=x=>[e(x,0,0,0),e(x,7,0,30),e(x,7,108,30),e(x,5,146,15),e(x,0,108,0)];
     range.solid(eastEnd(483),eastEnd(671));
     // The sloping front of the covered link follows the chamfer into the drum.
@@ -11329,7 +11576,14 @@ const SchoolThreeHalls=(()=>{
       }
       arch(m,at,29,24,71,92,9,-.7,2.8,3.1);
       for(const [w,z,h,d] of [[17.5,.4,2.6,9],[15.8,3,4.2,7.7],[17.7,7.2,2.65,9.2]])m.block(at,29-w,29+w,0,d,z,z+h);
-      if(west){arch(m,at,98,15.8,37,54,0,0,3.8,3.2);m.block(at,82.8,113.2,.2,1.2,.2,36);}
+      if(west){
+        const {centre,radius,spring,crown}=a.practiceOpening;
+        arch(m,at,centre,radius,spring,crown,0,0,3.8,3.2);
+        const jamb=(u,d,z)=>at(centre+u,d,z);
+        m.block(jamb,-radius-2.7,-radius,-4.1,2.3,0,spring);
+        m.block(jamb,radius,radius+2.7,-4.1,2.3,0,spring);
+        m.block(jamb,-radius-5,radius+5,.3,4.9,.1,1.1);
+      }
       else{
         m.block(at,59,137,0,2.2,3,74);
         m.block(at,58,138,0,7.5,1.7,4.5);m.block(at,59,137,0,3.4,72.8,75.1);
@@ -11390,7 +11644,7 @@ const SchoolThreeHalls=(()=>{
     entry.finish();
   }
   function goblet(m,x,y,z){
-    m.lathe(x,y,[[z,1.55],[z+.45,1.65],[z+.8,.53],[z+1.8,.47],[z+2.2,1.45],[z+3.3,1.99],[z+4.5,2.1],[z+4.67,1.7]],12);
+    m.lathe(x,y,[[z,2],[z+.48,1.9],[z+.78,.50],[z+1.9,.85],[z+2.8,.48],[z+3.3,.8],[z+4.3,1.8],[z+6.22,2.42],[z+6.48,2.3],[z+6.3,1.67]],14);
   }
   function trestle(m,at,l,s,r,h){
     const profiles=[[0,r],[1.4,r],[2.25,r-.8],[3.05,Math.min(2.45,r*.68)],[h*.44,Math.min(1.45,r*.4)],[h*.65,Math.min(2.05,r*.55)],[h-2.3,r-1.1],[h-.85,r],[h,r]];
@@ -11523,7 +11777,7 @@ const SchoolThreeHalls=(()=>{
       wall.finish();
     }
   }
-  function greatDoor(api,room,sg,motion){
+  function greatDoor(api,room,sg){
     const a=SchoolGreatHall.art,[x,y]=great(-21,sg*30),left=x-(sg<0?68:11),top=y-73;
     const at=(u,d,z)=>great(-22+d,sg*(28+u),z),leaf=(u,d,z)=>great(-21.6+u*.18+d,sg*(30+u*1.17),z);
     const g=api.group('Dining entrance '+(sg<0?'west':'east')+' return',room);
@@ -11535,25 +11789,14 @@ const SchoolThreeHalls=(()=>{
     const shape=[[0,1.8],[23.2,1.8],[23.2,48.8],[16.4,52.6],[9.1,54.7],[0,56]];
     m.shell(shape.map(([u,z])=>leaf(u,-1.8,z)),shape.map(([u,z])=>leaf(u,.53,z)));
     for(const z of [5,18,38])m.block(leaf,.7,22.3,.5,1.18,z,z+1.05);
-    const mesh=m.finish();api.moving(mesh);
-    motion.push((_t,view)=>{
-      const p=view.player||view;
-      if(!Number.isFinite(p.x+p.y)||!mesh.material)return;
-      // The close return is cut away while standing immediately behind it.
-      const cut=p.y<y+3&&p.y>y-35&&Math.abs(p.x-x)<27;
-      if(mesh.userData.cutaway===cut)return;
-      mesh.userData.cutaway=cut;mesh.material.transparent=cut;mesh.material.opacity=cut?.32:1;mesh.material.depthWrite=!cut;mesh.material.needsUpdate=true;
-    });
+    m.finish();
   }
   function diningHall(api,motion){
     const a=SchoolGreatHall.art,room=api.group('Great Hall');
     api.backdrop({x:96,y:-345,w:1100,h:832},a.nightRoof);
     const floorSkin=material(api,118,-100,1057,538,c=>{
       a.pave(c);
-      for(const [l,s,w,d] of [[-17,-27,21,54],[668,-117,77,234]]){
-        a.plate(c,l,s,w,d,0,'#8d8679');for(let j=0;j<3;j++)SchoolWorkshop.line(c,[a.P(l+j*3,s),a.P(l+j*3,s+d)],j%2?'#6d655a':'#c3b49b',1.3);
-      }
-      for(const s of a.staffSeats)SchoolHighTableChairs.drawFeetShadow(c,...a.P(725,s),s);
+      a.landings(c);
       for(const s of a.rows)for(const [start,end] of a.runs)for(let l=start;l<end;l+=48){
         const [x,y]=a.P(l,s);SchoolWorkshop.oval(c,x+15,y-4,28,5.7,'rgba(55,43,38,.19)');
       }
@@ -11583,7 +11826,7 @@ const SchoolThreeHalls=(()=>{
       const [x,y]=great(l,a.rows[row]+sg*16);
       api.pixel(pupils,'Seated pupil '+(i+1),x,y,0,{x:x-31,y:y-53,w:62,h:62},c=>a.drawPupil(c,x,y,sg,id));
     }
-    for(const sg of [-1,1])greatDoor(api,room,sg,motion);
+    for(const sg of [-1,1])greatDoor(api,room,sg);
     const lights=api.group('Floating candles',room);
     const wax=new api.THREE.MeshBasicMaterial({color:'#e9d6a9'}),fire=new api.THREE.MeshBasicMaterial({color:'#ffcb74'});
     for(let i=0;i<30;i++){
@@ -11817,10 +12060,21 @@ const SchoolThreeTrials=(()=>{
         b.block(shell,'Portal threshold',w,a-r-4,2,0,2*r+8,7,1.3,skin);
         for(let i=0;i<5;i++)b.block(shell,'Receding stair tread',w,a-r,-6-i*4.4,0,r*2,4.4,1+i*2.6,skin);
       }
-      if((bay&&!left)||(gate&&left)){
-        const start=bay?25:103,end=bay?80:148;
-        b.block(shell,'Panelled wall cupboard',w,start,.5,0,end-start,7.6,21,skin);
-        b.block(shell,'Cupboard ledge',w,start-1,0,21,end-start+2,10.3,2.4,skin);
+      if(bay&&!left){
+        b.block(shell,'Panelled wall cupboard',w,25,.5,0,55,7.6,21,skin);
+        b.block(shell,'Cupboard ledge',w,24,0,21,57,10.3,2.4,skin);
+      }
+      if(gate&&left){
+        const finish=b.paint(rect(146,94,80,63),s.paintGateCabinet);
+        b.block(shell,'Panelled wall cupboard',w,103,.75,0,45,7.5,21,finish);
+        b.block(shell,'Cupboard ledge',w,101.8,0,21,47.4,10.2,2.4,finish);
+        b.block(shell,'Cupboard plinth',w,102.1,0,1,46.8,9.4,1.2,finish);
+        const spacing=(45-2.2)/3;
+        for(let i=0;i<3;i++){
+          const u=104.35+i*spacing;
+          b.block(shell,'Framed oak cupboard door',w,u,8.27,2.7,spacing-1.1,.53,15.8,finish);
+          b.block(shell,'Cabinet latch',w,u+(i%2?2.0:spacing-3.9),8.8,9.1,1.25,.65,2.1,finish);
+        }
       }
       if(gallery&&left){
         arch(b,shell,w,117,15,9,24,0,skin,6.25);
@@ -11943,16 +12197,6 @@ const SchoolThreeTrials=(()=>{
       const tex=b.paint(bounds,c=>o.draw(c));
       if(SchoolTrialModels[key])workshop(b,g,key,x,y,tex);
       else nativePiece(b,g,key,x,y,tex,room==='practice');
-      if(key==='settle'){
-        tex.material.transparent=true;tex.material.forceSinglePass=true;
-        let cut='';
-        b.updates.push(v=>{
-          const p=v.player,dx=p.x-x,dy=p.y-y;
-          const mask=dy<=0&&dy>=-45&&Math.abs(dx)<=45?Math.round(dx*2)+','+Math.round(dy*2):'';
-          if(cut===mask)return;
-          repaint(tex,c=>SchoolFurnishings.drawPracticeSeat(c,o,p));cut=mask;
-        });
-      }
     }
     if(room==='gate')for(const [key,x,y] of [['plinth',195,241],['windowSeat',455,285]]){
       const tex=b.paint(rect(x-30,y-65,60,84),c=>SchoolWorkshop.furniture(c,key,x,y));
@@ -12325,7 +12569,7 @@ const SchoolThreeTrials=(()=>{
       const normal=[-(d-y)/len*4.3,(a-x)/len*4.3];
       b.elev(quay,'Cistern ashlar coping',[[x,y],[a,d],[a+normal[0],d+normal[1]],[x+normal[0],y+normal[1]]],-13,13,'skin');
     }
-    for(const [x,y,w,d] of [[132,221,8.1,27],[185,231,11,32],[226,221,7,23],[351,156,8,22],[409,205,7,18],[463,204,10,26]]){
+    for(const [x,y,w,d] of SchoolGalleryFittings.piers){
       const q=[[x-w,y],[x,y-w*.45],[x+w,y],[x,y+w*.45]];
       b.elev(quay,'Submerged coursed pier',q,-d,d,'skin');
     }
@@ -12414,10 +12658,12 @@ const SchoolThree=(()=>{
   const point=(x,y,z)=>new T.Vector3(x,z*unit,y*unit);
   const sample=new T.Vector3(),normalMatrix=new T.Matrix3();
   const engines=new WeakMap();
-  function canvasMap(canvas){
+  function canvasMap(canvas,filterWhenSmall=false){
     const tex=new T.CanvasTexture(canvas);
-    tex.colorSpace=T.SRGBColorSpace;tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;
-    tex.generateMipmaps=false;
+    tex.colorSpace=T.SRGBColorSpace;
+    tex.magFilter=T.NearestFilter;
+    tex.minFilter=filterWhenSmall?T.LinearMipmapLinearFilter:T.NearestFilter;
+    tex.generateMipmaps=filterWhenSmall;
     return tex;
   }
   function paintedMaterial(map){
@@ -12449,7 +12695,7 @@ const SchoolThree=(()=>{
       const ctx=tile.getContext('2d');ctx.imageSmoothingEnabled=false;
       ctx.setTransform(tile.width/w,0,0,tile.height/h,-x*tile.width/w,-y*tile.height/h);
       paint(ctx);
-      const tex=canvasMap(tile),mat=paintedMaterial(tex);textures.add(tex);materials.add(mat);
+      const tex=canvasMap(tile,options.filterWhenSmall),mat=paintedMaterial(tex);textures.add(tex);materials.add(mat);
       return {bounds:{x,y,w,h},map:tex,material:mat};
     }
     function architecture(bounds,paint,options){skin=painted(bounds,paint,options);return skin;}
@@ -12628,13 +12874,6 @@ const SchoolThree=(()=>{
         const layer=dynamicLayer(doc,208,192),root=new T.Group(),mat=paintedMaterial(layer.map);
         const geometry=new T.PlaneGeometry(104,96*unit);
         const figure=new T.Mesh(geometry,mat);figure.position.y=42*unit;root.add(figure);
-        if(id==='Harry'){
-          // A warm silhouette local to the sprite makes him readable behind
-          // the near gatehouses, without turning masonry transparent.
-          const ghost=mat.clone();ghost.color.set('#ba9784');ghost.depthFunc=T.GreaterDepth;
-          ghost.depthWrite=false;ghost.transparent=true;ghost.opacity=.76;
-          const hidden=new T.Mesh(geometry,ghost);hidden.position.copy(figure.position);hidden.renderOrder=40;root.add(hidden);
-        }
         const shadow=new T.Mesh(new T.CircleGeometry(1,24),new T.MeshBasicMaterial({
           color:0x211e20,transparent:true,opacity:.27,depthWrite:false
         }));
@@ -12933,6 +13172,7 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
       c.save();
       if(kind==='shield'){
         const swell=Math.sin(Math.PI*life),xx=p.x,yy=p.y-25;
+        if(fx.spell && life<.32)wandBolt(c,from,to,life/.32,'light');
         c.globalAlpha=swell*.85;
         for(const q of [-1,1])for(let j=0;j<2;j++){
           const h=j*5;
@@ -12974,10 +13214,10 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     const fx=combat?.fx.find(item=>item.kind==='roll');
     if(!fx)return;
     const {from,age,duration}=fx,k=age/duration,ease=k*k*(3-2*k);
-    c.save();c.fillStyle='#cfc6b2';c.globalAlpha=.85*(1-k);
-    for(const [angle,spread] of [[.2,12],[1.1,7],[2.25,13],[3.7,9],[4.1,15],[5.4,10]]){
-      const x=from.x+Math.cos(angle)*spread*ease,y=from.y+Math.sin(angle)*spread*ease*.5-4*k;
-      c.beginPath();c.arc(x,y,2.4*(1-.6*k),0,Math.PI*2);c.fill();
+    c.save();c.fillStyle='#ab9c8c';c.globalAlpha=.36*(1-k);
+    for(const [angle,spread] of [[.2,6],[2.25,7],[4.1,8]]){
+      const x=from.x+Math.cos(angle)*spread*ease,y=from.y+Math.sin(angle)*spread*ease*.45-k;
+      c.fillRect(Math.round(x),Math.round(y),1,1);
     }
     c.restore();
   }
@@ -13070,10 +13310,9 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
           rollDust(ctx,combat);
         });
       }
-      if(sp?.bolt||combat?.fx?.length||combat?.rollAge>=0&&combat.rollAge<.50||scene==='practice'&&v.dumbledore&&(v.mode==='intro'||v.selected==='dumbledore')){
+      if(sp?.bolt||combat?.fx?.some(fx=>fx.kind!=='roll')||scene==='practice'&&v.dumbledore&&(v.mode==='intro'||v.selected==='dumbledore')){
         three.effect('Wand and action effects',false,extent,ctx=>{
           if(scene==='practice'&&v.dumbledore&&(v.mode==='intro'||v.selected==='dumbledore'))marker(ctx,v.dumbledore.x,v.dumbledore.y-67+Math.sin(t*3),sun);
-          const trail=[];SchoolActionPose.rollTrail(ctx,p,combat,(y,f)=>trail.push(f));for(const draw of trail)draw();
           spellFlight(ctx,sp?.bolt);battleEffects(ctx,p,combat);
         });
       }
@@ -13125,9 +13364,8 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
         ctx.save();ctx.translate(-o.x,-o.y);o.draw(ctx);ctx.restore();
       },o.key==='library'||o.key==='plinth'?.255:o.key==='wandCase'?.125:.18);
       a.ellipse(c,o.x-3,o.y+1.4,size,size*.27,'rgba(40,32,40,.22)');
-      add(o.y,()=>scene==='practice'&&o.key==='settle'?SchoolFurnishings.drawPracticeSeat(c,o,p):o.draw(c));
+      add(o.y,()=>o.draw(c));
     }
-    SchoolActionPose.rollTrail(c,p,v.combat,add);
     if(v.combat?.rolling && assetShadowsReady){
       const aim=v.combat.rollDirection,angle=Math.round(Math.atan2(aim.y,aim.x)*4/Math.PI);
       const stage=Math.min(7,Math.floor(v.combat.rollProgress*8));
@@ -13177,7 +13415,65 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
   return {drawSchoolFrame,drawSchoolCard,schoolFrameSpot,schoolFramePoint,schoolSceneContext};
 })();
 </script>
-<script>/* Timers advance with the room simulation. Spellbook and pause screens freeze the drill. */
+<script>/* These anchors are in the eight original 80px cast rows, relative to Harry's planted feet.
+   The authored right sleeve, hand and wand share this rig with targeting and release. */
+const SchoolWand = (() => {
+  const faces=['east','south-east','south','south-west','west','north-west','north','north-east'];
+  // Shoulder and the offset where the elbow opens to clear the robe in this view.
+  const joints=[[2,-29,1,2],[-4,-30,-3,2],[-7,-29,-3,1],[-6,-31,-2,1],
+    [-3,-32,-3,-1],[3,-32,-6,5],[7,-31,5,-2],[7,-30,3,-2]];
+  // Forward upper-body lean, knee compression and casting-arm swing on each original cel.
+  const clips={
+    basic:{snap:1,arm:8,shaft:12,lean:[-2,3,0],sink:[1,0,1],swing:[-1.4,0,.65]},
+    flipendo:{snap:1,arm:10,shaft:14,lean:[-4,5,4,3,1,0],sink:[2,2,2,1,0,0],swing:[-1.8,0,0,.25,.6,.9]},
+    lumos:{snap:4,arm:7,shaft:14,lean:[0,0,-1,-2,-2,-1,0,0],sink:[0,1,0,-1,-2,-2,-1,0],swing:[.9,.7,.2,-.9,0,0,.3,.9]},
+    spongify:{snap:4,arm:6,shaft:11,lean:[0,1,2,-1,-4,-5,-3,-2,0],sink:[0,2,3,5,7,7,5,3,0],swing:[.9,.7,.3,-1.2,0,0,.3,.6,.9]},
+    leviosa:{snap:5,arm:9,shaft:15,lean:[0,3,4,2,0,-3,-4,-2,0],sink:[0,6,6,3,1,-3,-3,-1,0],swing:[.9,1.5,1.85,1.3,.55,0,0,-.45,.9]},
+    impedimenta:{snap:4,arm:9,shaft:13,lean:[0,-1,-3,-4,4,6,3,1,0],sink:[0,3,3,4,4,3,2,1,0],swing:[.9,.5,-.6,-1.7,0,0,.3,.5,.9]},
+    ultimate:{snap:6,arm:10,shaft:15,lean:[0,-1,-3,-6,-7,-4,10,11,7,4,1],sink:[0,3,6,9,10,7,6,7,5,3,1],swing:[.9,.5,-.2,-1.1,-1.95,-1.65,0,0,.18,.55,.9]},
+    ready:{snap:0,arm:7,shaft:10,lean:[0],sink:[0],swing:[0]}
+  };
+  const facing=d=>faces[(Math.round(Math.atan2(d.y,d.x)*4/Math.PI)+8)%8];
+  function forward(name){
+    const a=Math.max(0,faces.indexOf(name))*Math.PI/4;
+    return {x:Math.cos(a),y:Math.sin(a)};
+  }
+  function body(id,name,frame){
+    const c=clips[id],d=forward(name),lean=c.lean[frame],sink=c.sink[frame];
+    return {x:lean*d.x*1.05,y:sink+lean*d.y*.30};
+  }
+  function jointsAt(id,name,frame){
+    const [x,y,ox,oy]=joints[Math.max(0,faces.indexOf(name))],b=body(id,name,frame);
+    const shoulder={x:x+Math.round(b.x*.64),y:y+Math.round(b.y*.64)};
+    return {shoulder,base:{x:shoulder.x+ox,y:shoulder.y+oy}};
+  }
+  function arm(id,name,aim,scale=1,frame=clips[id].snap){
+    const c=clips[id],{shoulder,base}=jointsAt(id,name,frame),s=c.swing[frame];
+    // Opposite screen projections of the same right-handed backswing.
+    const sweep=s*(forward(name).x<-.01?-1:1),cos=Math.cos(sweep),sin=Math.sin(sweep);
+    const d={x:aim.x*cos-aim.y*sin,y:aim.x*sin+aim.y*cos};
+    const reach=c.arm*scale*(1-Math.min(.4,Math.abs(s)*.2)),wand=c.shaft*scale;
+    const grip={x:base.x+d.x*reach,y:base.y+d.y*reach};
+    const tip={x:grip.x+d.x*wand,y:grip.y+d.y*wand};
+    const elbow={x:(shoulder.x+grip.x)/2+(base.x-shoulder.x)*.85,y:(shoulder.y+grip.y)/2+3};
+    return {shoulder,elbow,grip,tip};
+  }
+  function solve(p,id,name,aim,point){
+    const c=clips[id],base=jointsAt(id,name,c.snap).base;
+    const foot={x:Math.round(p.x),y:Math.round(p.y)};
+    let scale=1;
+    if(point){
+      const x=point.x-foot.x-base.x,y=point.y-foot.y-base.y,n=Math.hypot(x,y);
+      if(n>.00001)aim={x:x/n,y:y/n};
+      scale=Math.min(1,n/(c.arm+c.shaft+1));
+    }
+    const tip=arm(id,name,aim,scale).tip;
+    return {facing:name,aim,scale,from:{x:foot.x+tip.x,y:foot.y+tip.y}};
+  }
+  return {faces,facing,forward,body,arm,solve,clips};
+})();
+
+/* Timers advance with the room simulation. Spellbook and pause screens freeze the drill. */
 function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipendoPath, onBreak, onDefeat, onEvade, onChange, beep}) {
   // The time of release is shared by the actor's planted pose, wand sound and projectile.
   const motions = {
@@ -13209,19 +13505,10 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
   let rollStart=-10, rollEnd=0, rollReady=0, basicReady=0, actionReady=0, recentHits=0;
   let rollDirection={x:1,y:0}, rollOrigin={x:0,y:0}, phase='idle',phaseAge=0, enemyAim=null, fightKey='';
   const ready=Object.create(null), effects=[];
-  const faces=['east','south-east','south','south-west','west','north-west','north','north-east'];
-  const rollDuration=.30, evadeWindow=.20;
+  const rollDuration=.48, rollCooldownDuration=.88, evadeWindow=.20;
   const length=(p,q)=>Math.hypot(p.x-q.x,p.y-q.y);
   const torso=p=>({x:p.x,y:p.y-25});
   const suit={x:320,y:220};
-  function forward(p) {
-    const a=Math.max(0,faces.indexOf(p.facing))*Math.PI/4;
-    return {x:Math.cos(a),y:Math.sin(a)};
-  }
-  function direction(x,y,p) {
-    const from=torso(p);
-    return unit(x-from.x,y-from.y)||forward(p);
-  }
   function unit(dx,dy) {
     const n=Math.hypot(dx,dy);
     return Number.isFinite(n)&&n>.01?{x:dx/n,y:dy/n}:null;
@@ -13243,30 +13530,41 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     effects.length=0;action=null;lastImpact=null;lastBasic=-Infinity;actionReady=0;resetFight();fightKey='';recentHits=0;rollStart=-10;rollEnd=0;
     recovery=0;safeUntil=0;shieldUntil=0;slowUntil=0;
   }
-  function begin(id,x,y,release,fixedDirection) {
-    const p=context().player,aim=fixedDirection||direction(x,y,p);
+  function shotPose(id,c,x,y,relative,lockedFacing){
+    const p=c.player,centre=torso(p),manual=Number.isFinite(x)&&Number.isFinite(y);
+    const fixed=relative?unit(x,y):null;
+    if(relative&&!fixed)return null;
+    let point=!relative&&manual?{x,y}:null;
+    const forward=fixed||(point&&unit(x-centre.x,y-centre.y))||SchoolWand.forward(p.facing);
+    const facing=lockedFacing||SchoolWand.facing(forward);
+    if(!manual&&c.target){
+      const dx=c.target.x-centre.x,dy=c.target.y-centre.y;
+      if(dx*forward.x+dy*forward.y>=0 && Math.abs(dx*forward.y-dy*forward.x)<=(c.target.r||12))point=c.target;
+    }
+    return SchoolWand.solve(p,id,facing,forward,point);
+  }
+  function begin(id,x,y,release,relative=false) {
+    const pose=shotPose(id,context(),x,y,relative);
+    if(!pose)return false;
     const [duration,fraction]=motions[id];
-    const point=!fixedDirection&&Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null;
-    if(face)face(aim);
+    if(face)face(SchoolWand.forward(pose.facing));
     const chained=id==='basic'&&time-lastBasic<=.39;
     lastBasic=id==='basic'?time:-Infinity;
-    action={id,start:time,duration,aim,chained,releaseAt:chained?time:time+duration*fraction,release,point,fixedDirection};
+    action={id,start:time,duration,...pose,input:{x,y,relative},chained,releaseAt:chained?time:time+duration*fraction,release};
     actionReady=action.releaseAt+.028;
     if(chained){releaseAction(action);action.release=null}
+    return true;
   }
   function releaseAction(a) {
-    const c=context(),from=torso(c.player),target=c.target;
-    let point=a.point;
-    if(!a.fixedDirection && !point && target){
-      const dx=target.x-from.x,dy=target.y-from.y;
-      if(dx*a.aim.x+dy*a.aim.y>=0 && Math.abs(dx*a.aim.y-dy*a.aim.x)<=(target.r||12))point=target;
-    }
-    const dir=a.fixedDirection||(point&&unit(point.x-from.x,point.y-from.y))||a.aim;
-    a.release({from,dir});beep('cast');
+    // The ferry can carry both planted feet during a wind-up.
+    const {x,y,relative}=a.input;
+    Object.assign(a,shotPose(a.id,context(),x,y,relative,a.facing));
+    a.release({from:a.from,dir:a.aim});beep('cast');
   }
   function combatRayPath(from,d,target,range) {
     if(target) {
       const tx=target.x-from.x,ty=target.y-from.y,along=tx*d.x+ty*d.y,side=Math.abs(tx*d.y-ty*d.x);
+      if(Math.hypot(tx,ty)<=(target.r||12))return {distance:Math.max(.1,along),object:target.id};
       if(along>=0&&along<=range&&side<=(target.r||12)) {
         return {distance:Math.max(1,along-Math.sqrt(Math.max(0,(target.r||12)**2-side**2))*.65),object:target.id};
       }
@@ -13274,16 +13572,19 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     return {distance:range,object:null};
   }
   const spellRange=id=>id==='lumos'?100:125;
-  function spellGuide(i,x,y,relative=false) {
-    const c=context(),id=slots[i];
+  function aimPreview(which,x,y,relative=false) {
+    const c=context(),id=validSlot(which)?slots[which]:which==='basic'||which==='ultimate'?which:null;
     if(!c.live || !id)return null;
-    const from=torso(c.player);
-    const dir=relative?unit(x,y):unit(x-from.x,y-from.y);
-    if(!dir)return null;
-    if(id==='spongify')return {from,to:from,dir,self:true,object:null};
-    const path=id==='flipendo'?flipendoPath(from,dir):combatRayPath(from,dir,c.target,spellRange(id));
-    return {from,to:{x:from.x+dir.x*path.distance,y:from.y+dir.y*path.distance},dir,object:path.object};
+    const pose=shotPose(id,c,x,y,relative);
+    if(!pose)return null;
+    const {from,aim:dir}=pose;
+    if(id==='spongify')return {from,to:torso(c.player),dir,self:true,object:null};
+    const range=id==='basic'?115:id==='ultimate'?150:spellRange(id);
+    const path=id==='flipendo'?flipendoPath(from,dir):combatRayPath(from,dir,c.target,range);
+    return {from,to:{x:from.x+dir.x*path.distance,y:from.y+dir.y*path.distance},dir,object:path.object,self:false};
   }
+  const spellGuide=(i,x,y,relative=false)=>validSlot(i)?aimPreview(i,x,y,relative):null;
+  const basicGuide=(x,y,relative=false)=>aimPreview('basic',x,y,relative);
   function castRay(kind,shot,range,spell,onContact) {
     const target=context().target,{from,dir:d}=shot;
     const {distance:dist,object}=combatRayPath(from,d,target,range),hit=object!==null;
@@ -13293,31 +13594,31 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     return hit;
   }
   function credit(amount=1){focus=Math.min(maxFocus,focus+amount)}
-  function basic(x,y) {
-    const c=context(); if(!canAct(c)||time<basicReady)return false;
+  function basic(x,y,relative=false) {
+    const c=context(); if(!canAct(c)||time<basicReady||(relative&&!unit(x,y)))return false;
     basicReady=time+.31;
     begin('basic',x,y,shot=>castRay('basic',shot,115,'',target=>{
       credit();
       if(target.id==='armour'&&++recentHits>=3){recentHits=0;guardUntil=Math.max(guardUntil,time+.85)}
       beep('step');onChange();
-    }));return true;
+    }),relative);return true;
   }
-  function ultimate(x,y) {
-    const c=context();if(!canAct(c)||focus<maxFocus)return false;
+  function ultimate(x,y,relative=false) {
+    const c=context();if(!canAct(c)||focus<maxFocus||(relative&&!unit(x,y)))return false;
     focus=0;
     begin('ultimate',x,y,shot=>castRay('ultimate',shot,150,'',target=>{
       if(target.id==='armour'&&context().stage==='armour'&&!context().bonus)onBreak();
       if(target.id==='armour')interrupt(1.0);
       beep('armour');onChange();
-    }));
+    }),relative);
     onChange();return true;
   }
   function roll(dx,dy) {
     const c=context();syncFight(c);
     if(!c.live||time<rollEnd||time<recovery||time<rollReady)return false;
     const mag=Math.hypot(dx,dy);
-    const f=forward(c.player);
-    rollDirection=Number.isFinite(mag)&&mag>.02?{x:dx/mag,y:dy/mag}:{x:-f.x,y:-f.y};
+    rollDirection=Number.isFinite(mag)&&mag>.18?{x:dx/mag,y:dy/mag}:SchoolWand.forward(c.player.facing);
+    if(face)face(rollDirection);
     // Dodge takes priority over an unfinished wind-up. A cancelled cast has
     // emitted nothing, so its focus or spell cooldown is available on landing.
     if(action?.release){
@@ -13327,7 +13628,7 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     }
     const refundedFocus=action?.id==='ultimate'&&!!action.release;
     actionReady=time;lastBasic=-Infinity;
-    action=null;rollOrigin={x:c.player.x,y:c.player.y};rollStart=time;rollEnd=time+rollDuration;rollReady=time+.88;
+    action=null;rollOrigin={x:c.player.x,y:c.player.y};rollStart=time;rollEnd=time+rollDuration;rollReady=time+rollCooldownDuration;
     effect('roll',rollOrigin,rollOrigin,rollDuration);beep('step');
     if(refundedFocus)onChange();
     return true;
@@ -13356,8 +13657,7 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     const c=context();if(!canAct(c)||!validSlot(i)||!slots[i])return false;
     const id=slots[i],spec=book.get(id);
     if(time<(ready[id]||0))return false;
-    const fixedDirection=relative?unit(x,y):null;
-    if(relative&&!fixedDirection)return false;
+    if(relative&&!unit(x,y))return false;
     begin(id,x,y,shot=>{
       if(id==='flipendo'){fireFlipendo(shot);return}
       if(id==='spongify'){
@@ -13372,7 +13672,7 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
         }
         beep('bell');onChange();
       });
-    },fixedDirection);
+    },relative);
     active=i;ready[id]=time+spec.cooldown;onChange();return true;
   }
   function changePhase(next){phase=next;phaseAge=0}
@@ -13423,14 +13723,14 @@ function createSchoolCombat({saved, context, displace, face, fireFlipendo, flipe
     return {hp,maxHp,focus,maxFocus,active,slots:slots.slice(),library:spells.map(s=>({
       id:s.id,name:s.name[lang],description:s.desc[lang],requirement:requirements[s.gate][lang],
       learned:learned.has(s.id),available:available(s,c),cooldown:s.cooldown,remaining:Math.max(0,(ready[s.id]||0)-time)
-    })),basicCooldown:Math.max(0,basicReady-time),rollCooldown:Math.max(0,rollReady-time),
+    })),basicCooldown:Math.max(0,basicReady-time),rollCooldown:Math.max(0,rollReady-time),rollCooldownDuration,
     fx:effects.map(f=>({kind:f.kind,from:f.from,to:f.to,age:Math.max(0,time-f.start),duration:f.duration,travel:f.delay,hit:f.hit,spell:f.spell,object:f.object})),
-    action:action?{id:action.id,age:time-action.start,duration:action.duration,aim:action.aim,chained:action.chained}:null,
+    action:action?{id:action.id,age:time-action.start,duration:action.duration,aim:action.aim,facing:action.facing,scale:action.scale,chained:action.chained}:null,
     lastImpact:lastImpact?{object:lastImpact.object,age:time-lastImpact.at}:null,
     enemyPhase:phase,enemyAge:phaseAge,enemyAim,stun:Math.max(0,guardUntil-time),liftRemaining:Math.max(0,liftedUntil-time),slowed:time<slowUntil,shield:time<shieldUntil,
     rolling:time<rollEnd,rollAge:time-rollStart,rollProgress:Math.max(0,Math.min(1,(time-rollStart)/rollDuration)),rollDirection,invulnerable:(time<rollEnd&&time<rollStart+evadeWindow)||time<safeUntil};
   }
-  return {tick,state,view,leaveRoom,basic,ultimate,roll,castSlot,spellGuide,cast:(x,y)=>castSlot(active,x,y),equip,learn,credit,
+  return {tick,state,view,leaveRoom,basic,ultimate,roll,castSlot,spellGuide,basicGuide,aimPreview,cast:(x,y)=>castSlot(active,x,y),equip,learn,credit,
     busy:()=>time<rollEnd||time<recovery||!!(action&&time-action.start<action.duration*.85),guardOpen:()=>time<guardUntil};
 }
 
@@ -13585,8 +13885,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     unsaved=false; travelSinceSave=0;
   }
   function changed() {practiceSnapshot=null; save(); onChange()}
-  // An unsaved training visit starts on the worn bootprints. Both an unaimed
-  // shot at the mannequin and a full backwards roll fit this part of the mat.
+  // An unsaved training visit faces the mannequin from the worn bootprints.
   if(entry==='training'||entry==='practice-bay')Object.assign(s,{bayX:267,bayY:225,bayFacing:'north-west'});
   if(entry==='counterweight')Object.assign(s,{practice:'gate',bayX:278,bayY:230,bayFacing:'east',targetHit:true,learned:true});
   if(entry==='counterweight-v2'||entry==='pendulum')Object.assign(s,{practice:'gate',gearRoom:'pendulum',bayX:entry==='pendulum'?249:218,bayY:212,bayFacing:'east',targetHit:true,learned:true,notch:0,bridgeLatched:true});
@@ -13737,7 +14036,8 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   function flipendoPath(from,dir) {
     const prop=trainingObject();
     const choices=inGallery()?[SchoolPendulumGallery.stoneTarget(slide),SchoolPendulumGallery.drum]:s.practice==='gate'?[works.cartTarget(s.notch),works.lever]:prop?[prop]:[];
-    const contact=works.intercept(from,dir,choices);
+    const touching=choices.find(obj=>Math.hypot(obj.x-from.x,obj.y-from.y)<=obj.r);
+    const contact=touching?{obj:touching,distance:Math.max(.1,(touching.x-from.x)*dir.x+(touching.y-from.y)*dir.y)}:works.intercept(from,dir,choices);
     const reachable=contact && contact.distance<=flipendoRange;
     return {distance:reachable?contact.distance:flipendoRange,object:reachable?contact.obj.id:null,outOfRange:!!contact&&!reachable};
   }
@@ -14148,7 +14448,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     }
   });
   return {view,choose,move,act,jump,tracePoint,traceDirection,resetTrace,
-    basic:(x,y)=>combat.basic(x,y),ultimate:(x,y)=>combat.ultimate(x,y),roll:(dx,dy)=>combat.roll(dx,dy),
+    basic:combat.basic,basicGuide:combat.basicGuide,aimPreview:combat.aimPreview,ultimate:combat.ultimate,roll:combat.roll,
     cast:()=>combat.cast(),castAt:(x,y)=>combat.cast(x,y),castSlot:combat.castSlot,spellGuide:combat.spellGuide,
     equipSpell:(i,id)=>combat.equip(i,id),learnSpell:id=>combat.learn(id),
     openAlbum() { if (!albumOpen) { walking = false; albumOpen = true; changed(); } },
@@ -14169,15 +14469,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
       title: 'The Other School Map', language: '日本語', languageName: '日本語に切り替え',
       sound: 'Sound on', muted: 'Sound off', toggleSound: 'Sound', seasons: ['September', 'November'],
       quest: 'Quest', act: 'Examine', openJournal: 'Pause and open journal', hideJournal: 'Resume game', cast: 'Flipendo',
-      walk: 'WASD or arrows move. E interacts. Click to aim your spell. F casts ahead. 1–3 use your spell slots. Space attacks, Shift rolls and Q uses your ultimate. At crossings, C jumps in place. Hold a direction to jump that way.',
-      touchWalk: 'Drag with one thumb and use the action buttons with the other. Tap the centre to attack or hold and release at full Focus for your ultimate. Roll dodges. At a crossing, Jump on its own goes straight up. Hold a direction to jump that way.',
+      walk: 'WASD or arrows move. E interacts. F casts ahead. 1–3 use your spell slots. Space attacks, Shift rolls and Q uses your ultimate. At crossings, C jumps in place. Hold a direction to jump that way.',
+      touchWalk: 'Drag with one thumb and use the action buttons with the other. Tap Attack, or hold still at full Focus and release for your ultimate. Roll follows your stick or the direction Harry faces. At crossings, Jump goes straight up unless you hold a direction.',
       explore: 'WASD or arrows move. Walk up to a door or an object and press E when its prompt appears. J opens the journal.', touchExplore: 'Drag to walk. At a door or an object, tap its prompt to interact.',
       firstWalk: 'WASD or arrows to move. J opens controls.', firstTouch: 'Drag to walk.',
-      aimMouse: 'Move the mouse to aim. Click to cast.', aimTouch: 'Drag a spell to aim, release to cast. Slide back to cancel.',
-      aimHelp: 'Drag a spell to aim. The tip lights up on a reachable target. Release to cast, or slide back to cancel.',
+      aimHelp: 'Drag Attack or an equipped spell to aim. Release to fire, or slide back to cancel.',
       spellbook:'Spellbook', closeBook:'Close spellbook', bookInstructions:'Choose a slot, then a learned spell to equip. Other entries show how to study them.',
       study:'Study', equip:'Equip', slot:'Slot', empty:'Empty', equipped:'Equipped', hp:'Health', focus:'Focus', attack:'Attack', roll:'Roll', ultimate:'Ultimate',
-      hold:'Tap for a basic attack. At full Focus, hold and release for your ultimate.', jump:'Jump',
+      hold:'Tap to attack or drag to aim. At full Focus, hold still and release for your ultimate.', jump:'Jump',
       choice: 'Click an action or press its number key.', touchChoice: 'Tap an action to continue.',
       collection: 'Cards', albumTitle: 'Wizard Card Album', close: 'Close album',
       collected: 'Collected', missing: 'Uncollected', count: 'Cards collected',
@@ -14190,15 +14489,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
       title: 'もうひとつの校内地図', language: 'EN', languageName: 'Switch to English',
       sound: '音あり', muted: '音なし', toggleSound: '音声', seasons: ['9月', '11月'],
       quest: 'クエスト', act: '調べる', openJournal: '一時停止して手帳を開く', hideJournal: 'ゲームに戻る', cast: 'フリペンド',
-      walk: 'WASD・矢印で移動、Eで調べる。クリックで狙い、Fで正面に発射。1〜3で呪文枠、スペースで通常攻撃、Shiftで回避、Qで必殺技。足場ではCでその場にジャンプ。方向を入れながら押すと、その方向に跳ぶ。',
-      touchWalk: '片手でドラッグして移動し、もう片方でアクションボタンを押す。中央をタップで通常攻撃。集中力が満タンなら中央を長押しして離すと必殺技。回避で転がり、足場ではジャンプだけでその場に跳ぶ。方向を入れたまま押すと、その方向に跳ぶ。',
+      walk: 'WASD・矢印で移動、Eで調べる。Fで正面に発射。1〜3で呪文枠、スペースで通常攻撃、Shiftで回避、Qで必殺技。足場ではCでその場にジャンプ。方向を入れながら押すと、その方向に跳ぶ。',
+      touchWalk: '片手で移動し、もう片方でアクションボタンを押す。中央をタップで通常攻撃。集中力が満タンなら、そのまま長押しして離すと必殺技。回避では入力した方向、またはハリーが向いている方向へ転がる。足場ではジャンプだけでその場に跳ぶ。方向を入れながら押すと、その方向に跳ぶ。',
       explore: 'WASD・矢印で移動。扉や調べたい物に近づき、表示が出たらEを押す。Jで手帳を開く。', touchExplore: 'ドラッグで移動。扉や調べたい物に近づき、表示されたボタンをタップ。',
       firstWalk: 'WASD・矢印で移動。Jで操作方法。', firstTouch: 'ドラッグで移動。',
-      aimMouse: 'マウスで狙い、クリックで呪文を放つ。', aimTouch: '呪文ボタンをドラッグして狙い、離して放つ。元の位置に戻すとキャンセル。',
-      aimHelp: '呪文ボタンをドラッグして狙う。届く的に照準が合うと先端が光る。離して発射、元の位置に戻すとキャンセル。',
+      aimHelp: '通常攻撃か装備した呪文のボタンをドラッグして狙う。離すと発射、元の位置に戻すとキャンセル。',
       spellbook:'呪文の書', closeBook:'呪文の書を閉じる', bookInstructions:'枠を選び、習得済みの呪文を装備しよう。ほかの呪文は習得条件を確認できる。',
       study:'習得', equip:'装備', slot:'枠', empty:'空き', equipped:'装備済み', hp:'体力', focus:'集中力', attack:'通常攻撃', roll:'回避', ultimate:'必殺技',
-      hold:'タップで通常攻撃。集中力が満タンなら長押しして離すと必殺技。', jump:'ジャンプ',
+      hold:'タップで通常攻撃。ドラッグで狙いを定める。集中力が満タンなら、そのまま長押しして離すと必殺技。', jump:'ジャンプ',
       choice: '行動をクリックするか、数字キーで選択。', touchChoice: '行動をタップして選択。',
       collection: 'カード', albumTitle: '魔法使いのカード帳', close: 'カード帳を閉じる',
       collected: '入手済み', missing: '未入手', count: '入手したカード',
@@ -14218,7 +14516,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   let editSlot = 0, bookKey = '', lastGear = '', lastVitals = '', vitalsUntil = 0, hudTick = 0;
   const padPresses = new Map();
   let centrePress = null, bufferedAction = null, bookReturn = null, padStage = '';
-  let aimPress = null, mouseAim = null, seenAimHelp = false;
+  let aimPress = null, seenAimHelp = false;
   let tracePointer = null, ink = [], strokeFraction = 0, lastTraceMode = false, albumKey = '', traceLocale = '', demoStart = null;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const directionSymbols = {north:'↑', east:'→', south:'↓', west:'←'};
@@ -14245,7 +14543,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     captionKey = key;
     const firstAim=combatView(view)&&!seenAimHelp;
     if(firstAim)seenAimHelp=true;
-    const tip=firstAim?(coarse.matches?t.aimTouch:t.aimMouse):firstWalk?(coarse.matches?t.firstTouch:t.firstWalk):'';
+    const tip=firstAim?t.aimHelp:firstWalk?(coarse.matches?t.firstTouch:t.firstWalk):'';
     write(el.caption,[text,tip].filter(Boolean).join('\n'));
     el.caption.classList.remove('faded'); clearTimeout(captionTimer);
     if (view.canWalk && !dialogueChoices.length) captionTimer = setTimeout(() => el.caption.classList.add('faded'), firstWalk ? 7400 : 5400);
@@ -14334,6 +14632,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     el.attack.classList.toggle('ready',combat.focus>=combat.maxFocus);
     const gear=JSON.stringify([view.lang,combat.slots]);
     if (gear!==lastGear) {
+      if(lastGear&&padPresses.size)clearPad();
       lastGear=gear;
       el.quickSlots.replaceChildren(...combat.slots.map((id,index)=>{
         const button=document.createElement('button'),label=document.createElement('span');
@@ -14353,7 +14652,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
       if(spell) button.setAttribute('aria-pressed',String(i===combat.active));
       markCooldown(button,spell?.remaining||0,spell?.cooldown||1);
     }
-    markCooldown(el.attack,combat.basicCooldown,.31);markCooldown(el.roll,combat.rollCooldown,.88);
+    markCooldown(el.attack,combat.basicCooldown,.31);markCooldown(el.roll,combat.rollCooldown,combat.rollCooldownDuration);
     const vitals=t.hp+' '+Math.ceil(combat.hp)+'/'+combat.maxHp+'   ·   '+t.focus+' '+Math.floor(combat.focus)+'/'+combat.maxFocus;
     if (lastVitals && lastVitals!==vitals) vitalsUntil=performance.now()+3000;
     lastVitals=vitals;
@@ -14364,10 +14663,10 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     button.classList.toggle('cooling',remaining>0);
     if(remaining>0)button.style.setProperty('--cool',Math.min(360,360*remaining/duration)+'deg');
   }
-  function controlStage(view) {return view.room+'|'+view.mode+(view.gate?.gallery?'|gallery':'')}
+  function controlStage(view) {return [view.room,view.mode,view.spell?.stage,view.gate?.gallery?'gallery':''].join('|')}
   function perform(input) {
     if(input.type==='slot')return input.aim?game.castSlot(input.index,input.aim.x,input.aim.y,true):game.castSlot(input.index);
-    if(input.type==='attack')return game.basic();
+    if(input.type==='attack')return input.aim?game.basic(input.aim.x,input.aim.y,true):game.basic();
     if(input.type==='ultimate')return game.ultimate();
     if(input.type==='jump')return game.jump(input.dx,input.dy);
     return game.roll(input.dx,input.dy);
@@ -14701,7 +15000,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     let instructions = coarse.matches ? t.touchChoice : t.choice;
     if (exploring) instructions = coarse.matches ? t.touchExplore : t.explore;
     else if (view.canWalk) instructions = coarse.matches ? t.touchWalk : t.walk;
-    write(el.hint, combatView(view) ? instructions+' '+(coarse.matches?t.aimHelp:t.aimMouse) : instructions);
+    write(el.hint, combatView(view) ? instructions+' '+t.aimHelp : instructions);
     syncTrace(view,t); syncAlbum(view,t); syncBook(view,t); syncCombat(view,t); syncTravel(travel); updateChoices(choices);
     syncCaption(view,t,choices);
   }
@@ -14762,24 +15061,24 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   }
   function updateAimDrag(press,event) {
     const dx=event.clientX-press.x,dy=event.clientY-press.y,length=Math.hypot(dx,dy);
-    if(length>=12)press.dragged=true;
+    const threshold=event.pointerType==='touch'?18:10;
+    if(!press.dragged&&length>=threshold){
+      press.dragged=true;
+      press.button.classList.remove('charging');
+    }
     press.direction=null;
-    if(!press.dragged||length<8)return;
+    if(!press.dragged||length<8){hideAim();return}
     // Convert a screen-space thumb vector through the same camera as the bolt.
     const origin=schoolFramePoint(el.scene,press.x,press.y);
     const point=schoolFramePoint(el.scene,event.clientX,event.clientY);
     if(origin&&point)press.direction={x:point.x-origin.x,y:point.y-origin.y};
   }
   function drawAim(view) {
-    if(!combatView(view) || (!mouseAim && !aimPress?.direction)){hideAim();return}
-    let index=view.combat.active,aim;
-    if(aimPress) {
-      index=Number(aimPress.button.dataset.slot);
-      if(aimPress.direction)aim=game.spellGuide(index,aimPress.direction.x,aimPress.direction.y,true);
-    } else {
-      const p=schoolFramePoint(el.scene,mouseAim.x,mouseAim.y);
-      if(p)aim=game.spellGuide(index,p.x,p.y);
-    }
+    if(aimPress&&aimPress.stage!==controlStage(view)){clearPad();return}
+    if(!combatView(view)||!aimPress?.direction){hideAim();return}
+    const {x,y}=aimPress.direction;
+    const aim=aimPress.button===el.attack?game.basicGuide(x,y,true):
+      game.spellGuide(Number(aimPress.button.dataset.slot),x,y,true);
     if(!aim){hideAim();return}
     const start=schoolFrameSpot(el.scene,aim.from.x,aim.from.y),end=schoolFrameSpot(el.scene,aim.to.x,aim.to.y);
     if(!start||!end){hideAim();return}
@@ -14803,7 +15102,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   }
   function clearPad() {
     for(const id of padPresses.keys())endPadPress(id);
-    bufferedAction=null;mouseAim=null;hideAim();
+    bufferedAction=null;hideAim();
   }
   function overPad(event,button) {
     const margin=event.pointerType==='touch'?8:2;
@@ -14820,20 +15119,21 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   el.combatHud.addEventListener('contextmenu',event=>event.preventDefault());
   el.combatHud.addEventListener('pointerdown',event=>{
     const button=event.target.closest('button.quick');
+    const view=game.view();
     if(!button || button.hidden || event.button!==0 || button.classList.contains('held') ||
-       !combatView(game.view()) || el.journal.open || el.spellbook.open)return;
+       !combatView(view) || el.journal.open || el.spellbook.open || view.albumOpen)return;
     event.preventDefault();enableSound();
     const spellButton=button.hasAttribute('data-slot')&&!button.hasAttribute('data-empty');
-    if(spellButton&&aimPress)return;
-    mouseAim=null;
-    const press={button,time:performance.now(),x:event.clientX,y:event.clientY,dragged:false,direction:null};
+    const canAim=button===el.attack||spellButton;
+    if(canAim&&aimPress)return;
+    const press={button,time:performance.now(),stage:controlStage(view),x:event.clientX,y:event.clientY,dragged:false,direction:null};
     padPresses.set(event.pointerId,press);button.setPointerCapture(event.pointerId);button.classList.add('held');
+    if(canAim)aimPress=press;
     if(button===el.attack){
       centrePress=press;
       const combat=game.view().combat;
       if(combat.focus>=combat.maxFocus){button.style.setProperty('--charge','0deg');button.classList.add('charging')}
-    }else if(spellButton)aimPress=press;
-    else if(!button.hasAttribute('data-empty'))padCommand(button);
+    }else if(!spellButton&&!button.hasAttribute('data-empty'))padCommand(button);
   });
   el.combatHud.addEventListener('pointermove',event=>{
     const press=padPresses.get(event.pointerId);
@@ -14841,18 +15141,19 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   });
   el.combatHud.addEventListener('pointerup',event=>{
     const press=padPresses.get(event.pointerId);if(!press)return;
+    if(press.stage!==controlStage(game.view())){endPadPress(event.pointerId);return}
     const button=press.button,valid=overPad(event,button),heldFor=performance.now()-press.time;
     if(press===aimPress){
       updateAimDrag(press,event);endPadPress(event.pointerId);
-      if(press.direction || (!press.dragged&&valid))runCombat('slot',Number(button.dataset.slot),press.direction);
+      if(!press.direction&&(press.dragged||!valid))return;
+      if(button===el.attack){
+        const combat=game.view().combat;
+        if(combat)runCombat(!press.dragged&&heldFor>=holdDuration&&combat.focus>=combat.maxFocus?'ultimate':'attack',undefined,press.direction);
+      }else runCombat('slot',Number(button.dataset.slot),press.direction);
       return;
     }
     endPadPress(event.pointerId);
-    if(!valid)return;
-    if(button===el.attack){
-      const combat=game.view().combat;
-      if(combat)runCombat(heldFor>=holdDuration && combat.focus>=combat.maxFocus?'ultimate':'attack');
-    }else if(button.hasAttribute('data-empty'))padCommand(button);
+    if(valid&&button.hasAttribute('data-empty'))padCommand(button);
   });
   for(const type of ['pointercancel','lostpointercapture'])el.combatHud.addEventListener(type,event=>endPadPress(event.pointerId));
   // Pointer actions are already committed. Keyboard and assistive activation use a zero-detail click.
@@ -14916,17 +15217,14 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
   }
   el.scene.addEventListener('pointerdown', event => {
     if (event.button !== 0 || el.journal.open || el.spellbook.open || sceneContact) return;
-    event.preventDefault(); enableSound();mouseAim=null;
+    event.preventDefault(); enableSound();
     el.scene.focus({preventScroll:true});
     sceneContact = {id:event.pointerId,x:event.clientX,y:event.clientY,dragged:false};
     el.scene.setPointerCapture(event.pointerId);
   });
   el.scene.addEventListener('pointermove', event => {
     if(sceneContact?.id===event.pointerId)trackContact(event);
-    else if(event.pointerType==='mouse'&&!event.buttons&&!el.journal.open&&!el.spellbook.open&&!el.album.open)
-      mouseAim={x:event.clientX,y:event.clientY};
   });
-  el.scene.addEventListener('pointerleave',()=>{mouseAim=null});
   el.scene.addEventListener('pointerup', event => {
     if (sceneContact?.id !== event.pointerId) return;
     trackContact(event);
@@ -14934,10 +15232,7 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
     resetStick();
     const view = game.view();
     if (!tapped || el.journal.open || view.albumOpen) return;
-    if (view.canCast) {
-      const point = schoolFramePoint(el.scene,event.clientX,event.clientY);
-      if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) {game.castAt(point.x,point.y); update()}
-    } else if (view.canAct) interact();
+    if (!view.canCast && view.canAct) interact();
   });
   for (const type of ['pointercancel','lostpointercapture']) el.scene.addEventListener(type,event=>{if(sceneContact?.id===event.pointerId)resetStick()});
   function held(a,b) {return pressed.has(a) || pressed.has(b) ? 1 : 0}
@@ -14951,7 +15246,10 @@ function createSchoolGame({ onChange = () => {}, beep = () => {}, entry = null, 
       const length = Math.hypot(dx,dy);
       if (length > 1) {dx /= length; dy /= length}
       game.move(dx,dy,dt);
-    } else game.move(0,0,0);
+    } else {
+      if(padPresses.size)clearPad();
+      game.move(0,0,0);
+    }
     const view = game.view();
     if (!paused) {
       flushBuffered(dt,view);
