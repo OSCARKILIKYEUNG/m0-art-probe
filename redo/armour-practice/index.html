@@ -7661,80 +7661,7 @@ const SchoolCourtyardSkyline=(()=>{
     line(c,[p(u+r*.23,z-1),p(u+r*.23,z-h*.74)],'#a0a294',.49);
     line(c,[p(u-r-.95,z+.6),p(u+r+1.1,z+.6)],light?'#b3af98':'#919487',.76);
   }
-  const ridgeEdge=[[478,144],[558,114],[624,95],[672,79.8],[697,74],[707,75.2],[717,82.3],
-    [727,89.6],[740,96.4],[752,103],[766,109],[783,118],[798,126.3],[811,130],[826,138.3],
-    [847,147.2],[868,165.9],[882,170.8],[897,181],[917,187.5],[942,194.2],[969,200.5],
-    [997,207.9],[1026,215.2],[1056,219.4]];
-  const rockOrigin={x:473,y:68,w:583,h:360};
-  let rockPainting;
-  function rangeBedrock(c){
-    if(!rockPainting){
-      rockPainting=c.canvas.ownerDocument.createElement('canvas');
-      const b=rockOrigin,k=1.65;rockPainting.width=Math.ceil(b.w*k);rockPainting.height=Math.ceil(b.h*k);
-      const g=rockPainting.getContext('2d');g.setTransform(k,0,0,k,-b.x*k,-b.y*k);
-      const limits=[];
-      for(let i=0;i<=Math.ceil(b.w*2);i++){
-        const x=b.x+i*.5;
-        let j=1;while(j<ridgeEdge.length-1&&ridgeEdge[j][0]<x)j++;
-        const a=ridgeEdge[j-1],n=ridgeEdge[j],t=clamp((x-a[0])/(n[0]-a[0]));
-        limits.push(a[1]+(n[1]-a[1])*t);
-      }
-      native(g,b.x,b.y,b.w,b.h,(x,y)=>{
-        const u=x-b.x,col=clamp(Math.floor(u*2),0,limits.length-1),v=y-limits[col];
-        // Pad the edge sampled by the solid mesh. Otherwise bilinear filtering
-        // mixes transparent black into its very first visible rock pixel.
-        if(v< -4.5)return -1;
-        const regional=cloud(x*.018-9,y*.008),joints=cloud(x*.067,y*.022+11),grain=cloud(x*.23,y*.32);
-        const fold=(regional-.5)*17+(joints-.5)*6.6;
-        const block=cloud(x*.029-y*.012,y*.041),chipped=cloud(x*.192,y*.082);
-        const strata=y+(x<680?.20:-.26)*(x-680)+fold+3.1*Math.sin(u*.025-.9);
-        const unit=strata/53,bed=Math.floor(unit),fraction=unit-bed;
-        const first=.17+hash(bed,481)*.21,second=.55+hash(bed,516)*.19;
-        const start=fraction<first?0:fraction<second?first:second,end=fraction<first?first:fraction<second?second:1;
-        const ledge=(fraction-start)/(end-start);
-        // Most beds weather back into the slope. Short broken scarps survive
-        // where the headwall is exposed between turf and wedges of scree.
-        const exposure=smooth((block*.57+regional*.24+joints*.19-.45)/.34);
-        const shelf=smooth(ledge/.13)*(1-smooth((ledge-.16)/.24));
-        const shade=smooth((ledge-.27)/.15)*(1-smooth((ledge-.54)/.27));
-        const face=(shelf*10.3-shade*9.0)*exposure;
-        const fracture=(x*.054-y*.031+.40*regional+.29*joints);
-        const shear=Math.abs(fracture-Math.round(fracture));
-        const fissure=shear<.057&&ledge>.27?(1-shear/.057)*(6.6+5*joints):0;
-        const turf=clamp((regional*.56+joints*.3+chipped*.14-.53)*4.6+.42*clamp(v/143));
-        const crest=1-smooth(v/14),atmosphere=smooth((v-104)/145);
-        const contrast=(1-.45*atmosphere)*(1-.28*turf);
-        const plane=(block>.67?3.0:block>.48?.55:-1.7)*(1-.60*atmosphere);
-        const light=face*contrast+plane+(regional-.5)*16+(joints-.5)*11+(grain-.5)*3.7-fissure*exposure+crest*4;
-        const lichen=turf*(.42+.58*chipped)*3.9;
-        return colour([102+7*turf+6*atmosphere,116+5*turf+5*atmosphere,114-4*turf+3*atmosphere],light+lichen);
-      });
-      const exposures=[[695,19,27,1],[725,17,33,2],[761,37,43,3],[786,68,25,4],
-        [817,31,44,5],[858,57,36,6],[935,53,29,7],[1001,38,31,8]];
-      for(const [x,drop,spread,key] of exposures){
-        const surface=xx=>limits[clamp(Math.round((xx-b.x)*2),0,limits.length-1)];
-        const baseY=surface(x)+drop,tilt=-.21+hash(key,203)*.57;
-        for(let i=0;i<5;i++){
-          const size=(.43+hash(key,i)*.57)*spread,u=x+(hash(i,key+9)-.45)*spread;
-          const y=baseY+(u-x)*tilt+(hash(key+4,i)-.5)*9,h=size*(.13+.14*hash(8+key,i));
-          const crest=[[u-size*.48,y+.23*h],[u-size*.31,y-.16*h],[u-size*.08,y-.16*h],
-            [u+size*.16,y-.56*h],[u+size*.42,y-.39*h]];
-          const toe=[[u+size*.25,y+h*.11],[u+size*.06,y+h*.39],[u-size*.22,y+h*.70],[u-size*.43,y+h*.54]];
-          face(g,[...crest,...toe],'rgba(55,73,73,.26)');
-          face(g,[crest[0],crest[1],crest[2],crest[3],crest[4],[u+size*.16,y-.10*h],[u-size*.37,y+.40*h]],'rgba(158,164,146,.31)');
-          if(i&1)line(g,[crest[1],crest[2],crest[3]],'rgba(190,191,169,.25)',.63);
-        }
-        for(let i=0;i<9;i++){
-          const xx=x+(hash(i,key+77)-.35)*spread,yy=baseY+6+hash(key+21,i)*8,r=.62+hash(i,key+62)*1.66;
-          face(g,[[xx-r,yy+.22*r],[xx-.28*r,yy-.67*r],[xx+.37*r,yy-.75*r],[xx+r,yy],[xx+.1*r,yy+.40*r]],'rgba(89,104,97,.65)');
-          line(g,[[xx-r*.7,yy],[xx-.16*r,yy-.54*r],[xx+.35*r,yy-.56*r]],'rgba(155,162,143,.60)',.38);
-        }
-      }
-    }
-    const b=rockOrigin;c.drawImage(rockPainting,b.x,b.y,b.w,b.h);
-  }
-  /* The low retaining range follows the cliff. The roofed eastern ward is
-     a separate survey with its own joined wings, dormer reveals and gables. */
+  // The attached eastern hall sits on the highlands' physical rock terrace.
   function retainingRange(c){
     const p=(u,v)=>[483+u,142-.32*u-v*(1-u*.00155)];
     const width=188,height=108,rise=38,wp=(x,z)=>p(x,z);
@@ -7936,7 +7863,9 @@ const SchoolCourtyardSkyline=(()=>{
     gallery(c);
     stringCourse(c,.22,[[0,47.2],[.8,48.45,[153,149,136]],[1.8,48.4,[95,99,94]],[2.7,47.1,[111,110,101]]]);
   }
-  const roof={apex:-143,base:.22,r:48.35};
+  // The lake-side plate gives a slightly broader eave than the portrait of
+  // the miniature. A modest correction keeps the two views within that range.
+  const roof={apex:-135,base:.22,r:49.2};
   function coneProfile(t){return t*(.946+.054*t);}
   function conePoint(angle,t){
     const radius=roof.r*coneProfile(t);
@@ -8021,9 +7950,10 @@ const SchoolCourtyardSkyline=(()=>{
     face(c,[[office-3,-89],[office+1,-100],[office+5,-94],[office+7,-86],[office+12,-75],[office+12.6,-67],[office+8,-68],[office+3,-74]],'rgba(30,43,54,.44)');
     c.restore();
     face(c,[[office-3,-87],[office+4,-91],[office+5,-72],[office+1,-67.2],[office-2,-73]],'#6a7773');
-    projection(c,office-2.65,-91.5,2.08,15.6);
-    projection(c,office+3.3,-92.4,2.38,14.2);
-    projection(c,office+.4,-91.2,2.8,18.6);
+    const officeHeight=roof.apex/-143;
+    projection(c,office-2.65,-91.5*officeHeight,2.08,15.6);
+    projection(c,office+3.3,-92.4*officeHeight,2.38,14.2);
+    projection(c,office+.4,-91.2*officeHeight,2.8,18.6);
     line(c,[[drum.x,apex-4.1],[drum.x,apex+1.8]],'#62797b',.84);
     line(c,[[drum.x-.78,apex-1.35],[drum.x+.72,apex-1.35]],'#7c8e88',.57);
   }
@@ -8039,15 +7969,21 @@ const SchoolCourtyardSkyline=(()=>{
     const ground=survey.viewDepth+(sight+dy)*.5;
     return [survey.x+localX*survey.scale,ground,ground-survey.eave-dy];
   }
+  function cylindrical(p){
+    const dy=p[1]-p[2]-survey.eave,sight=2*(p[1]-survey.viewDepth)-dy;
+    const sin=drum.curve*survey.rise/survey.scale,cos=Math.sqrt(1-sin*sin);
+    const depth=sight*cos+dy*sin;
+    return [Math.atan2(p[0]-survey.x,depth),(dy-depth*sin)/survey.rise];
+  }
   function draw(c,part='all'){
-    if(part==='all'||part==='range'){rangeBedrock(c);retainingRange(c);coveredLink(c);if(part==='range')return;}
+    if(part==='all'||part==='range'){retainingRange(c);coveredLink(c);if(part==='range')return;}
     if(part==='all')SchoolCourtyardWard.draw(c);
     c.save();c.translate(survey.x,survey.eave);c.scale(survey.scale,survey.rise);c.translate(-drum.x,0);
     staircase(c);
     towerRoof(c);
     c.restore();
   }
-  return {draw,crownY,towerPoint,radiusAt,coneProfile,belt,roof,lightRows,rangeBedrock};
+  return {draw,crownY,towerPoint,cylindrical,radiusAt,coneProfile,belt,roof,lightRows};
 })();
 
 /* A short roof enters the round wall below its belt. The eastern building
@@ -8526,7 +8462,7 @@ const SchoolInnerCastle=(()=>{
   'use strict';
   const faces=[];
   let collecting=faces;
-  const plate={x:285,y:-325,w:531,h:481,density:2.6};
+  const plate={x:285,y:-379,w:531,h:535,density:2.6};
   const swatches={
     link:0x918c78,linkReturn:0x707767,quad:0x81867b,quadReturn:0x66746f,
     far:0x83908c,farReturn:0x6f807f,slate:0x566b73,slateLight:0x697d81,
@@ -8664,10 +8600,9 @@ const SchoolInnerCastle=(()=>{
     const eaves=(low+eave)*.5;
     const endLights=span>15?[[span*.56,1.7,eaves-2,eaves+5,3,'arc']]:[];
     wall(right,0,span,low,eave,endLights,style==='far'?'farReturn':'quadReturn',seed+9);
-    if(collecting!==faces){
-      const left=(u,h,r)=>p(start-r,d+u,h);
-      wall(left,0,span,low,eave,endLights,style,seed+26);
-    }
+    const left=(u,h,r)=>p(start-r,d+u,h);
+    wall(left,0,span,low,eave,endLights,style,seed+26);
+    if(collecting===faces)surface('ashlar','farReturn',(u,h)=>p(u,d+span,h),rectangle(start,end,low,eave),seed+40);
     const h=ridge-eave,centre=span*.49;
     const near=(u,v)=>p(u,d+v*centre/h,eave+v);
     const back=(u,v)=>p(u,d+span-v*(span-centre)/h,eave+v);
@@ -8676,10 +8611,8 @@ const SchoolInnerCastle=(()=>{
     surface('slate','slateLight',near,[[start-1,0],[end+1,0],[end-hip,h],[start+hip,h]],seed);
     if(hip>0)surface('slate','slateDark',rake,[[0,0],[span,0],[centre,h]],seed+69);
     if(hip===0)surface('ashlar','quadReturn',(v,h)=>p(end,d+v,h),[[0,eave],[span,eave],[centre,ridge]],seed);
-    if(collecting!==faces){
-      if(hip>0)surface('slate','slate',(v,z)=>p(start+hip*z/h,d+v,eave+z),[[0,0],[span,0],[centre,h]],seed+19);
-      else surface('ashlar',style,(v,h)=>p(start,d+v,h),[[0,eave],[span,eave],[centre,ridge]],seed+19);
-    }
+    if(hip>0)surface('slate','slate',(v,z)=>p(start+hip*z/h,d+v,eave+z),[[0,0],[span,0],[centre,h]],seed+19);
+    else surface('ashlar',style,(v,h)=>p(start,d+v,h),[[0,eave],[span,eave],[centre,ridge]],seed+19);
     stringCourse(front,start-.65,end+.65,eave-2.2,1.06,1.06);
     facet('slate',0x929e96,[p(start+hip-.33,d+centre-.43,ridge+.1),p(end-hip+.33,d+centre-.43,ridge+.1),
       p(end-hip+.2,d+centre+.45,ridge+.58),p(start+hip-.2,d+centre+.45,ridge+.58)]);
@@ -8737,17 +8670,38 @@ const SchoolInnerCastle=(()=>{
     surface('slate','slateDark',sh,[[0,eave],[depth,eave],[depth*.5,tip]],seed+50);
     const rear=(u,h)=>p(x+u,d+depth-depth*.5*(h-eave)/cap,h);
     surface('slate','slate',rear,[[-w-1,eave],[w+1,eave],[.04,tip]],seed+5);
+    if(collecting===faces){
+      surface('ashlar','farReturn',(u,h)=>p(x+u,d+depth,h),rectangle(-w,w,foot,eave),seed+24);
+      surface('ashlar','far',(v,h)=>p(x-w,d+v,h),rectangle(0,depth,foot,eave),seed+33);
+      surface('slate','slate',(v,h)=>p(x-w*(1-(h-eave)/cap),d+v,h),[[0,eave],[depth,eave],[depth*.5,tip]],seed+37);
+    }
     const h=eave+cap*.2,r=w*.20;
     dormer(p,x+.26,d+depth*.07,r,h,h+r*1.35,h+r*2.75);
     // The square bell stage changes to a raised lead ridge at its roof foot.
     facet('slate','edge',[p(x-.17,d+depth*.5,tip-.2),p(x+.2,d+depth*.5,tip-.2),p(x+.04,d+depth*.5,tip+1.75)]);
   }
-  function endGable(p,x,d,w,span,base,eave,rise,seed){
+  function endGable(p,x,d,w,span,base,eave,rise,seed,oculus=false){
     const front=(u,h,r)=>p(x+u,d-r,h),side=(u,h,r)=>p(x+w+r,d+u,h);
     const big=[0,w*.43,eave-21.8,eave-4.3,7.15,'point'];
     wall(front,-w,w,base,eave-22,[], 'quad',seed);
     wall(front,-w,w,eave-22,eave+3.4,[big],'quad',seed);
-    surface('ashlar','quad',(u,v)=>p(x+u,d,v),[[-w,eave],[w,eave],[0,eave+rise]],seed);
+    const gable=(u,v,back=0)=>p(x+u,d+back,v);
+    if(oculus){
+      const r=4.55,cy=eave+rise*.40,z=u=>eave+rise*(1-Math.abs(u)/w);
+      for(const sign of [-1,1])surface('ashlar','quad',gable,[[sign*r,eave],[sign*w,eave],[sign*r,z(r)]],seed);
+      for(let j=0;j<18;j++){
+        const a=-r+2*r*j/18,b=-r+2*r*(j+1)/18;
+        const half=u=>r*1.18*Math.sqrt(Math.max(0,1-u*u/(r*r)));
+        surface('ashlar','quad',gable,[[a,eave],[b,eave],[b,cy-half(b)],[a,cy-half(a)]],seed);
+        surface('ashlar','quad',gable,[[a,cy+half(a)],[b,cy+half(b)],[b,z(b)],[a,z(a)]],seed);
+      }
+      const eye=(t,size,back)=>gable(Math.cos(t)*size,cy+Math.sin(t)*size*1.18,back);
+      for(let j=0;j<36;j++){
+        const a=j*Math.PI/18,b=(j+1)*Math.PI/18;
+        facet('stone','drip',[eye(a,r+1.05,-.71),eye(b,r+1.05,-.71),eye(b,r,-.71),eye(a,r,-.71)]);
+        facet('shadow','soffit',[eye(a,r,-.71),eye(b,r,-.71),eye(b,r,3.3),eye(a,r,3.3)]);
+      }
+    }else surface('ashlar','quad',gable,[[-w,eave],[w,eave],[0,eave+rise]],seed);
     wall(side,0,span,base,eave,[[span*.53,2.15,eave-21.4,eave-8,3.9,'point']],'quadReturn',seed);
     for(const s of [-1,1]){
       const r=(u,v)=>p(x+u,d+v,eave+rise-s*rise*u/w);
@@ -8777,8 +8731,36 @@ const SchoolInnerCastle=(()=>{
     [35,arcade(15,13,10.8,20,28.5,3.5,2.2)],[66,arcade(15,13,10.8,45.2,58,4.65,2.8)]]);
   endGable(far,27,6.4,12.7,31,9,77,18.4,65);
   range(far,11,157,-1,17,4,28,40,4.6,'far',87,[[28,arcade(17,15,9.1,13.3,19.6,3.1,2.05)]]);
-  bellTower(far,70,8.2,10.9,19.8,12,99,58,99);
-  bellTower(far,151,6.2,11.3,19.8,9,106,65.2,101);
+  // From the lake, the broad gabled crown of the opposite rock seat stands
+  // higher than either square belfry. From the court we see it on the turn:
+  // its staircase turrets belong to the same deep building, with the north
+  // roof and the two lower bell roofs meeting it at different elevations.
+  range(far,5,90,37.5,35,4,121,145,7.0,'far',161,[
+    [74,arcade(15,6,13.9,40,57,4.7,3.0)],[121,arcade(14,6,13.8,85,106,6.2,3.4)]]);
+  endGable(far,33.5,32.0,21.3,42.5,49,164,51.5,162,true);
+  endGable(far,59.4,47.2,12.7,28,98,153,44,164);
+  const shoulder=(x,d,r,eave,cap,seed)=>{
+    const foot=45;
+    turret(far,x,d,foot,r,[[eave-foot-20,r*.90,'wall'],[eave-foot-17.5,r*1.09,'trim'],
+      [eave-foot-14.8,r*1.12,'trim'],[eave-foot-2.4,r*1.12,'wall'],
+      [eave-foot-.75,r*1.17,'trim'],[eave-foot+.05,r*1.18,'trim'],
+      [eave-foot+cap*.38,r*.71,'roof'],[eave-foot+cap*.72,r*.30,'roof'],[eave-foot+cap,.23,'roof']],seed,22);
+    for(const angle of [2.07,2.66,3.22,3.78,4.40]){
+      const front=(a,z,push=.03)=>far(x+Math.sin(a)*(r*1.12+push),d+Math.cos(a)*(r*1.12+push),z);
+      const span=.092;
+      facet('shadow',0x38454a,[front(angle-span,eave-12.8),front(angle+span,eave-12.8),
+        front(angle+span,eave-7.2),front(angle,eave-4.75),front(angle-span,eave-7.2)]);
+    }
+  };
+  shoulder(13.9,34.2,8.1,147.6,42.3,169);
+  shoulder(55.0,36.1,8.0,165.1,57.6,171);
+  shoulder(34.8,57.6,8.6,175.6,68.4,175);
+  shoulder(23.4,66.2,5.2,173.2,48.2,178);
+  // The measured bell stages grow from opposite ends of one ward. Its
+  // stepped gable remains visible between the square towers.
+  bellTower(far,85,7.3,13.1,23.2,12,114,57.5,99);
+  bellTower(far,153,6.2,14.3,25.0,9,129,64.8,101);
+  endGable(far,110,7.0,16.8,30,6.5,80.4,31,184);
   const innerSite=site(478,30,-.23,.57,-.52);
   const inner=(u,d,h)=>{const q=innerSite(u,d,h);return [q[0],q[1]-64,q[2]-64];};
   range(inner,4,125,18,31,11,121,149,7.6,'quad',51,[
@@ -8797,6 +8779,29 @@ const SchoolInnerCastle=(()=>{
   const bridgeFront=(u,h,r)=>bridge(u,-r,h);
   wall(bridgeFront,0,59,18,57,[[18.4,8.1,18.05,29,6.5,'gate'],[39,7.5,18.05,29,6.2,'gate']],'quad',58);
   range(bridge,-1,60,-.3,10,55.2,70.2,77.8,1.7,'quad',58,[[70.2,arcade(6,7,7.85,58.2,63.8,2.2,1.05)]]);
+  // The tall stone viaduct ties the two rock seats together. Foreground
+  // buildings hide most of it on the courtyard approach. Its openings and
+  // the soffits above them remain empty, including from an oblique bearing.
+  const spanSite=site(461,-15,-.47,.62,-.44),span=15.4,spanDepth=9.8;
+  const openRange=(foot,spring,head,top,radius,base)=>{
+    const edge=(u,d,h)=>spanSite(u,d,h);
+    for(let j=0;j<6;j++){
+      const mid=(j+.5)*span,curve=t=>spring+(head-spring)*Math.sqrt(Math.max(0,1-t*t));
+      for(const s of [-1,1]){
+        const u=mid+s*radius,v=mid+s*span*.50;
+        facet('ashlar','far',[edge(u,0,foot),edge(v,0,foot),edge(v,0,top),edge(u,0,top)]);
+        facet('stone','farReturn',[edge(u,0,foot),edge(u,spanDepth,foot),edge(u,spanDepth,spring),edge(u,0,spring)]);
+      }
+      for(let k=0;k<12;k++){
+        const a=k/6-1,b=(k+1)/6-1,u=mid+a*radius,v=mid+b*radius;
+        for(const d of [0,spanDepth])facet('ashlar','far',[edge(u,d,curve(a)),edge(v,d,curve(b)),edge(v,d,top),edge(u,d,top)]);
+        facet('stone','soffit',[edge(u,0,curve(a)),edge(v,0,curve(b)),edge(v,spanDepth,curve(b)),edge(u,spanDepth,curve(a))]);
+      }
+      if(base)facet('stone','edge',[edge(j*span,0,top),edge((j+1)*span,0,top),edge((j+1)*span,spanDepth,top),edge(j*span,spanDepth,top)]);
+    }
+  };
+  openRange(-89,13,25,30,5.67,true);
+  openRange(30.1,34.6,38.2,40.9,3.99,true);
   // The model's lower building fills the bottom of the narrow slit of sky
   // between Great Hall and the drum; its top stays near the drum's belt.
   const linkSite=site(317,91,-.065,.32,-.62);
@@ -9047,26 +9052,751 @@ const SchoolInnerCastle=(()=>{
     c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
     c.drawImage(tile,area.x+(area.w-w)*.5,area.y+area.h-h,w,h);c.restore();return true;
   }
-  function glazing(api,atlas){
-    // Old leaded glass reflects the sky in front of a dark interior. Its
-    // opaque backing also writes correct depth for the fixed courtyard view.
-    const T=api.THREE,env=api.metal('pewter').envMap;
-    const material=new T.MeshPhysicalMaterial({name:'Sky in recessed leaded glass',map:atlas.map,
-      color:new T.Color().setScalar(.60),emissive:0xffffff,emissiveMap:atlas.map,emissiveIntensity:.42,
-      roughness:.43,metalness:0,envMap:env,envMapIntensity:.48,clearcoat:.32,clearcoatRoughness:.26,
-      specularIntensity:.58,ior:1.50,side:T.DoubleSide,alphaTest:.10});
-    return {bounds:atlas.bounds,map:atlas.map,material};
-  }
   function build(api,root,masonry){
-    const atlas=api.painted(plate,paint,{density:plate.density,filterWhenSmall:true});
-    const stone=masonry(api,root,'Inner castle: Link Building, court ranges, E–F crossing and attached belfry walls',api.coat(atlas,'limestone'));
-    const slate=masonry(api,root,'Inner castle: stepped roofs and two distant square bell stages',api.coat(atlas,'slate'));
-    const windows=masonry(api,root,'Inner castle: inset reflective leaded lights',glazing(api,atlas));
-    const recess=masonry(api,root,'Inner castle: tilted belfry louvres, scupper throats and bridge reveals',atlas);
-    for(const f of faces)(f.kind==='slate'?slate:f.kind==='glass'?windows:f.kind==='louvre'||f.kind==='shadow'?recess:stone).face(f.points);
-    stone.finish();slate.finish();windows.finish();recess.finish();
+    const skin=type=>SchoolCastleRelief.skin(api,type);
+    const stone=masonry(api,root,'Inner castle: Link Building, court ranges, E–F crossing and attached belfry walls',skin('distant'));
+    const slate=masonry(api,root,'Inner castle: stepped roofs and two distant square bell stages',skin('slate'));
+    const windows=masonry(api,root,'Inner castle: inset reflective leaded lights',skin('glass'));
+    const recess=masonry(api,root,'Inner castle: tilted belfry louvres, scupper throats and bridge reveals',skin('shadow'));
+    const dress=masonry(api,root,'Inner castle: sill stones, corbels and window orders',skin('carved'));
+    for(const f of faces)(f.kind==='slate'?slate:f.kind==='glass'?windows:f.kind==='louvre'||f.kind==='shadow'?recess:f.kind==='trim'?dress:stone).face(f.points);
+    stone.finish();slate.finish();windows.finish();recess.finish();dress.finish();
   }
-  return {paint,build,vista,glazing};
+  return {paint,build,vista};
+})();
+
+/* The castle model rests on jointed rock. Below it, the long backs of the
+   Highland hills open around a glacial trough. All coordinates below are
+   ground x, ground y, and elevation. The compatibility view projects the same
+   stone, folds, trees and skerries that receive daylight in the Three scene.
+   Shape references: the Warner Bros. Studio Tour castle model, Nic Henderson's
+   F1114C, and Raibeart MacAoidh's Glenfinnan view from Beinn an Tuim (Geograph
+   7802802). No photography is sampled by either renderer. */
+const SchoolCourtyardHighlands=(()=>{
+  'use strict';
+  const unit=Math.SQRT2, tau=2*Math.PI, clamp=a=>Math.min(1,Math.max(0,a));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  function hash(x,y){
+    let n=Math.imul(x|0,160481183)^Math.imul(y|0,279879641);
+    n=Math.imul(n^(n>>>14),1597334677);return ((n^(n>>>16))>>>0)/4294967296;
+  }
+  const lattice=Float32Array.from({length:256*256},(_,i)=>hash(i&255,i>>8));
+  function noise(x,y){
+    const a=Math.floor(x),b=Math.floor(y),fx=x-a,fy=y-b,u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+    const i=((b&255)<<8),j=(((b+1)&255)<<8),l=a&255,r=(a+1)&255;
+    return lerp(lerp(lattice[i+l],lattice[i+r],u),lerp(lattice[j+l],lattice[j+r],u),v);
+  }
+  const mix=(a,b,t)=>a.map((c,i)=>lerp(c,b[i],clamp(t)));
+  const shade=(a,delta)=>a.map(c=>Math.max(0,Math.min(255,c+delta)));
+  function profile(stations,x){
+    let j=0;while(j+2<stations.length&&x>stations[j+1][0])j++;
+    const a=stations[j],b=stations[j+1],t=clamp((x-a[0])/(b[0]-a[0]));
+    // Rock brows have a lip; adjacent ridges turn away at different angles.
+    return lerp(a[1],b[1],t)+Math.sin(t*Math.PI)*Math.min(3.8,(b[0]-a[0])*.035)*Math.sin(j*1.8);
+  }
+  const ranges=[
+    {name:'Distant Highland watershed',axis:-685,front:255,back:85,nx:112,ny:14,air:.67,
+      crest:[[-1220,-32],[-940,-84],[-675,-98],[-535,-86],[-411,-119],[-360,-99],[-279,-133],[-246,-126],[-174,-158],[-144,-149],[-111,-121],[-64,-112],[-39,-87],[-9,-90],[46,-61],[93,-67],[141,-41],[199,-51],[260,-13],[374,8],[493,-17],[577,-48],[634,-37],[678,-67],[712,-71],[799,-114],[835,-98],[873,-105],[923,-63],[1029,-47],[1119,-81],[1253,-60],[1493,-96],[1760,-86]]},
+    {name:'Rock ribs and corries above the glen',axis:-370,front:256,back:73,nx:164,ny:24,air:.34,
+      crest:[[-1220,24],[-921,-12],[-703,-44],[-564,-59],[-521,-50],[-437,-101],[-397,-94],[-345,-110],[-286,-88],[-243,-102],[-206,-88],[-154,-85],[-114,-52],[-74,-44],[-25,-18],[29,-21],[80,9],[114,4],[153,25],[197,57],[232,55],[312,101],[402,106],[501,83],[542,76],[616,54],[651,57],[724,16],[768,18],[825,-12],[865,-4],[929,-37],[1009,-37],[1066,-69],[1119,-52],[1153,-61],[1230,-31],[1389,-60],[1501,-30],[1760,-54]]},
+    {name:'Heather shoulders and wooded glen floor',axis:-76,front:279,back:92,nx:164,ny:25,air:.08,
+      crest:[[-1220,137],[-922,125],[-713,97],[-585,107],[-477,85],[-425,63],[-385,75],[-347,83],[-281,104],[-210,118],[-163,136],[-111,133],[-56,142],[18,157],[77,178],[135,201],[191,212],[235,232],[314,251],[433,255],[512,242],[594,229],[675,209],[738,198],[795,168],[859,136],[924,114],[991,96],[1050,104],[1113,79],[1160,84],[1203,62],[1303,77],[1427,97],[1601,101],[1760,98]]}
+  ];
+  const copses=[
+    [1,-390,.40,67,.091,124],[1,-161,.48,57,.087,89],[1,40,.38,48,.067,82],
+    [1,776,.37,61,.087,103],[1,1038,.46,74,.086,126],
+    [2,-330,.28,80,.12,60],[2,-195,.19,47,.075,36],[2,784,.20,51,.074,54],[2,918,.17,47,.077,47]
+  ];
+  function canopyZone(k,x,t){
+    let mask=0;
+    for(const [tier,cx,ct,w,deep] of copses){
+      if(tier!==k||Math.abs(x-cx)>w*1.2)continue;
+      const dx=(x-cx)/w,dy=(t-ct+.022*dx-.008*Math.sin(dx*6.8))/deep;
+      const d=dx*dx+dy*dy;
+      if(d<1.31)mask=Math.max(mask,clamp((1.04-d+.22*(noise(x*.073,t*14)-.5))*2.8));
+    }
+    return mask;
+  }
+  function hill(s,x,t,k){
+    const seed=1+k*9;
+    const line=profile(s.crest,x);
+    const sweep=22*Math.sin(x*.0053+seed)+11*Math.sin(x*.015+.7*k);
+    const crestY=s.axis+sweep, y=crestY+(t<0?t*s.back:t*s.front);
+    const spine=(noise(x*.019,seed)-.5)*6.1+(noise(x*.057,seed+3)-.5)*2.1;
+    // The west slope turns away from the entrance, opening the glen instead
+    // of presenting a second cliff parallel to the front of the school.
+    const saddle=k===1?43*Math.exp(-(((x+126)/158)**2)):k===2?18*Math.exp(-(((x+36)/120)**2)):0;
+    const head=crestY-line+spine-saddle;
+    const channel=x+(82+13*k)*t+45*Math.sin(t*2.9+x*.004+k)+36*(noise(x*.010,t*1.7+seed)-.5);
+    const broad=(noise(channel*.016+3,seed+t*1.24)-.48)*2.0+(noise(channel*.045,seed+t*.81)-.5)*.46;
+    const narrow=noise(channel*.034+9,t*1.7+seed);
+    const exposure=clamp(.38+.34*broad+.31*(narrow-.5));
+    const cross=Math.sin(Math.max(0,t)*Math.PI);
+    const ribs=(38+8*k)*broad+24*(narrow-.5)+15*(noise(channel*.082,t*4.1)-.5);
+    const fall=t<0?(-t)*(s.back*1.72+10*k):Math.pow(t,.86)*(105+31*k);
+    // Glacial gullies widen and merge toward the loch. The convex shoulder
+    // remains continuous while dark incisions travel diagonally down its face.
+    const trough=Math.max(0,1-Math.abs(broad+.17)*2.4);
+    const wedge=13*trough*cross+11*Math.pow(Math.max(0,t),1.4)*trough;
+    const z=head-fall+cross*ribs-wedge+cross*clamp((narrow-.51)*4.6)*5*Math.floor(3.1*noise(x*.025,t*6.4));
+    return {p:[x,y,z],t,exposure,trough,narrow,channel};
+  }
+  function hillColour(h,k){
+    const [x,y,z]=h.p, t=Math.max(0,h.t);
+    const grass=noise(x*.014+.9,y*.019),rock=noise(h.channel*.036+3,z*.039);
+    const morning=noise(x*.005+17,y*.007)*.56+noise(x*.016+6,y*.013)*.44;
+    return shade([246,246,245],4*(rock-.5)+6*(grass-.5)+5*(morning-.5)-4*h.trough*t);
+  }
+  function component(name,kind){
+    const p=[],rgb=[],uv=[],indices=[];
+    const vertex=(q,color,u,v)=>{p.push(q);rgb.push(color);uv.push([u,v]);return p.length-1;};
+    const tri=(a,b,c)=>{indices.push(a,b,c);};
+    return {name,kind,p,rgb,uv,indices,vertex,tri};
+  }
+  function terrain(s,k){
+    const m=component(s.name,k===0?'air':'moor'),row=s.nx+1;
+    for(let j=0;j<=s.ny;j++){
+      const t=j<=3?(j-3)/3:(j-3)/(s.ny-3);
+      for(let i=0;i<=s.nx;i++){
+        const drift=(i===0||i===s.nx?0:(hash(i,j+53*k)-.5)*.48);
+        const x=lerp(-1220,1760,(i+drift)/s.nx);
+        const py=t>0&&j<s.ny?t+(hash(i+31,j+5*k)-.5)*.45/(s.ny-3):t;
+        const h=hill(s,x,py,k);
+        m.vertex(h.p,hillColour(h,k),(x+1220)/2980,.80-(py<0?py*.20:py*.80));
+        if(i&&j){
+          const d=m.p.length-1,c=d-1,b=d-row,a=b-1;
+          if((i+j)&1){m.tri(a,c,b);m.tri(c,d,b);}else{m.tri(a,c,d);m.tri(a,d,b);}
+        }
+      }
+    }
+    return m;
+  }
+  // The top follows the outer court's masonry and the toe of the eastern
+  // ranges. The shoulder below the Marble Staircase Tower turns toward the
+  // lake; its outcrops deliberately break the direction of the buttresses.
+  const rim=[
+    [-46,262.5,-37],[-61,235,-30],[-33,208,-25],[14,174,-22],[65,150,-19],
+    [120,112,-18],[183,85,-20],[277,43,-27],[382,25,-32],[480,11,-30],
+    [566,-4,-16],[646,-10,-11],[693,9,-8],[711,37,-5],[733,66,-5],
+    [748,81,-7],[731,101,-9],[718,121,-10],[727,138,-17],[733,160,-21],
+    [720,180,-22],[738,194,-25],[717,216,-29],[712,237,-32],[686,262.5,-37],
+    [472,369.5,-37],[168,369.5,-37]
+  ];
+  const risers=[
+    [-12,2.2],[0,0],[2.8,-1.4],[4.2,-4.1],[2.9,-11],[5.1,-14],
+    [8.9,-14.8],[10.2,-18.1],[9.5,-27.4],[13.3,-33],
+    [18.7,-33.4],[21,-37],[22,-49],[24.6,-54],[31.6,-55],
+    [34.4,-61],[36.6,-71],[44,-78],[54.3,-83],[63,-95],[81,-106],[103,-119],[138,-137],[184,-159]
+  ];
+  function shorePoints(){
+    const points=[];let s=0;
+    for(let j=0;j<rim.length;j++){
+      const a=rim[j],b=rim[(j+1)%rim.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]);
+      const n=Math.ceil(length/6.3);
+      for(let i=0;i<n;i++){
+        const u=i/n,q=a.map((v,k)=>lerp(v,b[k],u));
+        points.push({q,s:s+length*u});
+      }
+      s+=length;
+    }
+    for(let i=0;i<points.length;i++){
+      const a=points[(i-3+points.length)%points.length].q,b=points[(i+3)%points.length].q;
+      const l=Math.hypot(b[0]-a[0],b[1]-a[1]);
+      points[i].normal=[(b[1]-a[1])/l,(a[0]-b[0])/l];
+    }
+    return points;
+  }
+  function cragVertex(st,j){
+    const [x,y,h]=st.q,[nx,ny]=st.normal,[reach,drop]=risers[j],s=st.s;
+    const t=clamp(-drop/142),fragment=noise(s*.039+2.3,t*1.7);
+    const joint=noise(s*.022+t*.72,19.4),bank=noise(s*.010,29.81);
+    const notch=Math.pow(clamp(1-Math.abs(Math.sin(s*.039+2.9*joint+t*1.4))*3.7),1.3);
+    const sediment=clamp((bank-.40)*3.5+t*.65);
+    const fold=(4.3*Math.sin(s*.032+1.7)+4.5*(joint-.5)+3.5*(fragment-.5))*Math.min(1,.18+j*.18);
+    const saltus=(23*(bank-.5)+11*Math.sin(s*.012+1.7))*Math.sin(t*Math.PI);
+    const upper=clamp((j-1)/4), lip=fragment*3+joint*4.3-1.95;
+    const broadSeat=clamp((x-653)/65)*clamp((244-y)/70);
+    let distance=reach*(.80+.20*broadSeat)+upper*(saltus-notch*(6.5+8*t)+lip*Math.sin(j*1.2));
+    if(j<=1)distance+=Math.min(1,j+.45)*(fragment-.5)*2.1;
+    // Smaller beds terminate against the diagonal joints instead of ringing
+    // the whole island like a stack of uniformly stepped contour lines.
+    const rise=h+drop+fold-notch*(j<2?1.1:4.1)+upper*(4.3*Math.sin(s*.014+t*3.6)+fragment*.9)+
+      broadSeat*Math.sin(t*Math.PI)*(5.4*joint+3.3);
+    // At the foot, detritus spreads away from the whole island, rather than
+    // following a sharp corner of an individual buttress. On the far shore
+    // it must descend faster than it recedes: the toe cannot eclipse the rim.
+    const cx=x-345,cy=(y-174)*1.44,radial=Math.hypot(cx,cy)||1;
+    const mixNormal=.75*clamp((j-3)/16),rx=lerp(nx,cx/radial,mixNormal),ry=lerp(ny,cy/radial,mixNormal);
+    return {p:[x+rx*distance,y+ry*distance*(ry<0?.54:.85),rise],sediment,fragment,joint,notch,t};
+  }
+  function basaltColour(h,j,st){
+    const [x,y,z]=h.p,ledge=[0,1,2,6,10,14,18].includes(j);
+    const band=noise(x*.025+z*.053,y*.023+z*.039);
+    const mineral=noise(st.s*.060+j*.097,43.82);
+    const under=clamp(h.notch*.45+(ledge?0:.21)+.35*(1-h.fragment));
+    const north=clamp(.45-.5*st.normal[0]-.1*st.normal[1]);
+    const moss=clamp((h.sediment*.54+band*.43+(ledge?.25:0)+h.t*.18-.48)*2.1);
+    return shade([235+3*moss,235+5*moss,235-8*moss],
+      (ledge?6:-3)+7*north-16*under+6*(h.joint-.5)+7*(mineral-.5));
+  }
+  function foundation(stations){
+    const m=component('Jointed rock beneath the castle and Viaduct','cliff'),length=stations.length;
+    const rockUV=(x,y,z)=>[(x*.84+y*.48+.12*z+320)/1380,1-clamp((.42*y-.75*z+.044*x+43)/485)];
+    for(let j=0;j<risers.length;j++)for(let i=0;i<length;i++){
+      const st=stations[i],h=cragVertex(st,j),[x,y,z]=h.p;
+      m.vertex(h.p,basaltColour(h,j,st),...rockUV(x,y,z));
+    }
+    for(let j=0;j<risers.length-1;j++)for(let i=0;i<length;i++){
+      const a=j*length+i,b=j*length+(i+1)%length,c=a+length,d=b+length;
+      m.tri(a,b,d);m.tri(a,d,c);
+    }
+    let previous=stations.map((_,i)=>i);
+    for(const retreat of [.19,.41,.68,.88]){
+      const edge=[];
+      for(let i=0;i<length;i++){
+        const st=stations[i],[ax,ay,az]=m.p[i],x=lerp(ax,350,retreat),y=lerp(ay,142,retreat);
+        const z=lerp(az,-33,retreat)+Math.sin(retreat*Math.PI)*(7.8*(noise(x*.044,y*.038)-.46)+11*(noise(x*.013,y*.016)-.5));
+        const reed=24*(noise(x*.031,y*.024)-.5);
+        edge.push(m.vertex([x,y,z],shade([218,226,202],reed),...rockUV(x,y,z)));
+      }
+      for(let i=0;i<length;i++){
+        const next=(i+1)%length;m.tri(edge[i],previous[next],previous[i]);m.tri(edge[i],edge[next],previous[next]);
+      }
+      previous=edge;
+    }
+    const centre=m.vertex([350,142,-33],[214,222,200],...rockUV(350,142,-33));
+    for(let i=0;i<length;i++)m.tri(centre,previous[(i+1)%length],previous[i]);
+    // The lake-side model has long, squat noses that overlap below the walls.
+    // Their roots, asymmetrical benches and the cleft between them all meet
+    // the solid crag. No ledge is placed by guessing a screen-point height.
+    const buckets=new Map(),cell=35;
+    for(let n=0;n<m.indices.length;n+=3){
+      const tri=m.indices.slice(n,n+3),pp=tri.map(i=>m.p[i]);
+      const xs=pp.map(p=>p[0]),ys=pp.map(p=>p[1]);
+      const a=Math.floor(Math.min(...xs)/cell),b=Math.floor(Math.max(...xs)/cell),c=Math.floor(Math.min(...ys)/cell),d=Math.floor(Math.max(...ys)/cell);
+      for(let j=c;j<=d;j++)for(let i=a;i<=b;i++){
+        const key=i+j*128;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(pp);
+      }
+    }
+    function rootHeight(x,y){
+      const list=buckets.get(Math.floor(x/cell)+128*Math.floor(y/cell));let top=-Infinity;
+      if(!list)return top;
+      for(const [a,b,c] of list){
+        const bx=b[0]-a[0],by=b[1]-a[1],cx=c[0]-a[0],cy=c[1]-a[1],det=bx*cy-by*cx;
+        if(Math.abs(det)<.001)continue;
+        const dx=x-a[0],dy=y-a[1],v=(dx*cy-dy*cx)/det,w=(bx*dy-by*dx)/det,u=1-v-w;
+        if(Math.min(u,v,w)>=-.0001)top=Math.max(top,a[2]*u+b[2]*v+c[2]*w);
+      }
+      return top;
+    }
+    const spurs=[[688,84,131,39,.24,36],[714,113,121,32,.17,31],[717,142,119,31,.24,27],
+      [711,178,104,31,.19,20],[690,205,97,26,.24,17],[-55,218,107,32,.43,19],
+      [-76,240,112,30,.43,22],[22,292,139,28,.49,19],[539,311,116,23,-.37,19]];
+    for(const [n,[ox,oy,len,width,direction,height]] of spurs.entries()){
+      const nx=29,ny=14,ids=[];
+      const anchor=rootHeight(ox+len*.13,oy+len*.13*direction);
+      for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){
+        const u=i/nx,v=2*j/ny-1,rough=noise(i*.35+n,j*.50);
+        const w=width*(.69+.25*Math.sin(u*Math.PI)+.095*Math.sin(u*8.5+n));
+        const x=ox+len*u-v*w*.18,y=oy+len*direction*u+v*w+2.9*Math.sin(u*6.1+n);
+        const old=rootHeight(x,y);
+        if(!Number.isFinite(old)){ids.push(-1);continue;}
+        const lip=.13+.17*Math.sin(u*7.3+n),toe=v-lip,windward=clamp((v+.88)/.40);
+        const lee=clamp((.26-toe)/.28);
+        const head=clamp(u/.18)*clamp((1-u)/.19),envelope=head*clamp((1-Math.abs(v))/.22);
+        const crown=Math.max(0,windward*lee)+.22*clamp(1-Math.abs(toe-.53)*4);
+        const fracture=clamp((.17-Math.abs(noise(x*.040,y*.060+n)-.52))*7);
+        const shaping=height*crown+5.6*(rough-.51)-4.8*fracture+.8*Math.cos(u*10+n);
+        const table=Number.isFinite(anchor)?anchor+height*.19-(u-.13)*len*.205+v*2.2:old;
+        const ledge=Math.min(height*2.44,Math.max(shaping*.74,table-old))*crown;
+        const z=old-1.6+envelope*(ledge+4.5*(rough-.5)-3.8*fracture);
+        const colour=shade([244,242,232],9*(rough-.5)+5.5*windward-13*(1-lee)-5*fracture);
+        ids.push(m.vertex([x,y,z],colour,...rockUV(x,y,z)));
+      }
+      for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+        const a=j*(nx+1)+i,b=a+1,c=a+nx+1,d=c+1;
+        if(Math.min(ids[a],ids[c],ids[d])>=0)m.tri(ids[a],ids[c],ids[d]);
+        if(Math.min(ids[a],ids[d],ids[b])>=0)m.tri(ids[a],ids[d],ids[b]);
+      }
+    }
+    return m;
+  }
+  function pine(m,x,y,ground,h,seed,birch=false){
+    const random=(i,k)=>hash(seed+i*131,k*31+17);
+    const remote=seed>=28700;
+    const radius=h*(birch?.31:.255)*(.81+random(2,13)*.41),n=remote?5:birch?7:6;
+    const lean=(random(3,7)-.5)*h*.105,angle=random(0,17)*tau;
+    const tuft=mix(birch?[75,92,57]:[42,65,54],birch?[129,140,76]:[78,95,60],random(7,1));
+    const shaft=mix([72,65,52],[114,100,72],random(7,6));
+    const stemWidth=Math.max(.15,h*.022);
+    const root0=m.vertex([x-stemWidth,y,ground-.65],shaft,0,0);
+    const root1=m.vertex([x+stemWidth,y+.13,ground-.65],shaft,0,0);
+    const root2=m.vertex([x,y-stemWidth*.83,ground-.65],shaft,0,0);
+    const fork=m.vertex([x+lean*.4,y,ground+h*.62],shade(shaft,6),0,0);
+    m.tri(root0,root1,fork);m.tri(root1,root2,fork);m.tri(root2,root0,fork);
+    const branch=(cx,cy,low,high,r,phase,light)=>{
+      const lower=[],full=[],shoulder=[];
+      for(let k=0;k<n;k++){
+        const a=angle+k*tau/n+phase,ww=.77+.38*random(k+18,Math.round(phase*11+2));
+        const dx=Math.cos(a)*r*ww,dy=Math.sin(a)*r*ww*.72;
+        const sun=clamp(.44-.29*Math.cos(a)+.24*Math.sin(a));
+        const underside=shade(tuft,-10+sun*6),side=shade(tuft,-4+sun*13+light);
+        lower.push(m.vertex([cx+dx*.52,cy+dy*.52,low-r*(.12+random(k,4)*.18)],underside,0,0));
+        full.push(m.vertex([cx+dx,cy+dy,low+(high-low)*(.13+.13*random(k,3))],side,0,0));
+        shoulder.push(m.vertex([cx+dx*(birch?.75:.41),cy+dy*(birch?.75:.43),lerp(low,high,.60+.14*random(k,6))],shade(side,1.5),0,0));
+      }
+      const crown=m.vertex([cx+lean*.45,cy,high],shade(tuft,11+light),0,0);
+      for(let k=0;k<n;k++){
+        const b=(k+1)%n;
+        m.tri(lower[k],full[k],full[b]);m.tri(lower[k],full[b],lower[b]);
+        m.tri(full[k],shoulder[k],shoulder[b]);m.tri(full[k],shoulder[b],full[b]);
+        m.tri(shoulder[k],crown,shoulder[b]);
+      }
+    };
+    if(remote){
+      branch(x+lean*.42,y,ground+h*.19,ground+h,radius,angle*.31,0);
+    }else if(birch){
+      branch(x+lean*.4,y,ground+h*.24,ground+h,radius,0,0);
+      if(h>8.2)branch(x-radius*.61,y+radius*.28,ground+h*.17,ground+h*.74,radius*.82,1.4,-4);
+    }else{
+      branch(x+lean*.35,y,ground+h*.21,ground+h*.79,radius,.1,0);
+      branch(x+lean*.69,y-.12,ground+h*.49,ground+h,radius*.70,.57,2);
+      if(h>10.4)branch(x-radius*.54,y+.26*radius,ground+h*.21,ground+h*.56,radius*.52,1.6,-3);
+    }
+  }
+  function onHill(mesh,s,k,x,t){
+    // Sample the built surface. Crests, rocks and tree roots share the actual
+    // triangles, including the lightly irregular spacing of their survey.
+    const u=(x+1220)/2980,v=.8-(t<0?t*.2:t*.8),ci=Math.floor(u*s.nx);
+    const cj=Math.floor(t<0?3+3*t:3+t*(s.ny-3)),row=s.nx+1;
+    for(let j=Math.max(0,cj-1);j<=Math.min(s.ny-1,cj+1);j++)for(let i=Math.max(0,ci-1);i<=Math.min(s.nx-1,ci+1);i++){
+      const a=j*row+i,b=a+1,c=a+row,d=c+1;
+      const tris=(i+j)&1?[[a,c,b],[c,d,b]]:[[a,c,d],[a,d,b]];
+      for(const [ia,ib,ic] of tris){
+        const A=mesh.uv[ia],B=mesh.uv[ib],C=mesh.uv[ic],xx=u-A[0],yy=v-A[1];
+        const bx=B[0]-A[0],by=B[1]-A[1],cx=C[0]-A[0],cy=C[1]-A[1],det=bx*cy-by*cx;
+        const bb=(xx*cy-yy*cx)/det,cc=(bx*yy-by*xx)/det,aa=1-bb-cc;
+        if(Math.min(bb,aa,cc)>=-.00002)return mesh.p[ia].map((n,c)=>n*aa+mesh.p[ib][c]*bb+mesh.p[ic][c]*cc);
+      }
+    }
+    return hill(s,x,t,k).p;
+  }
+  function woods(stations,landscape){
+    const m=component('Rooted Scots pine and birch on low terraces','wood');
+    // Pockets follow the valley floor and shelter on lee slopes. The rim of
+    // the occupied school crag remains open, especially beside the entrance.
+    const stands=[[-495,.14,69,.10,42],[-333,.29,84,.13,56],[-198,.18,50,.10,40],
+      [-61,.29,47,.10,43],[22,.13,40,.07,31],[102,.25,27,.10,18],
+      [609,.29,43,.12,18],[790,.20,48,.10,52],[910,.17,49,.10,55],[1031,.32,93,.14,42],[1191,.23,85,.13,24]];
+    let tree=0;
+    for(const [cx,ct,spread,depth,count] of stands)for(let i=0;i<count;i++){
+      const n=tree++,a=hash(n,31)*tau,r=Math.sqrt(hash(n,87)),x=cx+Math.cos(a)*r*spread;
+      const t=clamp(ct+Math.sin(a)*r*depth),ground=onHill(landscape[2],ranges[2],2,x,t);
+      const stature=(8.5+hash(n,91)*14.2)*(.79+.34*(1-r));
+      pine(m,x,ground[1],ground[2]-.42,stature,n+259,hash(n,73)>.85);
+    }
+    for(let i=0;i<stations.length;i+=2){
+      const st=stations[i],[x,y]=st.q;
+      if(x>23&&x<646&&y<185||x>195&&x<446&&y>240)continue;
+      if(hash(i,57)>.60||noise(st.s*.021,4.9)<.27)continue;
+      const j=hash(i,8)<.61?18:14,h=cragVertex(st,j),size=5+hash(i,56)*10.4;
+      pine(m,h.p[0],h.p[1],h.p[2]-.48,size,i+4521,hash(i,81)>.73);
+    }
+    for(let i=0;i<stations.length;i++){
+      const st=stations[i],[x,y]=st.q;
+      const grove=(x>700&&y>83&&y<119)||(x< -34&&y>202&&y<226);
+      if(!grove||hash(i,713)>.87)continue;
+      const j=hash(i,89)<.52?6:10,foot=cragVertex(st,j).p,h=11+hash(i,83)*14;
+      pine(m,foot[0],foot[1],foot[2]-.32,h,i+17901,hash(i,321)>.89);
+    }
+    for(const [n,[k,cx,ct,spread,deep,count]] of copses.entries()){
+      if(k!==1)continue;
+      for(let i=0;i<count;i++){
+        const seed=28700+n*237+i,a=hash(seed,54)*tau,r=Math.sqrt(hash(seed,83));
+        const dx=Math.cos(a)*r,x=cx+dx*spread,t=ct+Math.sin(a)*r*deep-.022*dx+.008*Math.sin(dx*6.8);
+        const p=onHill(landscape[k],ranges[k],k,x,t),h=(5.0+5.9*hash(seed,78))*(1.06-.21*r);
+        pine(m,x,p[1],p[2]-.32,h,seed,hash(seed,66)>.96);
+      }
+    }
+    return m;
+  }
+  function outcrops(stations,landscape){
+    const m=component('Fractured schist ledges and detached blocks on the talus','blocks');
+    const form=[[-.54,-.18],[-.39,-.48],[.16,-.47],[.48,-.28],[.55,.12],[.35,.43],[-.18,.48],[-.47,.29]];
+    // Outward-facing slabs catch a sliver of light on the up-dip edge.
+    // Distinct top, joint and underside normals keep a broken edge at distance.
+    function block(p,w,d,h,angle,key,moss,air){
+      const ca=Math.cos(angle),sa=Math.sin(angle),rings=[[],[],[]];
+      const lean=(hash(key,6)-.5)*.36, dip=(hash(key,83)-.5)*.19;
+      for(let i=0;i<form.length;i++){
+        const [u,v]=form[i],j=.85+hash(i+key,37)*.3,dx=u*w*j,dy=v*d*j;
+        for(let l=0;l<3;l++){
+          const f=l===0?.83:l===1?1:.82+.15*hash(key+i,88);
+          const xx=dx*f+(l===0?0:l===1?w*.03:lean*w*.28),yy=dy*f+(l===0?-.12*d:0);
+          const rise=l===0?-h*.62:l===1?h*(.17+.22*hash(i+key,79)):h*(.65+.18*hash(i+key,9))+dx*dip;
+          rings[l].push([p[0]+ca*xx-sa*yy,p[1]+(sa*xx+ca*yy)*.69,p[2]+rise]);
+        }
+      }
+      function face(points,base){
+        const start=m.p.length;for(let i=0;i<points.length;i++)m.vertex(points[i],shade(base,(hash(key+i*83,start%7)-.5)*5),0,0);
+        for(let i=1;i<points.length-1;i++)m.tri(start,start+i,start+i+1);
+      }
+      const mineral=hash(key,71),tone=mix([87,96,100],[134,131,113],mineral);
+      const inert=mix(tone,[111,122,82],moss*.72),shale=mix(inert,[142,156,168],air);
+      face([...rings[2]].reverse(),shade(shale,12));
+      for(let i=0;i<form.length;i++){
+        const j=(i+1)%form.length;
+        const joint=shade(shale,-15+9*hash(i+key,84));
+        face([rings[0][i],rings[1][i],rings[1][j],rings[0][j]],joint);
+        face([rings[1][i],rings[2][i],rings[2][j],rings[1][j]],shade(shale,-1+7*hash(key+i,55)));
+      }
+    }
+    let key=0;
+    for(const [j,st] of stations.entries()){
+      const [xx,yy]=st.q;
+      if(yy<69||xx>125&&xx<478&&yy<220)continue;
+      const pocket=noise(st.s*.022,17);
+      if(pocket<.39)continue;
+      const axis=Math.atan2(st.normal[0],-st.normal[1]);
+      for(const layer of [5,10,14,18,21]){
+        key++;if(hash(key,83)>(pocket+.09)*(layer<18?.71:.55))continue;
+        const p=cragVertex(st,layer).p,ww=(6+hash(key,17)*15)*(layer<18?1:.68);
+        block(p,ww,ww*(.32+.39*hash(key,36)),ww*(.13+.15*hash(key,71)),axis+(.5-hash(key,109))*.67,key,pocket-.22,.04);
+      }
+    }
+    const scarps=[[-382,.22,64,1],[-229,.32,83,1],[-108,.37,61,1],[-15,.16,32,1],[58,.28,57,1],
+      [685,.20,56,1],[840,.20,38,1],[979,.33,76,1],[1081,.20,57,1],
+      [-273,.10,34,2],[-161,.17,40,2],[-52,.28,37,2],[34,.13,30,2],[780,.15,36,2],[975,.13,43,2]];
+    for(const [n,[xc,t,span,k]] of scarps.entries()){
+      const outline=[];
+      for(let i=0;i<=16;i++){
+        const u=i/16,x=xc+(u-.5)*span;
+        const tt=t+(u-.5)*.042+Math.sin(u*9.2+n)*.007,env=Math.sin(Math.PI*u)**.76;
+        const exposed=2.3+3.2*noise(i*.32,9+n),edge=[];
+        for(const [j,[v,rise]] of [[-.018,-.75],[-.005,.51],[.002,.74],[.007,.10],[.017,-.8]].entries()){
+          const p=onHill(landscape[k],ranges[k],k,x,tt+v*env);
+          p[2]+=-.76+env*rise*exposed;
+          const face=mix([88,97,96],[138,144,140],ranges[k].air);
+          edge.push(m.vertex(p,shade(face,(j===1||j===2?3:-5)+7*(noise(i*.7,j*.31+n)-.5)),0,0));
+        }
+        outline.push(edge);
+      }
+      for(let i=0;i<16;i++)for(let j=0;j<4;j++){
+        const a=outline[i],b=outline[i+1];m.tri(a[j],a[j+1],b[j+1]);m.tri(a[j],b[j+1],b[j]);
+      }
+    }
+    return m;
+  }
+  let land;
+  function shapes(){
+    if(!land){
+      const st=shorePoints();
+      const slopes=ranges.map(terrain);
+      land=[...slopes,foundation(st),outcrops(st,slopes),woods(st,slopes)];
+    }
+    return land;
+  }
+  const period=160;
+  let grains;
+  function stoneGrain(){
+    if(grains)return grains;
+    // Periodic lattice samples make the mineral grain continuous across
+    // meters of stone. The varying split runs uphill and later disappears
+    // under the heath; it never forms an identical outline on another hill.
+    const field=(x,y,k,s=0)=>{
+      const ix=Math.floor(x),iy=Math.floor(y),u=x-ix,v=y-iy;
+      const a=((ix%k)+k)%k,b=((iy%k)+k)%k,q=(a+1)%k,r=(b+1)%k;
+      const t=u*u*(3-2*u),h=v*v*(3-2*v);
+      return lerp(lerp(hash(a+s,b),hash(q+s,b),t),lerp(hash(a+s,r),hash(q+s,r),t),h);
+    };
+    grains=new Uint8Array(period*period);
+    for(let j=0;j<period;j++)for(let i=0;i<period;i++){
+      const u=i/period,v=j/period,warp=field(4*u,4*v,4);
+      const high=field(u*13,v*13,13,16), broken=field(u*7,v*7,7,21),fine=field(u*37,v*37,37,9);
+      const fold=3*u-5*v+.74*warp+.20*high;
+      const seam=Math.abs(fold-Math.round(fold)),cut=clamp((.108-seam)*10.4)*clamp((broken-.34)*3.2);
+      const top=clamp((.13-Math.abs(seam-.14))*6.1)*clamp((broken-.35)*2.7);
+      const quartz=clamp((high*.7+fine*.3-.69)*4.4);
+      grains[j*period+i]=Math.max(178,Math.min(255,Math.round(230+(warp-.5)*13+(high-.5)*16+
+        (fine-.5)*14-22*cut+9*top+8*quartz+(hash(i,j)-.5)*5)));
+    }
+    return grains;
+  }
+  const surfaces=new Map();
+  function fracturedFace(u,v){
+    const iu=Math.floor(u),iv=Math.floor(v);let near=5,second=5,tone=0;
+    for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){
+      const sx=iu+i,sy=iv+j,dx=sx+.12+.76*hash(sx,sy)-u,dy=sy+.11+.78*hash(sx+81,sy-14)-v;
+      const d=dx*dx+dy*dy;
+      if(d<near){second=near;near=d;tone=hash(sx+11,sy+8);}else if(d<second)second=d;
+    }
+    return [tone,Math.sqrt(second)-Math.sqrt(near)];
+  }
+  function hillsidePaint(kind,k){
+    const key=kind==='cliff'?'cliff':k;
+    if(surfaces.has(key))return surfaces.get(key);
+    const w=1536,h=224,data=new Uint8ClampedArray(w*h*4),grain=stoneGrain();
+    const relief=kind==='cliff'?new Float32Array(w*h):null;
+    for(let iy=0;iy<h;iy++){
+      const yy=(iy+.5)/h;
+      const t=yy<.2?(yy-.20)*5:(yy-.20)/.80;
+      for(let ix=0;ix<w;ix++){
+        const u=(ix+.5)/w,x=-1220+2980*u;
+        const grit=(grain[(iy%period)*period+ix%period]-230)/24;
+        let red,green,blue;
+        if(kind==='cliff'){
+          const along=u*1610,drop=yy*430-14;
+          const zone=noise(along*.014+17,drop*.021),joint=noise(along*.039,drop*.043+8);
+          const cross=noise(along*.085+drop*.032,drop*.093),mineral=noise(along*.14,drop*.16);
+          const fault=Math.floor(4*noise(along*.023+2,drop*.013))*.36;
+          const fold=drop*(.074+.014*zone)-along*.012+1.2*noise(along*.017,drop*.019)+.51*joint+fault;
+          const dist=fold-Math.floor(fold),cut=clamp((.19-Math.abs(dist-.59))*6)*clamp((cross+.6*zone-.55)*2.1);
+          const lip=clamp((.14-Math.abs(dist-.39))*10)*clamp((joint+.45*cross-.47)*2.8);
+          const shear=along*.051-drop*.034+.55*noise(along*.017,drop*.030)+.30*cross;
+          const fracture=clamp((.085-Math.abs(shear-Math.round(shear)))*15)*clamp((cross-.39)*3.6);
+          const seam=clamp((.085-Math.abs(dist-.12))*12)*clamp((cross+.40*joint-.79)*4);
+          const moss=clamp((zone*.57+joint*.30+cross*.13-.56)*3.9+Math.max(0,yy-.48)*.50);
+          const spall=clamp((noise(along*.18+drop*.14,drop*.32)-.66)*5)*clamp((cross-.37)*3.8);
+          const [stone,gap]=fracturedFace(along*.068+drop*.027+zone*.42,drop*.105-along*.018+joint*.35);
+          const jointMask=clamp((cross*.41+zone*.35+joint*.24-.37)*3.5);
+          const crack=clamp((.105-gap)*11.0)*jointMask,rim=clamp((.10-Math.abs(gap-.16))*10)*jointMask;
+          const lightFoot=12*clamp((yy-.56)/.39);
+          const bright=26*(zone-.5)+33*(joint-.5)+19*(cross-.5)+13*(mineral-.5)+7*grit+
+            14*lip-21*cut-14*fracture+11*seam+8*spall+lightFoot+(stone-.5)*17*jointMask-22*crack+8*rim;
+          relief[iy*w+ix]=13*zone+9*joint+4*cross+2.8*mineral+4*stone-3.1*cut-2.6*crack+1.8*lip+1.2*spall;
+          red=120+bright+5*moss;green=122+bright+8*moss;blue=120+bright-24*moss;
+        }else{
+          const depth=t*(235+k*20),seed=k*19+12.7;
+          const kink=82*(noise(x*.006,t*2.1+seed)-.5)+23*(noise(x*.021,depth*.012+seed)-.5);
+          const rib=x+depth*(.39+.29*Math.sin(x*.004+seed))+kink;
+          const spur=noise(rib*.017,t*1.85+seed),cuts=noise(rib*.059,t*3.65+seed*.27);
+          const scree=noise(rib*.095+depth*.045,depth*.072+seed),fleck=noise(x*.146,depth*.115+.8);
+          const peat=noise(x*.011+9,depth*.019+seed),drift=noise(x*.029-.15*t,depth*.027+7);
+          const ledge=noise(rib*.037,depth*.047+seed);
+          const rock=clamp((spur*.24+cuts*.29+scree*.21+ledge*.26-.48-.13*Math.max(0,t))*5.6);
+          const course=(depth*.103+x*.023+2.13*noise(x*.008,depth*.015+seed)+.47*ledge);
+          const band=course-Math.floor(course);
+          const bed=clamp((.15-Math.abs(band-.28))*8)*clamp((cuts+spur*.35-.56)*3.1);
+          const behind=clamp((.21-Math.abs(band-.54))*6)*clamp((ledge+spur*.33-.50)*2.2);
+          const rift=Math.abs(noise(rib*.036+.5*drift,t*1.76+seed)-.49);
+          const gully=clamp((.104-rift)*10.0)*clamp((cuts*.49+drift*.51-.41)*4.0);
+          const grainy=noise(x*.282+depth*.127,depth*.239);
+          const light=19*(spur-.5)+17*(cuts-.5)+19*(scree-.5)+16*(fleck-.5)+6*grit+8*(grainy-.5)+
+            rock*(10*bed-10*behind)-11*gully;
+          const dry=clamp((peat*.49+drift*.33+fleck*.18-.29)*1.74);
+          const gorse=clamp((peat*.45+cuts*.19+drift*.36-.56)*4.8)*(1-rock);
+          const forest=canopyZone(k,x,t);
+          const loam=[106+57*dry-24*gorse,102+33*dry-4*gorse,65+11*dry-17*gorse];
+          // Grey ribs give way to golden deergrass; dark green vegetation
+          // collects at the foot of sheltered runnels. Haze cools every
+          // landmark on the far side of the valley, including the rock.
+          const air=ranges[k].air*1.03,lit=ledge*.6+scree*.4;
+          red=lerp(lerp(loam[0],107+39*lit,rock)+light,145,air);
+          green=lerp(lerp(loam[1],116+32*lit,rock)+light,160,air);
+          blue=lerp(lerp(loam[2],124+25*lit,rock)+light,174,air);
+          if(forest){
+            const value=18*(scree-.5)+11*(grainy-.5),depth=forest*(k===1?.83:.71);
+            red=lerp(red,68+value+24*air,depth);green=lerp(green,84+value+22*air,depth);blue=lerp(blue,71+value+39*air,depth);
+          }
+        }
+        const pos=(iy*w+ix)*4;data[pos]=red;data[pos+1]=green;data[pos+2]=blue;data[pos+3]=255;
+      }
+    }
+    if(relief){
+      // The ledge faces keep their fine relief in grazing light. A broken
+      // mineral lip receives light; the recessed side and cavities collect
+      // occlusion even where the larger rock is shaded by the east range.
+      for(let j=3;j<h-3;j++)for(let i=3;i<w-3;i++){
+        const n=j*w+i,dx=relief[n-1]-relief[n+1],dy=relief[n-w]-relief[n+w];
+        const neighbours=(relief[n-3]+relief[n+3]+relief[n-3*w]+relief[n+3*w])*.25;
+        const strength=Math.max(-27,Math.min(25,dx*3.90+dy*2.05))-3.1*Math.max(0,neighbours-relief[n]);
+        const pixel=n*4;
+        data[pixel]+=strength*1.06;data[pixel+1]+=strength;data[pixel+2]+=strength*.86;
+      }
+    }
+    const out={data,w,h};surfaces.set(key,out);return out;
+  }
+  function makeMaterials(api){
+    const T=api.THREE;
+    const make=(name,settings={})=>new T.MeshLambertMaterial({name,vertexColors:true,side:T.DoubleSide,...settings});
+    return shapes().map((f,k)=>{
+      if(f.kind==='wood')return make('Scots pine needles and birch leaves',{emissive:0x182122});
+      if(f.kind==='blocks')return make('Broken stone faces and exposed quartzy edges',{emissive:0x282b2c});
+      const {data,w,h}=hillsidePaint(f.kind,k);
+      const skin=api.painted({x:0,y:0,w,h},c=>{
+        const im=c.createImageData(w,h);im.data.set(data);c.putImageData(im,0,0);
+      },{density:1});
+      const glow=f.kind==='cliff'?0x33383a:k===0?0x455059:k===1?0x222d35:0x1a211d;
+      if(k===0)return make(f.name+' surface',{map:skin.map,color:0xb6c5ce,emissive:0xffffff,emissiveMap:skin.map,emissiveIntensity:.47});
+      const mat=make(f.name+' surface',{map:skin.map,emissive:glow});
+      if(f.kind==='cliff'){
+        mat.emissive.setHex(0xffffff);mat.emissiveMap=skin.map;mat.emissiveIntensity=.185;
+        // Project in three geological planes. A fold or an east-facing
+        // undercut must not stretch a single line of mineral over its face.
+        mat.onBeforeCompile=shader=>{
+          shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vHighlandStone;')
+            .replace('#include <begin_vertex>','#include <begin_vertex>\nvHighlandStone=vec3(position.x,position.z*.70710678,position.y*.70710678);');
+          shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vHighlandStone;')
+            .replace('#include <map_fragment>',[
+              'vec3 s=vHighlandStone;',
+              'vec3 w=pow(abs(normalize(cross(dFdx(s),dFdy(s)))),vec3(2.4));w/=max(.0001,w.x+w.y+w.z);',
+              'vec2 east=vec2(.19+(s.y+75.)/1030.,1.-(.12*s.y-s.z+.021*s.x+34.)/300.);',
+              'vec2 south=vec2(.06+(s.x+230.)/1610.,1.-(.073*s.x-s.z+44.)/320.);',
+              'vec2 cap=vec2(.12+(s.x+180.)/1530.,1.-(s.y+.18*s.x+133.)/730.);',
+              'vec4 rockAlbedo=texture2D(map,east)*w.x+texture2D(map,south)*w.y+texture2D(map,cap)*w.z;',
+              'diffuseColor*=rockAlbedo;'
+            ].join('\n'))
+            .replace('#include <emissivemap_fragment>','totalEmissiveRadiance*=rockAlbedo.rgb;');
+        };
+      }
+      return mat;
+    });
+  }
+  const linear=Float32Array.from({length:256},(_,c)=>{const v=c/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+  function build(api,parent){
+    const T=api.THREE,materials=makeMaterials(api);
+    const group=api.group('Highland watershed, wooded glen and castle foundations',parent);
+    for(const [k,f] of shapes().entries()){
+      const mesh=api.poly(group,f.name,f.p,f.indices,materials[k]),geo=mesh.geometry;
+      const color=new Float32Array(f.rgb.length*3),uv=new Float32Array(f.p.length*2);
+      for(let i=0;i<f.p.length;i++){
+        const rgb=f.rgb[i];for(let k=0;k<3;k++)color[3*i+k]=linear[Math.round(rgb[k])];
+        uv[2*i]=f.uv[i][0];uv[2*i+1]=f.uv[i][1];
+      }
+      geo.setAttribute('color',new T.BufferAttribute(color,3));geo.setAttribute('uv',new T.BufferAttribute(uv,2));
+      geo.computeBoundingSphere();mesh.castShadow=f.kind==='cliff'||f.kind==='wood';mesh.receiveShadow=true;
+    }
+    return group;
+  }
+  let compatibility;
+  function draw(c){
+    const b={x:-494,y:-247,w:1658,h:824},scale=1.05;
+    if(!compatibility){
+      compatibility=c.canvas.ownerDocument.createElement('canvas');
+      const w=compatibility.width=Math.ceil(b.w*scale),h=compatibility.height=Math.ceil(b.h*scale);
+      const ctx=compatibility.getContext('2d'),im=ctx.createImageData(w,h),data=im.data;
+      const depth=new Float32Array(w*h);depth.fill(-Infinity);
+      for(const [k,f] of shapes().entries()){
+        const tex=f.kind==='wood'||f.kind==='blocks'?null:hillsidePaint(f.kind,k);
+        const count=f.p.length,xx=new Float32Array(count),yy=new Float32Array(count),zz=new Float32Array(count);
+        const normals=new Float32Array(count*3),brightness=new Float32Array(count);
+        for(let i=0;i<count;i++){
+          const [x,y,z]=f.p[i];xx[i]=(x-b.x)*scale;yy[i]=(y-z-b.y)*scale;zz[i]=y+z;
+        }
+        for(let i=0;i<f.indices.length;i+=3){
+          const ia=f.indices[i],ib=f.indices[i+1],ic=f.indices[i+2],a=f.p[ia],p=f.p[ib],q=f.p[ic];
+          const bx=p[0]-a[0],by=(p[2]-a[2])*unit,bz=(p[1]-a[1])*unit;
+          const cx=q[0]-a[0],cy=(q[2]-a[2])*unit,cz=(q[1]-a[1])*unit;
+          const nx=by*cz-bz*cy,ny=bz*cx-bx*cz,nz=bx*cy-by*cx;
+          for(const v of [ia,ib,ic]){normals[3*v]+=nx;normals[3*v+1]+=ny;normals[3*v+2]+=nz;}
+        }
+        for(let i=0;i<count;i++){
+          const nx=normals[3*i],ny=normals[3*i+1],nz=normals[3*i+2],inv=1/(Math.hypot(nx,ny,nz)||1);
+          const sun=Math.max(0,(-nx*.472+ny*.792+nz*.388)*inv);
+          const diffuse=.79+.27*Math.max(0,ny*inv)+.24*sun;
+          brightness[i]=f.kind==='air'?lerp(1,diffuse,.52):diffuse;
+        }
+        for(let i=0;i<f.indices.length;i+=3){
+          const a=f.indices[i],d=f.indices[i+1],e=f.indices[i+2];
+          const x=xx[a],y=yy[a],dx=xx[d]-x,dy=yy[d]-y,ex=xx[e]-x,ey=yy[e]-y;
+          const det=dx*ey-ex*dy;if(Math.abs(det)<.004)continue;
+          const minX=Math.max(0,Math.ceil(Math.min(x,xx[d],xx[e])-.5)),maxX=Math.min(w-1,Math.floor(Math.max(x,xx[d],xx[e])-.5));
+          const minY=Math.max(0,Math.ceil(Math.min(y,yy[d],yy[e])-.5)),maxY=Math.min(h-1,Math.floor(Math.max(y,yy[d],yy[e])-.5));
+          const ua=f.uv[a],ud=f.uv[d],ue=f.uv[e],ra=f.rgb[a],rd=f.rgb[d],re=f.rgb[e],ia=brightness[a],id=brightness[d],ie=brightness[e];
+          const cliff=f.kind==='cliff',pa=f.p[a],pd=f.p[d],pe=f.p[e];
+          let weights;
+          if(cliff){
+            const bx=pd[0]-pa[0],by=pd[1]-pa[1],bz=pd[2]-pa[2],cx=pe[0]-pa[0],cy=pe[1]-pa[1],cz=pe[2]-pa[2];
+            const nx=Math.abs(by*cz-bz*cy)**2.4,ny=Math.abs(bz*cx-bx*cz)**2.4,nz=Math.abs(bx*cy-by*cx)**2.4;
+            const sum=nx+ny+nz||1;weights=[nx/sum,ny/sum,nz/sum];
+          }
+          for(let py=minY;py<=maxY;py++){
+            const ry=py+.5-y;
+            for(let px=minX;px<=maxX;px++){
+              const rx=px+.5-x,D=(rx*ey-ex*ry)/det,E=(dx*ry-rx*dy)/det,A=1-D-E;
+              if(A<0||D<0||E<0)continue;
+              const j=py*w+px,z=A*zz[a]+D*zz[d]+E*zz[e];if(z<=depth[j])continue;depth[j]=z;
+              const light=A*ia+D*id+E*ie;
+              let sr=1,sg=1,sb=1;
+              if(cliff){
+                const hx=A*pa[0]+D*pd[0]+E*pe[0],hy=A*pa[1]+D*pd[1]+E*pe[1],hz=A*pa[2]+D*pd[2]+E*pe[2];
+                sr=sg=sb=0;
+                for(let frame=0;frame<3;frame++){
+                  const u=frame===0?.19+(hy+75)/1030:frame===1?.06+(hx+230)/1610:.12+(hx+180)/1530;
+                  const v=frame===0?(.12*hy-hz+.021*hx+34)/300:frame===1?(.073*hx-hz+44)/320:(hy+.18*hx+133)/730;
+                  const pixel=4*(Math.min(tex.h-1,Math.max(0,Math.floor(v*tex.h)))*tex.w+Math.min(tex.w-1,Math.max(0,Math.floor(u*tex.w))));
+                  const weight=weights[frame]/255;sr+=tex.data[pixel]*weight;sg+=tex.data[pixel+1]*weight;sb+=tex.data[pixel+2]*weight;
+                }
+              }else if(tex){
+                const u=(A*ua[0]+D*ud[0]+E*ue[0]),v=1-A*ua[1]-D*ud[1]-E*ue[1];
+                const pixel=4*(Math.min(tex.h-1,Math.max(0,Math.floor(v*tex.h)))*tex.w+
+                  Math.min(tex.w-1,Math.max(0,Math.floor(u*tex.w))));
+                sr=tex.data[pixel]/255;sg=tex.data[pixel+1]/255;sb=tex.data[pixel+2]/255;
+              }
+              const n=j*4;
+              data[n]=(A*ra[0]+D*rd[0]+E*re[0])*light*sr;
+              data[n+1]=(A*ra[1]+D*rd[1]+E*re[1])*light*sg;
+              data[n+2]=(A*ra[2]+D*rd[2]+E*re[2])*light*sb;data[n+3]=255;
+            }
+          }
+        }
+      }
+      ctx.putImageData(im,0,0);
+    }
+    c.save();c.imageSmoothingEnabled=true;c.drawImage(compatibility,b.x,b.y,b.w,b.h);c.restore();
+  }
+  return {build,draw};
+})();
+
+/* A fixed weather study for the castle approach. The ridges, trees and rocks
+   in front of this sky live at their own distances in the school scene. */
+const SchoolCourtyardDaylight=(()=>{
+  'use strict';
+  const extent={x:-1120,y:-700,w:2900,h:1520},size=256,mask=size-1;
+  const weather=new Float32Array(size*size);
+  let seed=31973,sky;
+  for(let i=0;i<weather.length;i++){
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;weather[i]=seed/4294967296;
+  }
+  const mix=(a,b,t)=>a+(b-a)*t;
+  const clamp=x=>Math.max(0,Math.min(1,x));
+  function noise(x,y){
+    const ix=Math.floor(x),iy=Math.floor(y);
+    let u=x-ix,v=y-iy;u=u*u*(3-2*u);v=v*v*(3-2*v);
+    const a=(iy&mask)*size,b=((iy+1)&mask)*size,l=ix&mask,r=(ix+1)&mask;
+    return mix(mix(weather[a+l],weather[a+r],u),mix(weather[b+l],weather[b+r],u),v);
+  }
+  function vapour(x,y){
+    return .53*noise(x,y)+.275*noise(2.02*x+14,2.02*y-8)+
+      .132*noise(4.13*x-7,4.13*y+23)+.063*noise(8.4*x,8.4*y+71);
+  }
+  function draw(c){
+    if(!sky){
+      sky=c.canvas.ownerDocument.createElement('canvas');sky.width=1376;sky.height=608;
+      const ctx=sky.getContext('2d'),im=ctx.createImageData(sky.width,sky.height);
+      for(let py=0;py<sky.height;py++){
+        const y=extent.y+extent.h*py/sky.height,h=clamp((65-y)/560);
+        const horizon=Math.exp(-Math.pow((y+29)/179,2));
+        const deck=Math.exp(-Math.pow((y+209)/167,2));
+        for(let px=0;px<sky.width;px++){
+          const x=extent.x+extent.w*px/sky.width,u=x*.0052,v=y*.013;
+          const sunward=clamp(.62-(x-230)/1400),flow=.35*v+.16*noise(u*1.8,v*1.25);
+          const cloud=vapour(u+flow,v)+.038*(noise(u*15.3+3,v*13.7)-.5);
+          const cover=clamp((cloud-.44-.065*(1-deck))*4.6)*(.13+.80*deck);
+          const light=clamp(.41+3.4*(cloud-vapour(u+flow-.23,v-.39))+.27*sunward);
+          const skyR=190-86*h+12*horizon+10*sunward,skyG=203-59*h+6*horizon,skyB=211-30*h;
+          const ink=(py*sky.width+px)*4;
+          im.data[ink]=mix(skyR,mix(139,250,light),cover);
+          im.data[ink+1]=mix(skyG,mix(151,240,light),cover);
+          im.data[ink+2]=mix(skyB,mix(167,224,light),cover);
+          im.data[ink+3]=255;
+        }
+      }
+      ctx.putImageData(im,0,0);
+    }
+    c.save();c.imageSmoothingEnabled=true;c.drawImage(sky,extent.x,extent.y,extent.w,extent.h);c.restore();
+  }
+  return {draw,extent};
 })();
 
 /* Ground materials are sampled on the same half-world-pixel grid as the
@@ -9119,16 +9849,19 @@ const SchoolCourtyardGrounds=(()=>{
     const shifted=u+(j&1)*width*.46+hash(j,31)*.029,i=Math.floor(shifted/width);
     const fx=shifted-i*width,fy=v-j*rowH,variant=hash(i,j);
     const m=field(x*.092,y*.165),cuts=field(x*.28+13,y*.47);
-    const seam=.19+(cuts>.72?.49:0);
+    const rill=field(x*.022+4,y*.037-3),shell=field(u*.026+hash(i+13,j+23)*.012,v*.11);
+    const seam=.17+(cuts>.72?.43:0)+(rill>.77?.14:0);
     const du=Math.min(fx,width-fx),dv=Math.min(fy,rowH-fy);
     const chip=du<1.55&&dv<1.55&&du+dv<1.35+m*.7;
-    if(du<seam||dv<seam||chip)return tint(0x77786c,m*8);
+    const wet=constrain((rill-.59)*2.2)*(1-constrain(Math.min(du,dv)/4.6));
+    if(du<seam||dv<seam||chip)return tint(0x747469,m*9-6*wet,m*9-3*wet,m*9-5*wet);
     const cleft=fx<.9||fy>rowH-.98;
     const lip=fy<1.04||fx>width-.91;
     const lamina=field(u*.085+fy*.13,v*.29);
     const grain=hash(Math.floor(x*2+.2),Math.floor(y*2))*.011;
-    const wear=(m-.5)*9+(lamina>.76?2.4:0)+grain+(cleft?-9:lip?11:0);
-    return tint(flagPalette[variant%8],wear);
+    const worn=constrain((shell-.60)*3.5)*constrain((m-.37)*2.1);
+    const wear=(m-.5)*9+(lamina>.76?2.4:0)+grain+(cleft?-9:lip?11:0)+(rill-.5)*5.7+4.8*worn-4*wet;
+    return tint(flagPalette[variant%8],wear+1.7*worn-2*wet,wear,wear-1.8*worn);
   }
   const floorPoint=(u,v)=>[320+u-v,125+(u+v)*.5];
   function etchedSlabs(c){
@@ -9428,40 +10161,9 @@ const SchoolCourtyardGrounds=(()=>{
     cloisterShadow(c);
     c.restore();
   }
-  // The stone platform breaks into the local bedrock. Bedding planes continue
-  // around the gorge; each tread catches sky and its fractured face stays cool.
+  // Native Highland rock meets the bottom course of each retaining wall.
   const terraceFoot=[];
   const strata=(kind,points,base)=>terraceFoot.push({kind,points,base});
-  const stoneTint=(warm,lift)=>'rgb('+warm.map(v=>Math.round(v+lift)).join(',')+')';
-  const bankLine=x=>x< -46?262.5+.05*(-46-x):x<168?262.5+(x+46)*.5:
-    x<472?369.5:x<686?369.5-(x-472)*.5:262.5+.072*(x-686);
-  const ridgeLayers=[[0,-36],[3,-38],[6.8,-46],[12.6,-48],[16.3,-59],[22,-62],
-    [30.2,-71],[36.6,-71.5],[42,-84],[50,-87],[58,-92],[70,-105],[88,-111]];
-  const bankXs=[];
-  for(let x=-418,i=0;x<1066;x+=6.8+hash(i++,19)*.035)bankXs.push(x);
-  const ridge=(x,j)=>{
-    const [back,h]=ridgeLayers[j],t=j/(ridgeLayers.length-1),edge=(field(x*.011,71)-.5)*22;
-    const shelf=(field(x*.019+j*.13,7+j*.13)-.5)*17+(field(x*.099+j*.07,37+j*.19)-.5)*5;
-    const chimney=Math.max(0,(field(x*.033,j*.084+6)-.6)*2.15);
-    const gully=(x>248&&x<401?9:0)*t;
-    return [x,bankLine(x)+back+(edge+shelf)*t, h+shelf*Math.min(1,j*.37)-chimney*12*t-gully];
-  };
-  for(let j=1;j<ridgeLayers.length;j++)for(let i=1;i<bankXs.length;i++){
-    const xa=bankXs[i-1],xb=bankXs[i],a=ridge(xa,j-1),b=ridge(xb,j-1),c=ridge(xb,j),d=ridge(xa,j);
-    const ledge=[1,3,5,7,9].includes(j);
-    const damp=field(xa*.021,j*.17),mineral=field(xa*.073+2,j*.041);
-    const shade=(damp-.52)*14+(mineral-.5)*10+Math.max(-9,Math.min(9,(b[2]-a[2])*.95));
-    const outcrop=field(xa*.047,j*.19);
-    const base=ledge?(damp>.57?[106,119,108]:outcrop>.55?[119,126,116]:[105,118,112]):
-      (j<4||outcrop>.64?[88,100,97]:[95,107,102]);
-    strata('rock',[a,b,c,d],stoneTint(base,shade+(j%3===0?2:0)));
-    // Rock planes intersect. Long fissures cut across several neighbouring beds.
-    if(!ledge&&mineral>.58){
-      const along=(p,q,t)=>p.map((n,k)=>n+(q[k]-n)*t);
-      const e=along(a,b,.36),f=along(d,c,.62);
-      strata('rock',[e,along(a,b,.4+damp*.09),f],stoneTint([70,84,85],shade));
-    }
-  }
   // The parapet follows the deck all the way back to the gatehouses. Open
   // arches frame pieces of the gorge on the outside of the causeway.
   const deckStation=(side,s,relief,h)=>[320+side*(43.55+.0929*s+relief),366.4+s,h];
@@ -9495,50 +10197,10 @@ const SchoolCourtyardGrounds=(()=>{
       if(f.kind!==part)continue;
       const pts=f.points.map(([x,y,h])=>[x,y-h]);
       face(c,pts,f.base);
-      if(part==='rock'){
-        const a=pts[0],b=pts[1],width=b[0]-a[0];
-        if(width<4)continue;
-        const seed=hash(a[0]|0,(a[1]*.1)|0),t=.12+(seed%29)*.01,at=k=>lerp(a,b,k);
-        if(seed%4===0)edge(c,[at(t),at(t+.16),at(t+.32)],'rgba(194,194,162,.27)',.43);
-        if(seed%3===0&&pts.length===4){
-          const top=lerp(a,b,.66),toe=lerp(pts[3],pts[2],.42),half=lerp(top,toe,.51);
-          edge(c,[[top[0],top[1]+.4],[half[0]+.68,half[1]],toe],'rgba(52,67,67,.30)',.48);
-        }
-      }
     }
   }
   function viaductApron(c){
-    SchoolCourtyardSkyline.rangeBedrock(c);
-    const bank=[[-411,289],[-385,283],[-364,281.5],[-344,278],[-324,277],[-305,272.5],[-289,273.3],
-      [-268,269.7],[-248,270.2],[-222,267.7],[-191,267.5],[-168,264.4],[-146,263.8],[-123,265.6],
-      [-99,262.5],[-73,263.7],[-46,262.5],[168,369.5],[472,369.5],[686,262.5],
-      [706,264.6],[726,262.9],[746,265.6],[761,266.2],[778,268.9],[795,267.8],[815,271.2],
-      [835,271.8],[860,274.5],[879,274],[895,276.6],[915,277],[930,280.5],[946,280.2],
-      [966,284.6],[985,285.9],[1003,289.7],[1023,291.5],[1051,297],[1051,578],[-411,578]];
-    const heath=c.createLinearGradient(0,276,0,558);
-    heath.addColorStop(0,'#76867d');heath.addColorStop(.36,'#687d74');heath.addColorStop(1,'#596f6a');
-    face(c,bank,heath);
-    c.save();clip(c,bank);
     const r=random(1654);
-    for(let j=0;j<21;j++){
-      const x0=-415+(j%3)*-16,ridge=[],foot=[];
-      for(let x=x0;x<=1068;x+=12){
-        const w=field(x*.008,j*.24),v=field(x*.032,11+j*.19);
-        const y=286+j*14.3+(w-.5)*36+(v-.5)*8;
-        ridge.push([x,y]);foot.push([x,y+5+w*14]);
-      }
-      const light=j%3===0?'rgba(155,163,138,.16)':j%3===1?'rgba(66,90,84,.22)':'rgba(133,148,131,.19)';
-      face(c,[...ridge,...foot.reverse()],light);
-    }
-    for(let i=1;i<bank.length-3;i++){
-      const a=bank[i-1],b=bank[i];
-      if((a[0]>=-46&&a[0]<686)||r()>.8)continue;
-      const [x,y]=lerp(a,b,.33+r()*.4),w=4+r()*12,h=2+r()*6;
-      face(c,[[x-w,y+.25],[x-w*.45,y+.7],[x+w*.29,y+.22],[x+w,y+h*.33],
-        [x+w*.49,y+h*.5],[x+w*.12,y+h],[x-w*.31,y+h*.45]],'#758170');
-      edge(c,[[x-w*.7,y+.9],[x-w*.2,y+1.01],[x+w*.32,y+.74]],'#87927e',.57);
-    }
-    viaductFeatures(c,'rock');
     for(const [a,b] of [[[-46,262.5],[168,369.5]],[[168,369.5],[472,369.5]],[[472,369.5],[686,262.5]]]){
       const span=b[0]-a[0],slope=(b[1]-a[1])/span,w=(u,z)=>[a[0]+u,a[1]+u*slope-z];
       face(c,[w(0,0),w(span,0),w(span,-39),w(0,-39)],'#656c61');
@@ -9573,7 +10235,6 @@ const SchoolCourtyardGrounds=(()=>{
       }
     }
     viaductFeatures(c,'masonry');
-    c.restore();
   }
   return {pavement,viaductApron,viaductFeatures,terraceFoot};
 })();
@@ -10352,138 +11013,7 @@ const SchoolCourtyard=(()=>{
     }
     line(c,outer,'#c5b89a',.78);line(c,inner,'#514e48',.86);
   }
-  function sky(c){
-    const skyWash=c.createLinearGradient(-110,-228,87,150);
-    skyWash.addColorStop(0,'#798fa3');skyWash.addColorStop(.48,'#a1b7c2');skyWash.addColorStop(1,'#dfd8bd');
-    c.fillStyle=skyWash;c.fillRect(-570,-550,1820,1130);
-    const rand=rng(307);
-    // Wind breaks the lower banks into long lenticular shelves. Top light is
-    // strongest at the western ends, where the court stone catches it too.
-    const clouds=[[-240,-101,148,10],[-82,-52,111,7],[74,-104,140,11],[103,-23,59,4],
-      [310,-141,127,7],[470,-83,89,6],[570,-28,122,9],[735,-104,152,12],[928,-46,135,8]];
-    for(const [x,y,w,h] of clouds){
-      const profile=[[0,.16],[.11,-.11],[.22,-.23],[.29,-.19],[.39,-.61],[.48,-.74],[.56,-.56],
-        [.65,-.65],[.77,-.33],[.82,-.26],[.92,-.13],[1,.06],[.81,.29],[.68,.32],[.55,.42],[.31,.31],[.17,.29]];
-      const bank=profile.map(([a,b])=>[x+a*w,y+b*h]);
-      face(c,bank,'rgba(229,231,216,.33)');
-      face(c,[[x+.08*w,y+.16*h],[x+.39*w,y+.04*h],[x+.54*w,y-.19*h],[x+.72*w,y-.16*h],[x+w,y+.06*h],[x+.69*w,y+.30*h],[x+.51*w,y+.36*h],[x+.27*w,y+.25*h]],'rgba(110,143,151,.16)');
-    }
-    // Broken cloud banks above the ridge catch the same western light as
-    // the slate. Keep the darker undersides in the sky's own value range.
-    for(const [left,top,width,rise,phase] of [[-90,-193,390,24,2],[224,-221,235,12,5],[523,-143,290,19,8]]){
-      const crest=[],body=[],flat=[];
-      for(let j=0;j<=48;j++){
-        const t=j/48,x=left+width*t,envelope=Math.sin(t*Math.PI)**.73;
-        const lobes=Math.max(0,Math.sin(t*13.2+phase))*.45+Math.max(0,Math.sin(t*31.8+phase*.4))*.21;
-        const y=top+envelope*(5*Math.sin(t*4+phase)-rise*(.32+lobes));
-        crest.push([x,y]);body.push([x,top+envelope*(6+3*Math.sin(t*5+phase))]);
-        flat.push([x,top+envelope*(1.9*Math.sin(t*14+phase)-2)]);
-      }
-      body.reverse();
-      face(c,[...crest,...body],'rgba(221,222,212,.26)');
-      face(c,[...flat,...body],'rgba(133,153,166,.15)');
-      const lit=crest.slice(12,31);
-      face(c,[...lit,...lit.slice().reverse().map(([x,y],i)=>[x,y+1.4+1.3*Math.sin(i*.17)])],'rgba(242,233,206,.25)');
-    }
-    const heights=(x,k)=>Math.sin(x*.009+k*2.4)*12+Math.sin(x*.0205+k*.84)*5.2+Math.sin(x*.047+k*2.3)*2.6;
-    const ridges=[[52,1.67,'#939fa1'],[75,1.35,'#798c8c'],[95,1.48,'#607676']];
-    for(const [k,[y,amplitude,ink]] of ridges.entries()){
-      const ridge=[];
-      for(let x=-550;x<=1200;x+=5)ridge.push([x,y+heights(x,k)*amplitude+rand()*1.4]);
-      const land=[...ridge,[1200,560],[-550,560]];face(c,land,ink);c.save();clip(c,land);
-      for(let i=4;i<ridge.length-6;){
-        const [x,top]=ridge[i],run=3+Math.floor(rand()*6),[end,last]=ridge[Math.min(i+run,ridge.length-1)];
-        if(top<ridge[i-2][1]||rand()>.73){
-          const drop=(3+k*2)+rand()*11;
-          face(c,[[x,top+.6],[end,last+1],[end+5,last+drop*.67],[x+8+rand()*6,top+drop],[x+4,top+drop*.48]],
-            k===0?'rgba(183,192,183,.23)':k===1?'rgba(166,177,159,.23)':'rgba(137,155,134,.26)');
-          if(k)line(c,[[x+3,top+2],[x+7,top+4],[x+9,top+7]],'rgba(204,203,177,.23)',.62);
-        }
-        i+=run;
-      }
-      c.restore();
-    }
-    // The west side is open to the Highlands. The ridge recedes into the gap
-    // beside the hall; gullies follow the fall of each slope towards the glen.
-    const ridge=[[-425,-67],[-367,-97],[-320,-88],[-286,-102],[-243,-109],[-216,-124],
-      [-178,-117],[-146,-98],[-111,-89],[-79,-63],[-54,-65],[-30,-56],[-6,-45],
-      [28,-44],[53,-35],[74,-22],[104,-17],[132,-2],[155,15],[171,20],[198,48],
-      [213,55],[235,76],[258,91],[284,97]];
-    // Two shoulders on the opposite side of the glen interrupt one another
-    // at the saddle. Atmospheric perspective keeps their rock cooler and
-    // softer than the pitched roof in front.
-    const farRanges=[
-      [[-425,-78],[-360,-124],[-315,-120],[-263,-153],[-218,-133],[-173,-136],[-130,-96],[-99,-81],[-72,-91],[-43,-77],[-12,-58],[13,-51],[43,-67],[66,-52],[90,-55],[124,-32],[157,-22],[184,-26],[218,20],[252,39],[284,48]],
-      [[-425,-71],[-389,-103],[-342,-95],[-280,-120],[-238,-144],[-200,-125],[-161,-116],[-124,-83],[-98,-88],[-62,-66],[-45,-70],[-12,-45],[13,-36],[41,-44],[68,-36],[106,-15],[133,-21],[163,-5],[193,22],[220,31],[251,63],[284,77]]
-    ];
-    for(const [k,range] of farRanges.entries()){
-      const points=[[-580,range[0][1]+14],[-518,range[0][1]-18],[-475,range[0][1]-6],...range];
-      const ink=k?'#9eafb1':'#afbdc1',rim=[];
-      for(let j=0;j<points.length-1;j++){
-        const [x,y]=points[j],[end,z]=points[j+1],steps=Math.ceil((end-x)/5);
-        for(let n=0;n<steps;n++){
-          const t=n/steps,shoulder=Math.sin(t*Math.PI)*Math.cos((x+n*4)*.073)*2.8;
-          rim.push([x+(end-x)*t,y+(z-y)*t+shoulder]);
-        }
-      }
-      rim.push(points.at(-1));
-      const slope=c.createLinearGradient(0,-110,0,140);
-      slope.addColorStop(0,ink);slope.addColorStop(.65,k?'#a5b4b2':'#b2bec0');slope.addColorStop(1,'#b7bfb7');
-      face(c,[...rim,[284,145],[-580,145]],slope);
-    }
-    const landscape=c.canvas.ownerDocument.createElement('canvas');
-    landscape.width=710;landscape.height=462;
-    const lc=landscape.getContext('2d'),tile=lc.createImageData(landscape.width,landscape.height);
-    const field=Float32Array.from({length:128*128},()=>rand());
-    function noise(x,y){
-      const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
-      const row=(iy&127)*128,next=((iy+1)&127)*128,left=ix&127,right=(ix+1)&127;
-      const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
-      const a=field[row+left]*(1-u)+field[row+right]*u;
-      return a+(field[next+left]*(1-u)+field[next+right]*u-a)*v;
-    }
-    for(let px=0,segment=0;px<landscape.width;px++){
-      const x=px-425;
-      while(segment<ridge.length-2&&x>ridge[segment+1][0])segment++;
-      const [x0,h0]=ridge[segment],[x1,h1]=ridge[segment+1];
-      const crest=h0+(h1-h0)*(x-x0)/(x1-x0)+(noise(x*.075,3)-.5)*3.5;
-      const foot=248-.18*(x+160)+14*Math.sin(x*.018)+12*(noise(x*.021,8)-.5);
-      for(let y=Math.ceil(crest);y<foot;y++){
-        const depth=y-crest,warp=noise(x*.014,y*.016);
-        const u=x-depth*.29+33*(warp-.5);
-        const folds=noise(u*.030,depth*.011),corrie=noise(u*.057+3,depth*.016);
-        const scree=noise(x*.073+y*.045,y*.099-x*.024);
-        const bed=noise(u*.15,depth*.043);
-        const light=(folds-.48)*32+(corrie-.5)*16+(scree-.5)*6+(bed-.5)*3;
-        const ledge=scree>.61&&folds>.51?(scree-.61)*24:0;
-        const heath=Math.max(0,Math.min(1,(depth-32)/110))*(.32+.68*noise(u*.027,depth*.035));
-        const air=Math.max(0,(x-42)/245);
-        const lee=Math.max(0,Math.min(1,(folds+corrie*.35-.68)*4));
-        const rib=Math.cos(u*.071+5.3*noise(x*.016,depth*.019)+Math.sin(depth*.018));
-        const ravine=Math.max(0,-rib-.22)*Math.max(0,1-depth/172);
-        const bank=Math.max(0,rib+.13)*Math.max(0,1-depth/108);
-        // Folded beds traverse several spurs. Only the bare, wind-scoured
-        // portions show their limestone cap and the narrow shadow under it.
-        const rock=Math.min(1,Math.max(0,(noise(.026*x,.036*y)-.52)*4.4))*
-          Math.min(1,Math.max(0,(scree*.40+corrie*.43+folds*.17-.36)*4.1))*(1-heath*.75);
-        const tilt=y*(.081+.033*warp)-x*.023+1.98*noise(.020*x,.022*y)+.41*noise(x*.059,y*.051)+Math.sin(x*.026)*.84;
-        const level=Math.floor(tilt),layer=tilt-level,breaks=Math.min(1,Math.max(0,(noise(x*.055+depth*.018,level*.73)-.33)*3.9));
-        const crown=Math.exp(-Math.pow((layer-.37)/.108,2)),undercut=Math.exp(-Math.pow((layer-.57)/.19,2));
-        const fracture=Math.max(0,.15-Math.abs(noise(u*.061,depth*.021)-.48))/.15;
-        const shade=light+ledge+air*10-lee*11-19*ravine+9*bank+rock*(breaks*(16*crown-13*undercut)-5*fracture);
-        const i=((y+141)*landscape.width+px)*4;
-        tile.data[i]=133+shade-21*heath+4*bank;
-        tile.data[i+1]=149+shade-18*heath;
-        tile.data[i+2]=151+shade-30*heath+4*ravine;
-        tile.data[i+3]=255*Math.max(0,Math.min(1,(foot-y)/14));
-      }
-    }
-    lc.putImageData(tile,0,0);c.drawImage(landscape,-425,-141);
-    // The extra horizontal field is needed on short landscape phones. Carry
-    // the same near shoulder to its edge at the original atmospheric depth.
-    c.save();c.translate(-850,0);c.scale(-1,1);
-    c.drawImage(landscape,0,0,156,462,-425,-141,156,462);c.restore();
-  }
+  function sky(c){SchoolCourtyardDaylight.draw(c);}
   const main=(u,z)=>[320+u,152-z];
   function wash(c,p,shape,x0,z0,x1,z1,stops){
     const g=c.createLinearGradient(...p(x0,z0),...p(x1,z1));
@@ -10757,13 +11287,17 @@ const SchoolCourtyard=(()=>{
         // the vault. Its sill and reveals catch light from different sides.
         for(const offset of [-5.2,5.2]){
           const light=(u,z)=>back(offset+u,z);
-          archBand(c,light,3.1,25,58,66.5,1.2,['#747d71','#909383','#677265']);
-          arch(c,light,2.9,25.8,58,65.7,'#38423c');
-          arch(c,light,2.0,26.9,57.6,64.5,'#84988f');
-          shape(light,[[-1.7,27],[1.8,27],[1.8,34],[-1.7,37.2]],'#647a70');
-          edge(light,[[.2,27.5],[.2,63.4]],'#46584e',.66);
-          for(const z of [34,44,55])edge(light,[[-2.1,z],[2.1,z]],'#485a4d',.66);
-          edge(light,[[-4.2,24.5],[4.2,24.5]],'#a3a28b',.94);
+          archBand(c,light,3.1,25,58,66.5,.91,['#737771','#85877a','#5c6763']);
+          arch(c,light,2.96,25.7,58,65.7,'#243138');
+          arch(c,(u,z)=>light(u+.34,z),2.24,26.96,57.0,63.8,'#435d66');
+          c.save();clip(c,contour(light,2.18,26.99,56.95,63.78));
+          for(let z=21;z<70;z+=5.1){
+            edge(light,[[-2.5,z],[2.5,z+5.15]],'#334b55',.26);
+            edge(light,[[-2.5,z+5.15],[2.5,z]],'#344c55',.26);
+          }
+          edge(light,[[.15,27.5],[.15,63.4]],'#32434a',.34);
+          for(const z of [36,47,56.5])edge(light,[[-2.75,z],[2.75,z]],'#2c414a',.31);
+          c.restore();edge(light,[[-4.0,24.65],[4.0,24.65]],'#787d72',.73);
         }
         for(const side of [-1,1]){
           const rib=[[side*17,66],[side*15.4,77],[side*9.1,84],[0,91]];
@@ -10997,11 +11531,12 @@ const SchoolCourtyard=(()=>{
     // Eight broad risers reach the paved courtyard. Give the stair actual
     // tread depth and nosings, fanning to the film plan's wider bottom step.
     for(let j=0;j<8;j++){
-      const y=145.3+2.06*j,half=39.4+j*1.28,front=half+.94;
-      face(c,[[320-half,y],[320+half,y],[320+front,y+1.24],[320-front,y+1.24]],j%3===1?'#b3ac94':'#aaa48d');
-      face(c,[[320-front,y+1.24],[320+front,y+1.24],[320+front,y+2.13],[320-front,y+2.13]],j%3===2?'#716e62':'#7e7d6c');
-      for(let x=-half+8+(j%3)*3.2;x<half-2;x+=11.8)line(c,[[320+x,y+.12],[320+x-.24,y+.99]],'#888875',.45);
-      line(c,[[320-front+.3,y+1.13],[320+front-.25,y+1.13]],'#c6baa1',.6);
+      const y=144.1+3.12*j,half=38.7+j*1.21,front=half+.32;
+      face(c,[[320-half,y],[320+half,y],[320+front,y+2.15],[320-front,y+2.15]],j%3===1?'#b0ab99':'#aaa795');
+      face(c,[[320-front,y+2.15],[320+front,y+2.15],[320+front,y+3.17],[320-front,y+3.17]],j%3===2?'#6a6d65':'#777a70');
+      const joints=(j%2?[-35,-13.7,6.9,27.2]:[-25.3,-4.2,17.3,36.9]);
+      for(const x of joints)if(Math.abs(x)<half-2)line(c,[[320+x,y+.16],[320+x-.18,y+2.08]],'#84877a',.35);
+      line(c,[[320-front+.28,y+2.06],[317,y+2.29],[330,y+2.26],[320+front-.25,y+2.06]],'#c3beaa',.47);
     }
   }
   function oakLeaf(c,dir,opening){
@@ -11091,7 +11626,7 @@ const SchoolCourtyard=(()=>{
     const im=c.canvas.ownerDocument.createElement('canvas');
     im.width=bounds.w*2;im.height=bounds.h*2;
     const z=im.getContext('2d');z.setTransform(2,0,0,2,-bounds.x*2,-bounds.y*2);z.imageSmoothingEnabled=false;
-    sky(z);SchoolInnerCastle.paint(z);SchoolCourtyardSkyline.draw(z);
+    sky(z);SchoolCourtyardHighlands.draw(z);SchoolInnerCastle.paint(z);SchoolCourtyardSkyline.draw(z);
     SchoolCourtyardGrounds.viaductApron(z);SchoolCourtyardGrounds.pavement(z,outline);
     gable(z);SchoolCourtyardArcades.draw(z,-1);SchoolCourtyardArcades.draw(z,1);gateSurround(z);
     return im;
@@ -18125,6 +18660,152 @@ const SchoolEstateRenderer={
   }
 };
 
+/* Object-space fabrics for the courtyard miniature. Wall, roof and soffit keep
+   their material coordinates when the player crosses the court. */
+const SchoolCastleRelief=(()=>{
+  'use strict';
+  const perScene=new WeakMap(),swatches={
+    stone:{rgb:[166,158,144],tile:49,pattern:'bed',bump:.16},
+    carved:{rgb:[194,184,161],tile:43,pattern:'dress',bump:.068},
+    step:{rgb:[173,171,157],tile:56,pattern:'dress',bump:.046},
+    shadow:{rgb:[105,110,109],tile:45,pattern:'bed',bump:.105},
+    distant:{rgb:[149,145,136],tile:43,pattern:'bed',bump:.095},
+    slate:{rgb:[70,85,97],tile:39,pattern:'slate',bump:.14},
+    lead:{rgb:[102,108,109],tile:28,pattern:'lead',bump:.055},
+    iron:{rgb:[88,94,91],tile:17,pattern:'lead',bump:.10},
+    brass:{rgb:[144,127,85],tile:17,pattern:'lead',bump:.05},
+    oak:{rgb:[113,77,48],tile:34,pattern:'wood',bump:.13},
+    glass:{rgb:[75,101,111],tile:19,pattern:'glass',bump:.045}
+  };
+  const tiles=new Map(),unit=Math.SQRT2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+  const fract=x=>x-Math.floor(x),wrap=(a,n)=>(a%n+n)%n;
+  function rand(x,y,k=0){
+    let v=Math.imul(x+27+k,374761393)+Math.imul(y+97,668265263);
+    v=Math.imul(v^(v>>>13),1274126177);
+    return ((v^(v>>>16))>>>0)/4294967295;
+  }
+  function noise(u,v,n,k){
+    const x=Math.floor(u*n),y=Math.floor(v*n),fx=fract(u*n),fy=fract(v*n);
+    const a=fx*fx*(3-2*fx),b=fy*fy*(3-2*fy);
+    const h=(i,j)=>rand(wrap(x+i,n),wrap(y+j,n),k)-.5;
+    return (h(0,0)*(1-a)+h(1,0)*a)*(1-b)+(h(0,1)*(1-a)+h(1,1)*a)*b;
+  }
+  function bake(type){
+    if(tiles.has(type))return tiles.get(type);
+    const s=swatches[type],size=256,albedo=new Uint8Array(size*size*4),surface=new Uint8Array(size*size*4);
+    const slate=s.pattern==='slate',dress=s.pattern==='dress',glass=s.pattern==='glass',lead=s.pattern==='lead',wood=s.pattern==='wood';
+    const rows=slate?10:dress?5:6,cols=slate?7:dress?3:4;
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+      const u=(x+.5)/size,v=(y+.5)/size,fine=rand(x,y,45)-.5;
+      const mist=noise(u,v,4,19),grain=noise(u,v,19,47),spall=noise(u,v,45,82);
+      const mortarV=v*rows+grain*(slate?.036:.081),row=Math.floor(mortarV),identity=wrap(row,rows);
+      const run=u*cols+.50*(identity%2)+(.28*rand(identity,42)-.14)+grain*(slate?.046:.098);
+      const cell=wrap(Math.floor(run),cols),bed=fract(mortarV),bond=fract(run);
+      const cast=rand(cell,identity,3),tone=rand(cell,identity,12)-.5;
+      const edgeX=Math.min(bond,1-bond)/cols,edgeY=Math.min(bed,1-bed)/rows;
+      const joint=1-clamp(Math.min(edgeX,edgeY)/(slate?.0055:dress?.006:.009));
+      let value=0,rough=.9,height=.72,chroma=tone*3;
+      if(glass){
+        const diag=Math.min(Math.abs(fract((u+v)*3)-.5),Math.abs(fract((u-v)*3)-.5));
+        const seam=1-clamp((diag-.018)/.065);
+        const paneTone=rand(wrap(Math.floor((u+v)*3+.5),6),wrap(Math.floor((u-v)*3+.5),6),8)-.5;
+        value=mist*15+grain*4+fine+paneTone*27-seam*32;
+        chroma=-2+paneTone*6;
+        height=.36+seam*.50;rough=.26+seam*.42;
+      }else if(wood){
+        const board=Math.floor(4*u),along=fract(u*4),offset=rand(board,24),knotY=rand(board,8,21);
+        const dy=(fract(v-knotY+.5)-.5)*2.9,dx=along-(.25+offset*.48);
+        const knot=Math.exp(-8*dx*dx-36*dy*dy);
+        const wobble=.12*Math.sin(v*Math.PI*2+offset*11)+knot*.42*Math.sin(dx*7);
+        const fibre=.5+.5*Math.sin((along+wobble)*Math.PI*29+noise(u,v,6,27)*2.7);
+        const latewood=Math.pow(fibre,6.5),cleft=1-clamp(Math.min(along,1-along)*60);
+        value=(offset-.5)*19+mist*11+grain*5-latewood*14-cleft*22-knot*20;
+        height=.62-latewood*.07-knot*.09-cleft*.39;rough=.62+grain*.18+knot*.11;chroma=offset*5;
+      }else if(lead){
+        const hammer=noise(u,v,9,53),forged=type==='iron';
+        value=mist*(forged?23:13)+hammer*7+grain*4;height=.52+hammer*(forged?.45:.09);rough=(forged?.52:type==='brass'?.31:.47)+mist*.15;
+      }else if(slate){
+        const cleavage=Math.pow(Math.max(0,1-bed),4),lip=clamp((bed-.83)/.15);
+        const flake=Math.max(spall*.8+grain*.66-.27,0)*30;
+        value=tone*15+mist*9+grain*7+fine*1.2+flake*.42+lip*8-joint*28-cleavage*8;
+        height=.56+bed*.22+spall*.12-joint*.46;rough=.59+cast*.16+spall*.12;
+        chroma=tone*7;
+      }else{
+        const scar=clamp((spall+grain*.51+.27)*1.8),hewn=Math.sin((u*171+v*59+cast*74)*Math.PI);
+        value=tone*(dress?7:15)+mist*(dress?5:15)+grain*(dress?4:9)+fine*(dress?.6:1.8)+scar*2+hewn*.55-joint*(dress?15:27);
+        height=.57+cast*.12+mist*.10+grain*.18+spall*.13-joint*.48;
+        rough=.84+spall*.15+joint*.09;
+      }
+      const i=(y*size+x)*4;
+      albedo[i]=clamp(s.rgb[0]+value+chroma,0,255);albedo[i+1]=clamp(s.rgb[1]+value,0,255);
+      albedo[i+2]=clamp(s.rgb[2]+value-chroma,0,255);albedo[i+3]=255;
+      surface[i]=clamp(height)*255;surface[i+1]=clamp(rough)*255;surface[i+2]=0;surface[i+3]=255;
+    }
+    const data={size,albedo,surface};tiles.set(type,data);return data;
+  }
+  function skin(api,type){
+    let library=perScene.get(api);if(!library){library=new Map();perScene.set(api,library);}
+    if(library.has(type))return library.get(type);
+    const T=api.THREE,s=swatches[type],data=bake(type);
+    function texture(bytes,srgb){
+      const tex=new T.DataTexture(bytes,data.size,data.size,T.RGBAFormat);
+      tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.minFilter=T.LinearMipmapLinearFilter;tex.magFilter=T.LinearFilter;
+      tex.generateMipmaps=true;tex.anisotropy=4;if(srgb)tex.colorSpace=T.SRGBColorSpace;tex.needsUpdate=true;return tex;
+    }
+    const pigment=texture(data.albedo,true),relief=texture(data.surface,false);
+    const glass=type==='glass',metal=['lead','iron','brass'].includes(type);
+    const params={name:'Courtyard '+type+' in architectural coordinates',map:pigment,bumpMap:relief,bumpScale:s.bump,
+      roughnessMap:relief,roughness:1,metalness:metal?(type==='brass'?.79:.69):glass?.12:.015,vertexColors:true,side:T.DoubleSide};
+    if(glass||metal){params.envMap=api.metal('pewter').envMap;params.envMapIntensity=metal?.92:.46;}
+    const material=glass?new T.MeshPhysicalMaterial({...params,clearcoat:.44,clearcoatRoughness:.23}):new T.MeshStandardMaterial(params);
+    material.addEventListener('dispose',()=>{pigment.dispose();relief.dispose();});
+    const token={intrinsic:true,material,tile:s.tile,type};
+    library.set(type,token);return token;
+  }
+  function mesh(api,parent,name,faces,skin){
+    if(!faces.length)return null;
+    const T=api.THREE,xyz=[],uv=[],colors=[],indices=[];
+    for(const points of faces){
+      const pts=points.map(p=>[p[0],p[2]*unit,p[1]*unit]);if(pts.length<3)continue;
+      const a=pts[0],b=pts[1];let nx=0,ny=0,nz=0,norm=0;
+      for(let k=2;k<pts.length&&norm<.00001;k++){
+        const c=pts[k];
+        nx=(b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1]);
+        ny=(b[2]-a[2])*(c[0]-a[0])-(b[0]-a[0])*(c[2]-a[2]);
+        nz=(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+        norm=Math.hypot(nx,ny,nz);
+      }
+      if(norm<.00001)continue;nx/=norm;ny/=norm;nz/=norm;
+      const lng=Math.hypot(nx,nz),sign=(Math.abs(nz)>.01?nz>0:nx<0)?1:-1;
+      const tx=lng>.04?sign*nz/lng:1,tz=lng>.04?-sign*nx/lng:0;
+      let sx=-ny*tz,sy=nx*tz-nz*tx,sz=ny*tx;
+      if(sy<0){sx=-sx;sy=-sy;sz=-sz;}
+      const start=xyz.length/3;let firstU;
+      pts.forEach((p,i)=>{
+        xyz.push(...p);const original=points[i];let u,v;
+        if(skin.unwrap){
+          [u,v]=skin.unwrap(original);
+          if(i===0)firstU=u;
+          else if(skin.period)u+=Math.round((firstU-u)/skin.period)*skin.period;
+        }else{
+          u=(p[0]*tx+p[2]*tz)/skin.tile;
+          v=(lng>.04?p[0]*sx+p[1]*sy+p[2]*sz:p[2])/skin.tile;
+        }
+        uv.push(u,v);
+        const light=skin.weather?skin.weather(original):1;
+        colors.push(light*(1+.018*(1-light)),light,light*(1+.26*(1-light)));
+      });
+      for(let i=1;i+1<pts.length;i++)indices.push(start,start+i,start+i+1);
+    }
+    if(!indices.length)return null;
+    const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(xyz,3));
+    geo.setAttribute('uv',new T.Float32BufferAttribute(uv,2));geo.setAttribute('color',new T.Float32BufferAttribute(colors,3));
+    geo.setIndex(indices);geo.computeVertexNormals();
+    return api.model(parent,name,geo,skin.material);
+  }
+  return {skin,mesh};
+})();
+
 /* The court is built in the same surveyed ground coordinates as the walking
    rules. Each roof, arch and pier is a solid with a footprint and thickness. */
 const SchoolThreeCourtyard=(()=>{
@@ -18133,8 +18814,9 @@ const SchoolThreeCourtyard=(()=>{
   // Batch stationary stones belonging to a single architectural feature.
   // Neighbouring bays share a material without costing a draw per voussoir.
   function masonry(api,parent,name,material){
-    const vertices=[],indices=[];
+    const vertices=[],indices=[],faces=[];
     function face(points){
+      if(material.intrinsic){faces.push(points);return;}
       const start=vertices.length;
       vertices.push(...points);
       for(let i=1;i+1<points.length;i++)indices.push(start,start+i,start+i+1);
@@ -18163,7 +18845,9 @@ const SchoolThreeCourtyard=(()=>{
       for(const level of levels.slice(1)){const next=ring(level);band(prev,next);prev=next;}
       face(prev);
     }
-    return {face,band,solid,prism,block,lathe,finish:()=>vertices.length?api.poly(parent,name,vertices,indices,material):null};
+    const finish=()=>material.intrinsic?SchoolCastleRelief.mesh(api,parent,name,faces,material):
+      vertices.length?api.poly(parent,name,vertices,indices,material):null;
+    return {face,band,solid,prism,block,lathe,finish};
   }
 
   function ground(api,root){
@@ -18186,32 +18870,17 @@ const SchoolThreeCourtyard=(()=>{
       plot.finish();
     }
     const apron=api.painted({x:-414,y:68,w:1470,h:509},c=>SchoolCourtyardGrounds.viaductApron(c),{density:1});
-    const castleRock=masonry(api,root,'Rock under the castle terrace',apron);
-    const scree=[[482,211],[792,213],[864,164],[870,168],[886,174],[908,183.4],
-      [928,188.3],[952,195.5],[984,203.6],[1011,209.6],[1052,218.1]];
-    for(let i=1;i<scree.length;i++){
-      const a=scree[i-1],b=scree[i];
-      const low=x=>215+Math.min(1,(x-482)/206)*106+Math.max(0,(x-688)/364)*6;
-      castleRock.face([[a[0],a[1]-25,-25],[b[0],b[1]-25,-25],
-        [b[0],low(b[0])-65,-65],[a[0],low(a[0])-65,-65]]);
-    }
-    // The cliff recedes away from the landing, below the face of the platform.
-    const bank=[[-412,289],[-305,272],[-169,264],[-46,262.5],[168,369.5],[472,369.5],[686,262.5],[831,276],[964,285],[1052,297]];
-    for(let i=1;i<bank.length;i++){
-      const [a,b]=[bank[i-1],bank[i]];
-      castleRock.face([[a[0],a[1]-209,-209],[b[0],b[1]-209,-209],[b[0],374,-209],[a[0],374,-209]]);
-    }
+    const castleRock=masonry(api,root,'Stone retaining courses under the castle terrace',apron);
     const front=[[-46,262.5],[168,369.5],[472,369.5],[686,262.5]];
     for(let i=1;i<front.length;i++){
       const [a,b]=[front[i-1],front[i]];
       castleRock.face([[a[0],a[1],0],[b[0],b[1],0],[b[0],b[1],-39],[a[0],a[1],-39]]);
     }
     castleRock.finish();
-    const bluff=masonry(api,root,'Fractured Highland bedrock beneath the Viaduct buttresses',apron);
     const rails=api.painted({x:253,y:350,w:136,h:217},c=>SchoolCourtyardGrounds.viaductFeatures(c,'masonry'),{density:2.35});
     const balustrade=masonry(api,root,'Open stone viaduct balustrades and alternating coping stones',api.coat(rails,'limestone'));
-    for(const f of SchoolCourtyardGrounds.terraceFoot)(f.kind==='rock'?bluff:balustrade).face(f.points);
-    bluff.finish();balustrade.finish();
+    for(const f of SchoolCourtyardGrounds.terraceFoot)if(f.kind!=='rock')balustrade.face(f.points);
+    balustrade.finish();
     const bridge=masonry(api,root,'Viaduct carriageway and coping',apron);
     bridge.prism([[277,365],[363,365],[381,561],[259,561]],-7,-.10);
     for(const sign of [-1,1]){
@@ -18225,7 +18894,7 @@ const SchoolThreeCourtyard=(()=>{
     const a=Math.min(1,Math.abs(t));
     return spring+rise*Math.sqrt((1-a)*(1+.5*a));
   }
-  function cloisterWindows(wall,glass,at,length,bay,offset,depth,crest,west){
+  function cloisterWindows(wall,glass,lead,at,length,bay,offset,depth,crest,west){
     const cap=crest+depth*SchoolCourtyardArcades.section.roofPitch-.7;
     const front=depth-.35,back=depth+2.05;
     let cursor=0;
@@ -18252,6 +18921,38 @@ const SchoolThreeCourtyard=(()=>{
       if(o.u>0&&o.u<length){
         wall.block(at,a-1.1,b+1.1,depth-3.1,back,o.bottom-2.25,o.bottom-.2);
         wall.block(at,o.u-.45,o.u+.45,depth+.65,back,o.bottom,o.spring-.7);
+        const rim=(u,d,top)=>at(o.u+u,d,top);
+        const limit=u=>SchoolCourtyardArcades.lancet(u/o.r,o.spring,o.top);
+        const lo=Math.max(a-o.u+.16,-o.r+.18),hi=Math.min(b-o.u-.16,o.r-.18);
+        // The quarries are held by dark lead cames. Clip each diagonal to the
+        // pointed masonry opening and put the saddle bars in front of them.
+        for(let y=o.bottom-2*o.r-6;y<o.top+2*o.r+6;y+=5.45)for(const sign of [-1,1]){
+          const height=x=>y+sign*x*.94;
+          const inside=x=>height(x)>=o.bottom+.29&&height(x)<limit(x)-.47;
+          let start=null;
+          for(let j=0;j<=24;j++){
+            const x=lo+(hi-lo)*j/24,good=inside(x);
+            if(start===null&&good)start=x;
+            if(start!==null&&(!good||j===24)){
+              const end=good?x:x-(hi-lo)/24;
+              if(end>start+.20)lead.face([rim(start,back-.24,height(start)-.135),rim(end,back-.24,height(end)-.135),
+                rim(end,back-.24,height(end)+.135),rim(start,back-.24,height(start)+.135)]);
+              start=null;
+            }
+          }
+        }
+        for(const z of [33.4,46.9,53.1]){
+          const from=o.u+lo+.18,to=o.u+hi-.18;
+          lead.block(at,from,to,back-.50,back-.25,z-.16,z+.19);
+        }
+        for(const sign of [-1,1]){
+          const mid=sign*o.r*.43,half=o.r*.365;
+          for(const side of [-1,1]){
+            const path=t=>{const u=mid+side*half*(1-t*t),z=o.spring-.60+t*(o.top-o.spring)*.62;
+              return [rim(u-.25,back-1.12,z),rim(u+.25,back-1.12,z),rim(u+.32,back-.48,z),rim(u-.32,back-.48,z)];};
+            let previous=path(0);for(let j=1;j<=7;j++){const next=path(j/7);wall.band(previous,next);previous=next;}
+          }
+        }
         if(o.accent){
           wall.block(at,o.u-11.4,o.u+11.4,depth-5.3,front,9.9,11.5);
           for(const x of [-7.1,7.1])wall.block(at,o.u+x-1.4,o.u+x+1.4,depth-3.3,front,5.1,9.95);
@@ -18272,11 +18973,15 @@ const SchoolThreeCourtyard=(()=>{
     }
   }
   function arcade(api,parent,name,segments,paint,radius,spring,rise,foot,opening=archTop){
-    const wall=masonry(api,parent,name+' arches and piers',api.coat(paint,'limestone'));
-    const roof=masonry(api,parent,name+' lapped slate, exposed cleavage and coping',api.coat(paint,'slate'));
-    const valley=masonry(api,parent,name+' folded lead valley lining',api.coat(paint,'lead'));
+    const skin=type=>SchoolCastleRelief.skin(api,type);
+    const wall=masonry(api,parent,name+' arches and piers',skin('stone'));
+    const roof=masonry(api,parent,name+' lapped slate, exposed cleavage and coping',skin('slate'));
+    const valley=masonry(api,parent,name+' folded lead valley lining',skin('lead'));
     const rear=masonry(api,parent,name+' covered floor, vaults and rear lights',paint);
-    const dress=masonry(api,parent,name+' carved arch orders, window splays and clustered shafts',api.coat(paint,'limestone'));
+    const dress=masonry(api,parent,name+' carved arch orders, window splays and clustered shafts',skin('carved'));
+    const vault=masonry(api,parent,name+' coursed stone soffits beyond the orders',skin('shadow'));
+    const arches=masonry(api,parent,name+' individual radial springing stones and vaulted ribs',skin('stone'));
+    const panes=masonry(api,parent,name+' recessed leaded lancet lights',skin('glass'));
     const section=SchoolCourtyardArcades.section,depth=section.depth,crest=section.eave,roofZ=d=>crest+d*section.roofPitch;
     for(const run of segments){
       const {at,count,length,offset}=run;
@@ -18290,8 +18995,7 @@ const SchoolThreeCourtyard=(()=>{
         wall.block(at,0,length,-d,.42,b,t);
       }
       rear.block(at,0,length,0,depth,0,1.1);
-      if(offset===undefined)rear.block(at,0,length,depth-.8,depth+1.3,.3,roofZ(depth)-.7);
-      else cloisterWindows(dress,rear,at,length,bay,offset,depth,crest,name.startsWith('West'));
+      if(offset!==undefined)cloisterWindows(dress,panes,valley,at,length,bay,offset,depth,crest,name.startsWith('West'));
       for(let i=0;i<count;i++){
         const mid=bay*(i+.5),r=bay*radius,pad=(bay-2*r)/2;
         // Spandrels enclose a genuinely empty passage. A second arch at the
@@ -18303,7 +19007,20 @@ const SchoolThreeCourtyard=(()=>{
           wall.solid(profile(0),profile(3.1));
           const cut=d=>[at(a,d,za),at(b,d,zb),at(b,d,zb+1.45),at(a,d,za+1.45)];
           wall.solid(cut(-.8),cut(.05));
-          rear.face([at(a,3.1,za),at(b,3.1,zb),at(b,depth-1,zb+4.4),at(a,depth-1,za+4.4)]);
+          vault.face([at(a,3.1,za),at(b,3.1,zb),at(b,depth-1,zb+4.4),at(a,depth-1,za+4.4)]);
+          if(run.cross){
+            const ta1=ta+.012,tb1=tb-.012,ua=mid+ta1*r,ub=mid+tb1*r;
+            const fa=opening(ta1,spring,rise),fb=opening(tb1,spring,rise);
+            const band=(d,offset,shift)=>[at(ua,d,fa+offset+shift),at(ub,d,fb+offset+shift)];
+            for(const d of [3.2,depth*.56,depth-2.8]){
+              const sh=4.4*(d-3.1)/(depth-4.1);
+              arches.face([...band(d,-.61,sh),...band(d+.98,-.42,sh).reverse()]);
+              arches.face([...band(d,-.61,sh),...band(d,.14,sh).reverse()]);
+            }
+            const outline=(t,d,s)=>at(mid+t*(r+s),d,opening(t,spring,rise)+s*(1-.72*Math.abs(t)));
+            const panel=d=>[outline(ta1,d,.15),outline(tb1,d,.15),outline(tb1,d,3.45),outline(ta1,d,3.45)];
+            arches.solid(panel(-1.24),panel(-.35));
+          }
         }
         for(const side of [-1,1]){
           const u=mid+side*r;
@@ -18336,7 +19053,7 @@ const SchoolThreeCourtyard=(()=>{
         }
       }
     }
-    roof.finish();valley.finish();rear.finish();wall.finish();dress.finish();
+    roof.finish();valley.finish();rear.finish();wall.finish();dress.finish();vault.finish();panes.finish();arches.finish();
   }
 
   function sideWalk(api,root,side){
@@ -18377,7 +19094,41 @@ const SchoolThreeCourtyard=(()=>{
     const section=SchoolCourtyardArcades.section,depth=section.depth,shear=west?1:.329;
     const angle=masonry(api,root,(west?'West':'East')+' transverse gallery return to the porch',paint);
     const extended=-depth*shear-1.4,top=d=>section.eave+section.roofPitch*d;
-    angle.block(at,extended,.02,depth-.8,depth+1.3,.3,top(depth)-.7);
+    const skin=type=>SchoolCastleRelief.skin(api,type),pitch=run.length/run.count;
+    const panels=masonry(api,root,'Sheltered stone wall of the '+(west?'west':'east')+' transverse gallery',skin('shadow'));
+    const trim=masonry(api,root,'Dressed sill, jambs and six-inch reveal of the transverse lights',skin('stone'));
+    const panes=masonry(api,root,'Cold leaded lancets onto the enclosed court',skin('glass'));
+    const bars=masonry(api,root,'Lead cames and saddle bars in gallery lights',skin('lead'));
+    const wall=(u,d,z)=>{const [x,y]=at(u,depth-.8,0);return [x,y-d,z];};
+    const cap=top(depth)-.7,sill=25.45,springZ=57.8,radius=3.16,riseZ=8.05;
+    const centres=Array.from({length:run.count},(_,i)=>[(i+.5)*pitch-shear*depth+3.3-5.2,(i+.5)*pitch-shear*depth+3.3+5.2]).flat();
+    let last=extended;
+    for(const mid of centres){
+      panels.block(wall,last,mid-radius,0,4.45,.3,cap);
+      panels.block(wall,mid-radius,mid+radius,0,4.45,.3,sill);
+      const topAt=t=>archTop(t,springZ,riseZ);
+      const atHead=(t,d,spread,z)=>wall(mid+t*(radius+spread),d,z);
+      for(let j=0;j<15;j++){
+        const a=j/7.5-1,b=(j+1)/7.5-1,za=topAt(a),zb=topAt(b);
+        const high=d=>[atHead(a,d,0,za),atHead(b,d,0,zb),atHead(b,d,0,cap),atHead(a,d,0,cap)];
+        panels.solid(high(0),high(4.45));
+        panes.face([atHead(a,4.44,.08,sill),atHead(b,4.44,.08,sill),atHead(b,4.44,.08,zb+.20),atHead(a,4.44,.08,za+.20)]);
+        const row=(s,d)=>[atHead(a,d,s,za+s*(1-.68*Math.abs(a))),atHead(b,d,s,zb+s*(1-.68*Math.abs(b)))];
+        const mould=[[0,0],[.34,-.57],[.77,-.72],[1.12,-.12]];
+        for(let k=1;k<mould.length;k++)trim.face([...row(...mould[k-1]),...row(...mould[k]).reverse()]);
+      }
+      for(const sign of [-1,1]){
+        const edge=mid+sign*radius;
+        panels.face([wall(edge,0,sill),wall(edge,0,springZ),wall(edge,4.45,springZ),wall(edge,4.45,sill)]);
+        trim.block(wall,Math.min(edge,edge+sign*.84),Math.max(edge,edge+sign*.84),-.56,.25,sill,springZ+.36);
+      }
+      trim.block(wall,mid-radius-1.08,mid+radius+1.08,-1.32,.75,sill-.77,sill+.09);
+      bars.block(wall,mid-.105,mid+.105,3.99,4.39,sill+.25,springZ+riseZ-.54);
+      for(const z of [36.1,47.1,56.5])bars.block(wall,mid-radius+.18,mid+radius-.18,3.96,4.37,z-.11,z+.15);
+      last=mid+radius;
+    }
+    panels.block(wall,last,run.length+.14,0,4.45,.3,cap);
+    panels.finish();trim.finish();panes.finish();bars.finish();
     const mitre=h=>[at(-.02,0,h(0)),at(.02,depth,h(depth)),at(extended,depth,h(depth))];
     angle.solid(mitre(()=>0),mitre(()=>1.1));
     angle.solid(mitre(d=>top(d)-2.4),mitre(top));
@@ -18392,15 +19143,27 @@ const SchoolThreeCourtyard=(()=>{
       SchoolCourtyardArcades.draw(c,-1);SchoolCourtyardArcades.draw(c,1);
     },{filterWhenSmall:true});
     crossWalk(api,root,-1,walkPaint);crossWalk(api,root,1,walkPaint);
-    const sidePaint=api.painted({x:56,y:-266,w:279,h:425},c=>SchoolCourtyard.gable(c,'nave'),{density:3.15});
-    const frontPaint=api.painted({x:264,y:-114,w:110,h:274},c=>SchoolCourtyard.gable(c,'front'),{density:3});
     const gatePaint=api.painted({x:261,y:-14,w:121,h:183},c=>{SchoolCourtyard.gable(c,'porch');SchoolCourtyard.gateSurround(c);},{density:3});
-    const stone=api.coat(sidePaint,'limestone'),shell=masonry(api,root,'Great Hall nave and recessed lancet bays',stone);
-    const pitch=masonry(api,root,'Great Hall deep slate nave roof',api.coat(sidePaint,'slate'));
-    const glass=masonry(api,root,'Recessed Great Hall glazing',SchoolInnerCastle.glazing(api,sidePaint));
-    const facade=masonry(api,root,'Great Hall east gable and splayed oculus',api.coat(frontPaint,'limestone'));
-    const detail=masonry(api,root,'Great Hall stepped buttresses, lucarnes and pinnacles',sidePaint);
-    const portal=masonry(api,root,'Pointed entrance porch, mouldings and vaulted returns',api.coat(gatePaint,'limestone'));
+    const skin=type=>SchoolCastleRelief.skin(api,type);
+    const ashlar=p=>{
+      const u=p[0]-320,h=p[2],a=Math.abs(u);
+      const ground=.23*Math.exp(-Math.max(0,h-5)/14);
+      if(p[1]<144||a>53)return .98-ground;
+      const line=(x,w)=>Math.exp(-Math.pow((a-x)/w,2));
+      const drip=line(35.6+2*Math.sin(h*.014),2.31)*.26+line(43.4,1.92)*.20;
+      const salts=drip*(.48+.52*Math.cos(h*.038)**2);
+      const coping=1.0-Math.min(1,Math.abs(h-(135-2.18*a))/7.7);
+      return .97-ground-salts-.14*coping;
+    };
+    const dressed=p=>.99-.49*(1-ashlar(p));
+    const shell=masonry(api,root,'Great Hall nave and recessed lancet bays',{...skin('stone'),weather:ashlar});
+    const pitch=masonry(api,root,'Great Hall deep slate nave roof',skin('slate'));
+    const glass=masonry(api,root,'Recessed Great Hall glazing',skin('glass'));
+    const facade=masonry(api,root,'Great Hall east gable and splayed oculus',skin('carved'));
+    const shadows=masonry(api,root,'Great Hall sheltered jambs, splayed window wells and eave soffits',skin('shadow'));
+    const detail=masonry(api,root,'Great Hall stepped buttresses, lucarnes and pinnacles',{...skin('carved'),weather:dressed});
+    const portal=masonry(api,root,'Pointed entrance porch, mouldings and vaulted returns',{...skin('carved'),weather:dressed});
+    const metal=masonry(api,root,'Great Hall lead cappings, sill bars and rainwater outlets',skin('lead'));
     const {depth,width,rise:scale,retreat,window,needles}=SchoolCourtyard.hallSurvey;
     // The rear line recedes screen-left from the aligned front gable.
     const at=(x,s,z)=>{
@@ -18415,7 +19178,17 @@ const SchoolThreeCourtyard=(()=>{
     // Model the longitudinal walls, underside of the ridge, both slopes and
     // rear end separately, so the door and front window can open into recesses.
     shell.face([at(53,0,0),at(53,depth,0),at(53,depth,138),at(53,0,138)]);
-    for(const x of [-53,53])pitch.face([at(x,0,138),at(x,depth,138),at(0,depth,197),at(0,0,197)]);
+    for(const sign of [-1,1]){
+      const eave=at(sign*56,-1.4,137.6),tail=at(sign*56,depth+1.3,137.6);
+      const cap=at(0,depth+1.3,197.7),head=at(0,-1.4,197.7);
+      pitch.face([eave,tail,cap,head]);
+      const inner=(p,by)=>[p[0],p[1],p[2]-by];
+      shadows.face([inner(eave,2.25),inner(tail,2.25),tail,eave]);
+      pitch.face([eave,head,inner(head,1.9),inner(eave,2.25)]);
+      detail.face([at(sign*55.8,0,135.2),at(sign*55.8,depth,135.2),at(sign*52.8,depth,132.2),at(sign*52.8,0,132.2)]);
+    }
+    const ridge=s=>[at(-.83,s,196.7),at(-.47,s,198.25),at(.47,s,198.25),at(.83,s,196.7)];
+    metal.band(ridge(-.8),ridge(depth+1));
     const bay=depth/7;
     for(let i=0;i<7;i++){
       const mid=(i+.5)*bay,r=window;
@@ -18427,11 +19200,11 @@ const SchoolThreeCourtyard=(()=>{
       for(let j=0;j<18;j++){
         const l=-r+2*r*j/18,h=l+2*r/18,z=crown(l),z2=crown(h);
         shell.face([atLight(l,0,z),atLight(h,0,z2),atLight(h,0,138),atLight(l,0,138)]);
-        shell.face([atLight(l,0,z),atLight(h,0,z2),atLight(h,3.8,z2-.8),atLight(l,3.8,z-.8)]);
-        glass.face([atLight(l,3.8,31),atLight(h,3.8,31),atLight(h,3.8,z2-.8),atLight(l,3.8,z-.8)]);
+        shadows.face([atLight(l,0,z),atLight(h,0,z2),atLight(h,7.65,z2-.7),atLight(l,7.65,z-.7)]);
+        glass.face([atLight(l,7.65,31),atLight(h,7.65,31),atLight(h,7.65,z2-.7),atLight(l,7.65,z-.7)]);
       }
-      for(const sign of [-1,1])shell.face([atLight(sign*r,0,31),atLight(sign*r,3.8,31),atLight(sign*r,3.8,109),atLight(sign*r,0,109)]);
-      shell.face([atLight(-r,0,31),atLight(r,0,31),atLight(r,3.8,31),atLight(-r,3.8,31)]);
+      for(const sign of [-1,1])shadows.face([atLight(sign*r,0,31),atLight(sign*r,7.65,31),atLight(sign*r,7.65,109),atLight(sign*r,0,109)]);
+      detail.face([atLight(-r,-1.75,30.1),atLight(r,-1.75,30.1),atLight(r,7.65,31),atLight(-r,7.65,31)]);
       const mullion=m=>[atLight(-.55,m,32),atLight(.55,m,32),atLight(.52,m,119),atLight(0,m,123),atLight(-.5,m,119)];
       shell.solid(mullion(1.7),mullion(3.64));
       for(const sign of [-1,1]){
@@ -18447,7 +19220,7 @@ const SchoolThreeCourtyard=(()=>{
       }
       for(const z of [57.8,83.2,103.6]){
         const bar=h=>[atLight(-r+.95,3.33,h),atLight(r-.95,3.33,h),atLight(r-.95,3.70,h),atLight(-r+.95,3.70,h)];
-        shell.solid(bar(z-.21),bar(z+.30));
+        metal.solid(bar(z-.21),bar(z+.30));
       }
     }
     shell.face([at(-53,depth,0),at(53,depth,0),at(53,depth,138),at(0,depth,197),at(-53,depth,138)]);
@@ -18462,19 +19235,24 @@ const SchoolThreeCourtyard=(()=>{
       const a=breaks[i-1],b=breaks[i],mid=(a+b)/2;
       const cutA=Math.abs(mid)>doorHalf?0:Math.abs(mid)<=glassWidth?cut(a):doorTop(a);
       const cutB=Math.abs(mid)>doorHalf?0:Math.abs(mid)<=glassWidth?cut(b):doorTop(b);
-      facade.face([[320+a,152,cutA],[320+b,152,cutB],[320+b,152,frontRise(b)],[320+a,152,frontRise(a)]]);
+      for(let j=0;j<7;j++){
+        const wallAt=(u,lo,t)=>[320+u,152,lo+(frontRise(u)-lo)*t];
+        shell.face([wallAt(a,cutA,j/7),wallAt(b,cutB,j/7),wallAt(b,cutB,(j+1)/7),wallAt(a,cutA,(j+1)/7)]);
+      }
+      facade.face([[320+a,152.6,frontRise(a)-1.7],[320+b,152.6,frontRise(b)-1.7],[320+b,152.6,frontRise(b)+.9],[320+a,152.6,frontRise(a)+.9]]);
+      facade.face([[320+a,148.5,frontRise(a)+.9],[320+b,148.5,frontRise(b)+.9],[320+b,152.6,frontRise(b)+.9],[320+a,152.6,frontRise(a)+.9]]);
       if(Math.abs(mid)<=glassWidth){
         // Recessed leaded lights and the oculus sit behind a splayed opening.
-        facade.face([[320+a,146,doorTop(a)-6],[320+b,146,doorTop(b)-6],
-          [320+b,146,cutB-6],[320+a,146,cutA-6]]);
-        facade.face([[320+a,146,cutA-6],[320+b,146,cutB-6],[320+b,152,cutB],[320+a,152,cutA]]);
+        glass.face([[320+a,144,doorTop(a)-7],[320+b,144,doorTop(b)-7],
+          [320+b,144,cutB],[320+a,144,cutA]]);
+        shadows.face([[320+a,144,cutA],[320+b,144,cutB],[320+b,152,cutB],[320+a,152,cutA]]);
       }
     }
     for(const sideSign of [-1,1]){
       const x=320+glassWidth*sideSign;
-      facade.face([[x,146,doorTop(glassWidth)-6],[x,152,doorTop(glassWidth)],[x,152,glassTop(glassWidth)],[x,146,glassTop(glassWidth)-6]]);
+      shadows.face([[x,144,doorTop(glassWidth)-7],[x,152,doorTop(glassWidth)],[x,152,glassTop(glassWidth)],[x,144,glassTop(glassWidth)]]);
     }
-    const axial=(u,h,relief)=>[320+u*width,152+relief,h*scale+relief];
+    const axial=(u,h,relief)=>[320+u*width,152+relief,h*scale];
     const raisedOrder=(part,project,rad,base,spring,apex,thick,relief)=>{
       for(const sign of [-1,1]){
         const path=[[sign*rad,base],[sign*rad,spring]],back=[[sign*(rad+thick),base],[sign*(rad+thick),spring]];
@@ -18501,25 +19279,85 @@ const SchoolThreeCourtyard=(()=>{
       const ext=annulus(outer,front),int=annulus(inner,front),inside=annulus(inner,back);
       facade.band(ext,int);facade.band(int,inside);facade.band(annulus(outer,back),ext);
     }
+    for(let k=0;k<5;k++){
+      const angle=k*Math.PI*2/5+Math.PI*.5;
+      const rosette=(r,d)=>Array.from({length:19},(_,j)=>{
+        const t=j*Math.PI*2/19;
+        return axial(.15+4.5*Math.cos(angle)+r*Math.cos(t),142.1+(4.5*Math.sin(angle)+r*Math.sin(t))/scale,d);
+      });
+      const front=rosette(2.82,-2.1),inside=rosette(2.22,-2.1);
+      facade.band(front,inside);shadows.band(inside,rosette(2.22,-4.15));
+    }
+    for(const x of [-14.1,-8.2,0,8.2,14.1]){
+      const z=Math.abs(x)>12?118.5:Math.abs(x)>7?128.9:133.5;
+      const profile=(a,h)=>[axial(x-a,h,-4.95),axial(x+a,h,-4.95),axial(x+a*.55,h,-5.9),axial(x-a*.55,h,-5.9)];
+      facade.solid(profile(.76,77.5),profile(.76,z));
+    }
     // The projecting porch front and jambs step back into the gate tunnel.
     const porchHeight=x=>SchoolCourtyard.porchElevation(146-Math.abs(x)*1.89/.91);
     for(let i=0;i<24;i++){
       const a=-doorHalf+2*doorHalf*i/24,b=-doorHalf+2*doorHalf*(i+1)/24;
-      const rim=(x,y,outer)=>[320+x,y,(outer?porchHeight(x):doorTop(x))+(y-152)*.7];
+      const rim=(x,y,outer)=>[320+x,y,(outer?porchHeight(x):doorTop(x))];
       const outline=y=>[rim(a,y,false),rim(b,y,false),rim(b,y,true),rim(a,y,true)];
-      portal.solid(outline(149.15),outline(156.5));
+      shell.solid(outline(149.4),outline(159.6));
     }
     for(const sign of [-1,1]){
       const a=doorHalf*sign,b=36.4*sign;
       const wall=y=>[[320+a,y,6],[320+b,y,6],[320+b,y,porchHeight(b)],[320+a,y,porchHeight(a)]];
-      portal.solid(wall(149.15),wall(156.5));
+      shell.solid(wall(149.4),wall(159.6));
       const x=320+sign*41*width;
-      facade.prism([[x-5.6,148],[x+5.6,148],[x+5.6,153],[x-5.6,153]],0,149*scale);
+      const pier=(wide,d,z)=>{
+        const k=.77;
+        return [[x-wide,148,z],[x+wide,148,z],[x+wide,152+d-k,z],
+          [x+wide-k,152+d,z],[x-wide+k,152+d,z],[x-wide,152+d-k,z]];
+      };
+      for(const [lo,hi,wide,d] of [[0,35,5.60,5.1],[35,75,5.22,4.17],[75,116,4.78,3.42],[116,149,4.22,2.87]]){
+        shell.solid(pier(wide,d,lo*scale),pier(wide,d,(hi-2.95)*scale));
+        detail.solid(pier(wide+.37,d+.43,(hi-3.00)*scale),pier(wide+.37,d+.43,(hi-1.63)*scale));
+        detail.solid(pier(wide+.37,d+.43,(hi-1.63)*scale),pier(wide-.29,d-.41,hi*scale));
+      }
       facade.lathe(x,152,[[149*scale,3.9,2],[155*scale,3.9,2],[170*scale,.12,.1]],8);
     }
-    const mouth=(u,z,d)=>[320+.655*u,152+d,8+.8*(.75*z+Math.max(0,z-54)*1.62)+d];
-    for(const [r,s,h,t,d] of [[41.9,55.3,87.7,1.1,4.05],[39.0,54.7,84.0,1.75,3.12],[35.8,54.5,81.5,1.15,1.65],[33.3,54.1,78.15,.92,.95]]){
+    const porch=(u,y,h)=>[320+.91*u,y,SchoolCourtyard.porchElevation(h)];
+    // Coped gabled hood: the lower shadow runs under the outer bevel and the
+    // inner triangular hood springs from a second pair of freestanding shafts.
+    for(const sign of [-1,1]){
+      const one=(u,y,z)=>porch(u*sign,y,z);
+      const cope=(u,z)=>[one(u,159.1,z-.7),one(u,161.36,z-1.0),one(u,162.10,z+.76),one(u,160.45,z+2.85),one(u,158.8,z+2.55)];
+      portal.solid(cope(.1,143.7),cope(38.4,72.10));
+      const under=(u,z)=>[one(u,159.12,z-2.55),one(u,161.20,z-2.4),one(u,161.36,z-1.02),one(u,159.1,z-.7)];
+      shadows.solid(under(.1,143.7),under(38.4,72.1));
+      const inner=(u,z)=>[one(u,159.48,z-2.18),one(u,161.0,z-1.55),one(u,161.54,z+.65),one(u,159.4,z+1.8)];
+      const harp=[[0,128.5],[13.2,108.0],[24.5,89.7],[31.9,68.2]];
+      for(let k=1;k<harp.length;k++)portal.solid(inner(...harp[k-1]),inner(...harp[k]));
+      for(const u of [5.4,11.5,17.9,24.6,31.4]){
+        const z=144.4-1.865*u;
+        const bud=(r,h,d)=>[one(u-r,d,z+h),one(u,d-.60*r,z+h+.22),one(u+r,d,z+h),one(u,d+.65*r,z+h-.23)];
+        portal.solid(bud(.90,-.15,161.35),bud(1.26,1.75,161.55));
+        portal.solid(bud(1.26,1.75,161.55),bud(.16,3.54,161.15));
+      }
+      const [px,py]=one(39.6,160.65,0);
+      const ph=SchoolCourtyard.porchElevation;
+      const tower=(height,rx,ry)=>[ph(height),rx,ry];
+      portal.lathe(px,py,[tower(8,3.92,2.45),tower(12.0,4.2,2.8),tower(14.0,3.48,2.22),
+        tower(77.4,3.14,1.99),tower(80.4,3.65,2.32),tower(82.1,3.88,2.5),tower(85.8,3.27,2.12),
+        tower(87.0,4.20,2.73),tower(90.1,3.54,2.27),tower(105.2,.50,.32),tower(108.7,.16,.1)],8);
+      for(const [u,d,r] of [[30.1,160.1,1.27],[27.9,160.65,1.16],[25.8,161.0,1.0]]){
+        const [x,y]=one(u,d,8),s=ph(47.1);
+        portal.lathe(x,y,[[8,r*1.55,r],[10.4,r*1.51,r*.98],[11.5,r*.93,r*.72],
+          [s-2.4,r*.85,r*.63],[s-1.55,r*1.26,r*.89],[s-.16,r*1.16,r*.89],[s+1.46,r*1.61,r*1.16]],10);
+      }
+    }
+    const mouth=(u,z,d)=>[320+.655*u,156.7+d,8+.8*(.75*z+Math.max(0,z-54)*1.62)];
+    for(const [r,s,h,t,d] of [[41.9,55.3,87.7,1.6,5.25],[39.0,54.7,84.0,1.75,4.25],[35.8,54.5,81.5,1.15,3.5],[33.3,54.1,78.15,.92,3.14]]){
       raisedOrder(portal,mouth,r,1,s,h,t,d);
+    }
+    // Each wedge ends on its own radial bed rather than drawing a line along
+    // a painted arch. The narrow open seam leaves the hood behind in shade.
+    for(const s of [-1,1])for(let i=0;i<10;i++){
+      const t0=i/10+.005,t1=(i+1)/10-.005,step=(t,d,r,h)=>mouth(s*r*(1-t*t),55.25+h*t,d);
+      const joint=d=>[step(t0,d,42.72,31.9),step(t1,d,42.72,31.9),step(t1,d,44.5,34.1),step(t0,d,44.5,34.1)];
+      portal.solid(joint(4.92),joint(5.43+(i%3)*.05));
     }
     for(const s of [-1,1]){
       const stone=(u,z,d)=>mouth(s*(42.35+u),z,d);
@@ -18531,18 +19369,29 @@ const SchoolThreeCourtyard=(()=>{
         [2.25,50.64],[1.83,49.65],[.88,49.94],[.18,52.17]];
       portal.solid(pearl.map(([u,z])=>stone(u,z,4.21)),pearl.map(([u,z])=>stone(u,z,5.08)));
     }
+    for(const sign of [-1,1]){
+      // Two sloping voussoir backs and the actual deep oak reveal. The warm
+      // ashlar at the opening turns into unlit grey-brown stone in the tunnel.
+      const q=(t,d)=>mouth(sign*32.7*(1-t*t),54+23.4*t,d);
+      for(let j=0;j<18;j++){
+        const t=j/18,v=(j+1)/18;shadows.face([q(t,2.75),q(v,2.75),q(v,-4.65),q(t,-4.65)]);
+      }
+      shadows.face([mouth(sign*32.7,1,2.75),mouth(sign*32.7,54,2.75),
+        mouth(sign*32.7,54,-4.59),mouth(sign*32.7,1,-4.59)]);
+    }
     // The far face of this short passage is only exposed when the leaves move.
     const well=masonry(api,root,'Entrance Hall beyond the hinged door',gatePaint);
     well.face([[320-doorHalf,128,-17],[320+doorHalf,128,-17],[320+doorHalf,128,70],[320-doorHalf,128,70]]);
     well.finish();
     for(let i=0;i<=7;i++){
       const s=i*depth/7,[x,y,bed]=side(s,0);
-      for(const [low,high,half] of [[0,46,3.7],[46,92,3],[92,132,2.45],[132,143,1.8]]){
-        const frontX=x-3.5;
-        detail.prism([[frontX-half,y-.7],[x+1.5,y-.7],[x+1.5,y+2.2],[frontX-half,y+2.2]],bed+low*scale,bed+high*scale);
+      for(const [lo,hi,extension,wide] of [[0,46,11,3.3],[46,92,7.6,2.9],[92,132,4.9,2.4],[132,143,3.1,1.95]]){
+        const ring=(h,length,w)=>[at(-53.3-length,s-w,h),at(-51.7,s-w,h),at(-51.7,s+w,h),at(-53.3-length,s+w,h)];
+        shell.solid(ring(lo,extension,wide),ring(hi-3.6,extension,wide));
+        detail.solid(ring(hi-3.8,extension+.7,wide+.42),ring(hi+.10,Math.max(1,extension-2),wide-.1));
       }
       detail.lathe(x-3.7,y+1,[[bed+142*scale,2,1.1],[bed+145*scale,1.9,1.1],[bed+(152+(i%2?0:2))*scale,.13,.12]],8);
-      if(i%2===1)for(const [,points] of SchoolCourtyard.hallDrain(s))detail.face(points.map(v=>at(...v)));
+      if(i%2===1)for(const [,points] of SchoolCourtyard.hallDrain(s))metal.face(points.map(v=>at(...v)));
     }
     for(const [f,r,shaft,needle] of needles){
       const [x,y,z]=roof(f*depth,196.4);
@@ -18553,15 +19402,30 @@ const SchoolThreeCourtyard=(()=>{
       for(let i=0;i<count;i++){
         const [x,y,h]=roof((i+shift)*depth/7,z);
         const front=d=>[[x-w,y+d,h-.3],[x+w,y+d,h-.3],[x+w,y+d,h+w],[x,y+d,h+w*2],[x-w,y+d,h+w]];
-        detail.solid(front(0),front(-2));
+        shadows.face(front(.40));
+        const e1=[x-w,y+.90,h+w],e2=[x+w,y+.90,h+w],ridge0=[x,y+.90,h+w*2.08],ridge1=[x,y-5,h+w*2.31];
+        pitch.face([e1,ridge0,ridge1,[x-w,y-4.8,h+w*.91]]);
+        pitch.face([e2,ridge0,ridge1,[x+w,y-4.8,h+w*.91]]);
+        for(const sign of [-1,1])detail.face([[x+sign*w,y-.95,h-.35],[x+sign*w,y+.90,h-.35],
+          [x+sign*w,y+.90,h+w],[x+sign*w,y-4.8,h+w*.91]]);
       }
     }
-    const stair=masonry(api,root,'Eight dressed entrance steps',gatePaint);
+    const stair=masonry(api,root,'Eight worn limestone entrance treads with bevelled nosings',skin('step'));
+    const risers=masonry(api,root,'Shadow beneath eight bolstered limestone nosings',skin('stone'));
     for(let j=0;j<8;j++){
-      const h=8-j,frontY=145.3+j*2.06+h,half=39.4+j*1.28;
-      stair.prism([[320-half,frontY],[320+half,frontY],[321+half,frontY+1.25],[319-half,frontY+1.25]],.08,h);
+      const h=8-j,y=153.1+j*2.12,half=38.7+j*1.21;
+      const joints=[-half,...(j%2?[-35,-13.7,6.9,27.2]:[-25.3,-4.2,17.3,36.9]).filter(x=>x>-half+3&&x<half-3),half];
+      for(let k=1;k<joints.length;k++){
+        const l=joints[k-1]+.080,r=joints[k]-.08;
+        const wear=x=>.27*Math.exp(-((x-4)*(x-4))/158);
+        const rim=(d,drop)=>[[320+l,y+d,h-drop-wear(l)],[320+r,y+d,h-drop-wear(r)]];
+        stair.face([...rim(-1.05,0),...rim(2.19,.03).reverse()]);
+        stair.face([...rim(2.19,.03),...rim(2.35,.20).reverse()]);
+        risers.face([...rim(2.35,.20),...rim(2.20,1.14).reverse()]);
+        for(const x of [l,r])risers.face([[320+x,y-1.04,h-wear(x)],[320+x,y+2.20,h-wear(x)],[320+x,y+2.18,.06],[320+x,y-1.04,.06]]);
+      }
     }
-    shell.finish();pitch.finish();glass.finish();facade.finish();detail.finish();portal.finish();stair.finish();
+    shell.finish();pitch.finish();glass.finish();facade.finish();detail.finish();portal.finish();stair.finish();risers.finish();shadows.finish();metal.finish();
   }
 
   function skyline(api,root){
@@ -18578,31 +19442,36 @@ const SchoolThreeCourtyard=(()=>{
     const via=x=>[[x,122,-35],[x,98,-35],[x,98,55+(x-348)*.037],
       [x,112,81+(x-348)*.037],[x,122,78+(x-348)*.037]];
     range.solid(via(348),via(495));range.finish();
-    const wardPaint=api.painted({x:471,y:-131,w:266,h:305},c=>SchoolCourtyardWard.draw(c),{density:3.25,filterWhenSmall:true});
-    const wardStone=masonry(api,root,'East range: stepped abutment, projecting gable, faceted stair turret and lancets',api.coat(wardPaint,'limestone'));
-    const wardRoof=masonry(api,root,'East range: hipped slate, crossing roofs, lucarnes and leadwork',api.coat(wardPaint,'slate'));
-    const wardGlass=masonry(api,root,'East range: leaded glazing in the window splays',SchoolInnerCastle.glazing(api,wardPaint));
-    const wardRecess=masonry(api,root,'East range: dark interior behind tracery and the passage',wardPaint);
+    const skin=type=>SchoolCastleRelief.skin(api,type);
+    const wardStone=masonry(api,root,'East range: stepped abutment, projecting gable, faceted stair turret and lancets',skin('stone'));
+    const wardTrim=masonry(api,root,'East range: dressed stone string courses and gable copings',skin('carved'));
+    const wardRoof=masonry(api,root,'East range: hipped slate, crossing roofs, lucarnes and leadwork',skin('slate'));
+    const wardGlass=masonry(api,root,'East range: leaded glazing in the window splays',skin('glass'));
+    const wardRecess=masonry(api,root,'East range: dark interior behind tracery and the passage',skin('shadow'));
     for(const f of SchoolCourtyardWard.faces){
       const roof=f.kind==='slate'||f.kind==='spire'||f.kind==='lead';
-      (roof?wardRoof:f.kind==='pane'?wardGlass:f.kind==='glass'?wardRecess:wardStone).face(f.points);
+      (roof?wardRoof:f.kind==='pane'?wardGlass:f.kind==='glass'?wardRecess:f.kind==='trim'?wardTrim:wardStone).face(f.points);
     }
-    wardStone.finish();wardRoof.finish();wardGlass.finish();wardRecess.finish();
-    const cliff=masonry(api,root,'Bedrock supporting the eastern range',paint);
-    const edge=[[482,143],[560,114],[624,95],[671,80],[699,74],[715,80],[739,96],
-      [761,107],[788,119],[812,131],[852,149],[870,168]];
-    for(let i=1;i<edge.length;i++){
-      const a=edge[i-1],b=edge[i];
-      const valley=x=>x<=792?215+3*(x-482)/310:218-(x-792)*50/78;
-      cliff.face([[a[0],a[1],0],[b[0],b[1],0],[b[0],valley(b[0])-33,-33],[a[0],valley(a[0])-33,-33]]);
-      cliff.face([[a[0],a[1],0],[a[0]-14,a[1]-36,-2],[b[0]-14,b[1]-36,-2],[b[0],b[1],0]]);
-    }
-    cliff.finish();
+    wardStone.finish();wardTrim.finish();wardRoof.finish();wardGlass.finish();wardRecess.finish();
     const a=SchoolCourtyardSkyline,tau=Math.PI*2;
-    const plate=api.painted({x:372,y:a.crownY-2,w:148,h:581},c=>a.draw(c,'tower'),{density:3.05});
-    const stone=masonry(api,root,'Marble Staircase Tower: shaft, deep lights and projecting gallery',api.coat(plate,'limestone'));
-    const roof=masonry(api,root,'Marble Staircase Tower: conical lead and slate, lucarnes and office turrets',api.coat(plate,'slate'));
-    const lining=masonry(api,root,'Marble Staircase Tower: recessed slit lights',plate);
+    function around(type,period,courseHeight,weather){
+      return {...skin(type),period,weather,unwrap:point=>{
+        const [angle,height]=a.cylindrical(point);return [angle*period/tau,-height/courseHeight];
+      }};
+    }
+    // Damp stone beneath a dripping ring dries out again before the next
+    // tier. Variation follows the curved surface around the entire drum.
+    const seep=point=>{
+      const [angle,h]=a.cylindrical(point);
+      const under=(y,width)=>h>y?Math.exp(-(h-y)/width):0;
+      return .92-(.20*under(27,17)+.29*under(a.belt+4,12))*(.64+.36*Math.cos(angle*13+h*.012)**2);
+    };
+    const stone=masonry(api,root,'Marble Staircase Tower: curved coursed shaft and deep lights',around('stone',9,35,seep));
+    const rimStone=masonry(api,root,'Marble Staircase Tower: projecting parapet, corbels and moulded belt',around('carved',9,35,seep));
+    const roof=masonry(api,root,'Marble Staircase Tower: conical slate, lucarnes and office turrets',around('slate',11,26));
+    const ribs=masonry(api,root,'Marble Staircase Tower: lead hips and slated vent frames',skin('lead'));
+    const lining=masonry(api,root,'Marble Staircase Tower: sheltered throat beneath parapet and slit lights',skin('shadow'));
+    const slitGlass=masonry(api,root,'Marble Staircase Tower: leaded glazing at the back of the embrasures',skin('glass'));
     const polar=(angle,r,y)=>a.towerPoint(Math.sin(angle)*r,Math.cos(angle)*r,y);
     const circle=(y,r)=>Array.from({length:96},(_,i)=>polar(tau*i/96,r,y));
     function turn(part,profile){
@@ -18610,8 +19479,11 @@ const SchoolThreeCourtyard=(()=>{
       for(const [y,r] of profile.slice(1)){const next=circle(y,r);part.band(last,next);last=next;}
     }
     const belt=a.belt;
-    turn(stone,[[.22,48.35],[1.05,48.45],[2.05,47.9],[2.7,47.2],[23.2,47.2],[24.1,47.6],[25.2,47.24],[26.1,43.82],[31.5,43.86]]);
-    turn(stone,[[belt,44.4],[belt+.82,47.82],[belt+2.15,47.82],[belt+3.1,46.48],[belt+4.35,46.48],[belt+5.45,45.62]]);
+    turn(rimStone,[[.22,48.35],[1.05,48.45],[2.05,47.9],[2.7,47.2]]);
+    turn(stone,[[2.7,47.2],[21.4,47.2]]);
+    turn(rimStone,[[21.4,47.2],[22.2,47.6],[23.2,47.65],[24.1,47.85],[25.2,47.24],[26.1,43.20]]);
+    turn(lining,[[25.8,42.54],[31.5,42.70]]);
+    turn(rimStone,[[belt,44.4],[belt+.82,47.82],[belt+2.15,47.82],[belt+3.1,46.48],[belt+4.35,46.48],[belt+5.45,45.62]]);
     // Split each course at its own window openings. Back stones are recessed
     // into the drum and the four reveals meet the curved load-bearing wall.
     for(let row=0;row<a.lightRows.length;row++){
@@ -18629,10 +19501,11 @@ const SchoolThreeCourtyard=(()=>{
         if(h){strip(l,r,top,h.z-h.h);strip(l,r,h.z,bottom);}else strip(l,r,top,bottom);
       }
       for(const h of holes){
-        const back=(ang,y)=>polar(ang,a.radiusAt(y)-1.85,y);
+        const back=(ang,y)=>polar(ang,a.radiusAt(y)-3.7,y);
         const outline=[[h.lo,h.z-h.h],[h.hi,h.z-h.h],[h.hi,h.z],[h.lo,h.z]];
         const front=outline.map(([ang,y])=>skin(ang,y)),rear=outline.map(([ang,y])=>back(ang,y));
-        stone.band(front,rear);lining.face(rear);
+        lining.band(front,rear);slitGlass.face(rear);
+        rimStone.face([skin(h.lo,h.z),skin(h.hi,h.z),polar(h.hi,a.radiusAt(h.z)+.67,h.z+.60),polar(h.lo,a.radiusAt(h.z)+.67,h.z+.60)]);
       }
     }
     const n=46;
@@ -18640,10 +19513,17 @@ const SchoolThreeCourtyard=(()=>{
       const angle=tau*(i+.5)/n,half=tau/n*.18;
       const cheek=(y,r,w)=>[polar(angle-w,r-2.2,y),polar(angle+w,r-2.2,y),polar(angle+w,r,y),polar(angle-w,r,y)];
       const foot=cheek(31.1,44.4,half*.62),knee=cheek(28,46.45,half*.91),cap=cheek(24.3,47.45,half);
-      stone.solid(foot,knee);stone.solid(knee,cap);
+      rimStone.solid(foot,knee);rimStone.solid(knee,cap);
+      const center=angle+Math.PI/n,aperture=tau/n*.35;
+      for(let j=0;j<6;j++){
+        const u=j/3-1,v=(j+1)/3-1,tip=t=>25.2+1.99*t*t;
+        const edge=(t,r,h)=>polar(center+t*aperture,r,h);
+        rimStone.face([edge(u,46.82,tip(u)),edge(v,46.82,tip(v)),edge(v,46.82,24.94),edge(u,46.82,24.94)]);
+        lining.face([edge(u,46.82,tip(u)),edge(v,46.82,tip(v)),edge(v,43,tip(v)),edge(u,43,tip(u))]);
+      }
     }
     const tRoof=t=>[a.roof.apex+(a.roof.base-a.roof.apex)*t,a.roof.r*a.coneProfile(t)];
-    turn(roof,[[2.15,47.23],[1.0,48.39],tRoof(1),...[.94,.86,.74,.62,.50,.39,.28,.16,.055,.006].map(tRoof),[-144,.48],[-147.1,.16]]);
+    turn(roof,[[2.15,47.23],[1.0,48.62],tRoof(1),...[.94,.86,.74,.62,.50,.39,.28,.16,.055,.006].map(tRoof),[a.roof.apex-1,.48],[a.roof.apex-4.1,.16]]);
     for(let i=-4;i<6;i++){
       const angle=i*.61-.34;
       const rib=t=>{
@@ -18653,7 +19533,7 @@ const SchoolThreeCourtyard=(()=>{
       let prev=rib(.2);
       for(let k=1;k<=8;k++){
         const next=rib(.2+k*.1);
-        for(let j=0;j<3;j++)roof.face([prev[j],prev[j+1],next[j+1],next[j]]);
+        for(let j=0;j<3;j++)ribs.face([prev[j],prev[j+1],next[j+1],next[j]]);
         prev=next;
       }
     }
@@ -18663,44 +19543,93 @@ const SchoolThreeCourtyard=(()=>{
       for(const ang of angles){
         const at=(u,d,h)=>polar(ang+u/rad,rad+d,y-h);
         const shape=d=>[at(-v*.60,d,.05),at(v*.60,d,.05),at(v*.60,d,v*.76),at(0,d,v*1.5),at(-v*.60,d,v*.76)];
-        roof.solid(shape(-1.4),shape(.75));
+        roof.band(shape(-1.45),shape(.80));lining.face(shape(.79));
+        for(const sign of [-1,1])ribs.face([at(sign*v*.70,1,v*.72),at(0,1,v*1.63),at(0,-.82,v*1.57),at(sign*v*.7,-.82,v*.68)]);
       }
     }
     // The office turret cluster is cantilevered to one side of the cone.
-    for(const [dx,cy,r,h] of [[-17.40,-91.5,2.08,15.6],[-11.45,-92.4,2.38,14.2],[-14.35,-91.2,2.8,18.6]]){
+    for(const [dx,oldY,r,h] of [[-17.40,-91.5,2.08,15.6],[-11.45,-92.4,2.38,14.2],[-14.35,-91.2,2.8,18.6]]){
+      const cy=oldY*a.roof.apex/-143;
       const local=(y,rad)=>Array.from({length:14},(_,j)=>{
         const th=tau*j/14;return a.towerPoint(dx+Math.sin(th)*rad,8+Math.cos(th)*rad,y);
       });
       const levels=[[cy+h,.65],[cy+3.0,r],[cy,r*1.17],[cy-r*3.9,.13]];
       let previous=local(...levels[0]);for(const lev of levels.slice(1)){const next=local(...lev);roof.band(previous,next);previous=next;}
     }
-    stone.finish();lining.finish();roof.finish();
+    stone.finish();rimStone.finish();lining.finish();slitGlass.finish();roof.finish();ribs.finish();
   }
 
   function gatehouses(api,root){
     for(const side of [-1,1]){
       const label=side<0?'West Viaduct gatehouse':'East Viaduct gatehouse';
-      const paint=api.painted({x:side<0?219:353,y:231,w:70,h:143},c=>{
-        const p=SchoolCourtyardGatehouses.piece(c,side);
-        c.drawImage(p.im,p.x,p.y,p.w,p.h);
-      });
-      const stone=masonry(api,root,label,paint);
+      const skin=t=>SchoolCastleRelief.skin(api,t);
+      const stone=masonry(api,root,label,skin('stone'));
+      const carved=masonry(api,root,label+' coping, crowstep, drips and sill stones',skin('carved'));
+      const slate=masonry(api,root,label+' two weathered pitched slate faces',skin('slate'));
+      const panes=masonry(api,root,label+' window glass at the back of the splay',skin('glass'));
+      const reveal=masonry(api,root,label+' recessed arrowslits',skin('shadow'));
+      const bars=masonry(api,root,label+' cross-hatched iron grille and lead saddle bars',skin('iron'));
       const at=(u,d,h)=>[320+side*(49+u-.3*d),369.5-d,h];
       const block=(u,v,near,far,b,t)=>stone.block(at,u,v,near,far,b,t);
       const across=(profile,d)=>profile.map(([u,h])=>at(u,d,h));
       // Both entrance cheeks stand on the viaduct. The open central bridge
       // is wide enough for the original player and collision footprints.
-      block(0,39,0,20,.3,68.5);
+      // A low glazed light, a stepped arrow slit and the window on the turn
+      // all cut through the skin of this gatehouse. Each returns into stone.
+      const cut=(p,length,h0,h1,mid,r,base,spring,crown,iron)=>{
+        const near=0,back=2.8,tip=t=>archTop(t,spring,crown-spring);
+        stone.block(p,0,mid-r,near,.82,h0,h1);stone.block(p,mid+r,length,near,.82,h0,h1);
+        stone.block(p,mid-r,mid+r,near,.82,h0,base);
+        for(let j=0;j<14;j++){
+          const a=j/7-1,b=(j+1)/7-1,va=tip(a),vb=tip(b);
+          const x=mid+a*r,y=mid+b*r;
+          const shell=d=>[p(x,d,va),p(y,d,vb),p(y,d,h1),p(x,d,h1)];
+          stone.solid(shell(near),shell(.82));
+          panes.face([p(x,back,base),p(y,back,base),p(y,back,vb),p(x,back,va)]);
+          reveal.face([p(x,near,va),p(y,near,vb),p(y,back,vb),p(x,back,va)]);
+          const c=(u,z,d)=>p(mid+u*(r+.71),d,z+.81*(1-.65*Math.abs(u)));
+          carved.face([p(x,-.24,va),p(y,-.24,vb),c(b,vb,-.41),c(a,va,-.41)]);
+        }
+        for(const s of [-1,1]){
+          const u=mid+s*r;reveal.face([p(u,0,base),p(u,0,spring),p(u,back,spring),p(u,back,base)]);
+          carved.block(p,Math.min(u,u+s*.65),Math.max(u,u+s*.65),-.44,.15,base-.23,spring);
+        }
+        carved.block(p,mid-r-.9,mid+r+.9,-1.12,.3,base-.80,base+.13);
+        if(iron){
+          for(let z=base+3;z<crown-1;z+=3.65)for(const sign of [-1,1]){
+            const q=(t,up)=>p(mid+t,2.06,z+t*sign*1.14+up);
+            let old;
+            for(let k=0;k<13;k++){
+              const t=(k/6-1)*(r-.21),h=z+t*sign*1.14;
+              if(h<base+.16||h>tip(t/r)-.28){old=null;continue;}
+              const edge=[q(t,-.12),q(t,.12)];if(old)bars.face([...old,edge[1],edge[0]]);old=edge;
+            }
+          }
+        }
+      };
+      for(const d of [0,20]){
+        const sign=d===0?1:-1,p=(u,v,h)=>at(u,d+sign*v,h);
+        cut(p,39,.3,37.7,19.5,3.65,6.2,26.6,34.7,true);
+        cut(p,39,37.7,68.5,19.5,1.18,40.5,52.2,55.8,false);
+      }
+      cut((v,d,h)=>at(d,v,h),20,.3,68.5,10.5,3.15,6.8,29.2,36.7,false);
+      const far=h=>[at(39,0,h),at(39,20,h)];
+      stone.face([...far(.3),...far(68.5).reverse()]);
       for(const [low,high,pad] of [[.1,1.15,1.35],[2.5,3.6,.85],[58.5,60.2,1],[61.55,62.8,1.15]]){
-        block(-pad,39+pad,-pad,20+pad,low,high);
+        carved.block(at,-pad,39+pad,-pad,20+pad,low,high);
       }
       const pitch=[[.55,67],[38.45,67],[19.5,110.7]];
-      stone.solid(across(pitch,0),across(pitch,20));
+      slate.solid(across(pitch,.1),across(pitch,19.9));
       const gable=[[-1,61],[40,61],[40,69],[37,71],[21.8,111],[17,111],[2.8,71],[-1,69]];
       const crown=[[16.6,107.5],[22.4,107.5],[22.4,113.3],[19.5,117.4],[16.6,113.3]];
       for(const d of [0,20]){
         stone.solid(across(gable,d-.38),across(gable,d+.38));
-        stone.solid(across(crown,d-.57),across(crown,d+.57));
+        carved.solid(across(crown,d-.57),across(crown,d+.57));
+        for(const s of [-1,1]){
+          const a=s<0?-.82:39.82,b=s<0?17.45:21.45,k=d===0?-1:1;
+          const cope=[[a,68.7],[b,111.65],[b-s*1.02,112.28],[a-s*1.49,69.15]];
+          carved.solid(across(cope,d+k*.39),across(cope,d+k*.98));
+        }
       }
       block(16.45,22.65,-1.25,-.24,61.5,112);
       for(const u of [0,39]){
@@ -18708,7 +19637,7 @@ const SchoolThreeCourtyard=(()=>{
         stone.solid(across(pinnacle,-.57),across(pinnacle,.46));
       }
       for(const d of [3,10.2,17])block(-.64,.6,d,d+3,59.7,64);
-      stone.finish();
+      stone.finish();carved.finish();slate.finish();panes.finish();bars.finish();reveal.finish();
     }
   }
 
@@ -18719,10 +19648,12 @@ const SchoolThreeCourtyard=(()=>{
       const pivot=api.group(label+' hinge',root);
       api.moving(pivot);
       const joinery=api.group(label+' joinery',pivot);
-      const material=api.painted({x:side<0?296:319,y:63,w:25,h:85},c=>SchoolCourtyard.oakLeaf(c,side,0),{density:4.8,surface:'oak'});
-      const oak=masonry(api,joinery,label+' panels, stiles and ironwork',material);
-      const hardware=masonry(api,joinery,label+' wrought straps, hammer heads and hanging ring',api.metal('iron'));
       const hingeX=320+side*32.7*.655,hingeY=151.8,span=32.3;
+      const material={...SchoolCastleRelief.skin(api,'oak'),unwrap:p=>[(p[0]-hingeX)*side/18,p[2]/42],
+        weather:p=>.94-.25*Math.exp(-Math.max(0,p[2]-7.8)/11)};
+      const oak=masonry(api,joinery,label+' hewn oak planks and pegged stiles',material);
+      const hardware=masonry(api,joinery,label+' wrought straps and hammer heads',SchoolCastleRelief.skin(api,'iron'));
+      const latch=masonry(api,joinery,label+' worn brass boss and hand-polished hanging ring',SchoolCastleRelief.skin(api,'brass'));
       const at=(u,z,d=0)=>[hingeX-side*.655*u,hingeY+d,7.8+.8*z];
       const top=u=>40.5+2.37*23.4*Math.sqrt(u/span*(1.5-.5*u/span));
       const crest=Array.from({length:15},(_,j)=>{const u=span*(1-j/14);return [u,top(u)];});
@@ -18736,6 +19667,8 @@ const SchoolThreeCourtyard=(()=>{
           const hi=Math.min(low+6.55,top(a)-1.05);if(hi-low<4.6)continue;
           const wall=ring(a,b,low,hi,0,.03),reed=ring(a,b,low,hi,.27,.58),inside=ring(a,b,low,hi,1.12,.23);
           oak.band(wall,reed);oak.band(reed,inside);oak.band(inside,ring(a,b,low,hi,1.45,.10));
+          const panel=ring(a,b,low,hi,1.55,.12),field=ring(a,b,low,hi,2.12,.49);
+          oak.band(panel,field);oak.face(field);
         }
       }
       for(const z of [18,41.4]){
@@ -18753,13 +19686,13 @@ const SchoolThreeCourtyard=(()=>{
         }
       }
       const handle=[[25.95,27.9],[26.4,30.8],[27.85,32.0],[29.45,30.8],[29.75,27.9],[27.85,26.8]];
-      hardware.solid(profile(handle,.35),profile(handle,.85));
+      latch.solid(profile(handle,.35),profile(handle,.85));
       const hoop=(angle)=>Array.from({length:6},(_,j)=>{
         const r=Math.cos(j*Math.PI/3)*.37,d=Math.sin(j*Math.PI/3)*.32;
         return at(27.85+(1.68+r)*Math.sin(angle),26.9+(2.65+r)*Math.cos(angle),1.41+d+(1-Math.cos(angle))*.31);
       });
-      let last=hoop(0);for(let j=1;j<=18;j++){const end=hoop(j*Math.PI/9);hardware.band(last,end);last=end;}
-      oak.finish();hardware.finish();
+      let last=hoop(0);for(let j=1;j<=18;j++){const end=hoop(j*Math.PI/9);latch.band(last,end);last=end;}
+      oak.finish();hardware.finish();latch.finish();
       const anchor=api.point(hingeX,hingeY,0);
       joinery.position.sub(anchor);pivot.position.copy(anchor);
       pivots.push({side,pivot});
@@ -18771,8 +19704,9 @@ const SchoolThreeCourtyard=(()=>{
   }
 
   function build(api){
-    api.backdrop(SchoolCourtyard.bounds,c=>SchoolCourtyard.sky(c));
+    api.backdrop(SchoolCourtyard.bounds,SchoolCourtyard.sky);
     const root=api.group('Entrance Courtyard');
+    SchoolCourtyardHighlands.build(api,root);
     SchoolInnerCastle.build(api,root,masonry);
     ground(api,root);skyline(api,root);greatHall(api,root);
     sideWalk(api,root,-1);sideWalk(api,root,1);gatehouses(api,root);
@@ -20402,14 +21336,33 @@ const SchoolThreeTrials=(()=>{
   return {build};
 })();
 
-/* Orthographic world coordinates share the original floor survey. A point at
-   height z projects to (x,y-z); the depth buffer orders the surfaces in 3D. */
+/* All school cameras use the same floor survey. The castle approach can turn
+   about its entrance axis while the playable floor stays registered to touch. */
 const SchoolThree=(()=>{
   'use strict';
   const T=SchoolThreeLibrary,unit=Math.SQRT2;
   const point=(x,y,z)=>new T.Vector3(x,z*unit,y*unit);
   const sample=new T.Vector3(),normalMatrix=new T.Matrix3();
   const engines=new WeakMap();
+  const courtAxis={x:320,y:180};
+  function courtyardLens(player){
+    const side=Math.tanh((player.x-courtAxis.x)/106);
+    const approach=Math.max(0,Math.min(1,(player.y-156)/112));
+    const yaw=.148*side+.048-.091*approach;
+    return {yaw,cos:Math.cos(yaw),sin:Math.sin(yaw)};
+  }
+  function toSurvey(lens,x,y,height=0){
+    if(!lens)return {x,y:y-height};
+    const dx=x-courtAxis.x,dy=(y-courtAxis.y)*unit;
+    return {x:courtAxis.x+dx*lens.cos-dy*lens.sin,
+      y:courtAxis.y+(dx*lens.sin+dy*lens.cos)/unit-height};
+  }
+  function fromSurvey(lens,x,y){
+    if(!lens)return {x,y};
+    const dx=x-courtAxis.x,dy=(y-courtAxis.y)*unit;
+    return {x:courtAxis.x+dx*lens.cos+dy*lens.sin,
+      y:courtAxis.y+(dy*lens.cos-dx*lens.sin)/unit};
+  }
   function canvasMap(canvas,environment=false,anisotropy=1){
     const tex=new T.CanvasTexture(canvas);
     tex.colorSpace=T.SRGBColorSpace;
@@ -20499,19 +21452,23 @@ const SchoolThree=(()=>{
     texture.minFilter=T.LinearFilter;texture.magFilter=T.LinearFilter;texture.needsUpdate=true;
     reflectionStudies.set(exterior,texture);return texture;
   }
-  function authorScene(canvas,id,anisotropy,canReflect){
+  function authorScene(canvas,id,anisotropy,canReflect,clayStudy){
     const scene=new T.Scene();
     scene.background=new T.Color(id==='courtyard'?'#98adb1':'#262831');
-    scene.add(new T.HemisphereLight(0xffedd0,0xaeb6c1,1.75));
-    const sun=new T.DirectionalLight(0xffe6c2,1.75);sun.position.set(-280,470,230);scene.add(sun);
-    if(id==='courtyard'){
+    const outdoors=id==='courtyard';
+    if(outdoors)scene.fog=new T.Fog(0xbdcbd1,3610,5730);
+    scene.add(outdoors?new T.HemisphereLight(0xc6dcf3,0x918a74,1.02):new T.HemisphereLight(0xffedd0,0xaeb6c1,1.75));
+    const sun=outdoors?new T.DirectionalLight(0xffe1b7,2.85):new T.DirectionalLight(0xffe6c2,1.75);
+    sun.position.set(-280,470,230);scene.add(sun);
+    if(outdoors){
       // The western cloister shades the court. The high nave and shaft also
       // cast onto their own recessed surfaces from this same sun position.
       sun.target.position.copy(point(320,156,74));scene.add(sun.target);
-      sun.position.multiplyScalar(2).add(sun.target.position);
-      sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.intensity=.64;
-      Object.assign(sun.shadow.camera,{left:-495,right:495,top:635,bottom:-390,near:10,far:1920});
-      sun.shadow.camera.updateProjectionMatrix();sun.shadow.normalBias=.48;sun.shadow.bias=-.00012;sun.shadow.radius=2;
+      sun.position.set(-745,695,470).add(sun.target.position);
+      sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.intensity=.84;
+      Object.assign(sun.shadow.camera,{left:-635,right:655,top:665,bottom:-465,near:10,far:2350});
+      sun.shadow.camera.updateProjectionMatrix();sun.shadow.normalBias=clayStudy ? .65 : .26;
+      sun.shadow.bias=clayStudy ? -.00115 : -.00010;sun.shadow.radius=2;
     }
     const lit=new T.MeshLambertMaterial({vertexColors:true,side:T.DoubleSide});
     const materialCache=new Map(),textures=new Set(),materials=new Set([lit]);
@@ -20566,9 +21523,9 @@ const SchoolThree=(()=>{
         const relief=reliefs.get(name);
         // Preserve the painting's baked bounce. Real surface normals carry
         // the remaining directional response and the roughness-dependent sky.
-        const mat=limitPaint(new T.MeshStandardMaterial({name,map:tex,color:new T.Color().setScalar(surface.body),
-          roughness:surface.roughness,metalness:surface.metalness,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:surface.bounce,
-          envMap:reflections(),envMapIntensity:.29,bumpMap:relief,bumpScale:surface.grain,roughnessMap:relief,
+        const mat=limitPaint(new T.MeshStandardMaterial({name,map:tex,color:new T.Color().setScalar(outdoors ? .91 : surface.body),
+          roughness:surface.roughness,metalness:surface.metalness,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:outdoors ? .045 : surface.bounce,
+          envMap:reflections(),envMapIntensity:outdoors ? .38 : .29,bumpMap:relief,bumpScale:surface.grain,roughnessMap:relief,
           side:T.DoubleSide,alphaTest:.12}));
         materials.add(mat);looks.set(name,{bounds:token.bounds,map:tex,material:mat,surface:name});
       }
@@ -20648,8 +21605,9 @@ const SchoolThree=(()=>{
       return upright(parent,name,y,bounds,token);
     }
     function backdrop(bounds,draw){
-      const bg=upright(scene,'Distant landscape',-1200,bounds,painted(bounds,draw,{density:1}));
-      bg.material.depthWrite=false;bg.renderOrder=-1000;return bg;
+      const extent=outdoors?SchoolCourtyardDaylight.extent:bounds;
+      const bg=upright(scene,'Distant landscape',-1200,extent,painted(extent,draw,{density:outdoors ? .60 : 1}));
+      bg.material.depthWrite=outdoors;bg.material.fog=false;bg.renderOrder=-1000;return bg;
     }
     // Batch immutable parts with the same material, preserving depth and the
     // identity of every authored component in the inspection inventory.
@@ -20712,7 +21670,7 @@ const SchoolThree=(()=>{
       for(const label of o.userData.components||[])modelNames.push(o.name+' / '+label);
     });
     if(id==='courtyard'){
-      const shadows=new T.ShadowMaterial({name:'Sun on courtyard paving',color:0x39465b,opacity:.44,
+      const shadows=new T.ShadowMaterial({name:'Sun on courtyard paving',color:0x303e56,opacity:.55,
         depthWrite:false,side:T.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
       materials.add(shadows);
       const ground=[];
@@ -20720,10 +21678,30 @@ const SchoolThree=(()=>{
       // The painted turf and flags have separate heights and an irregular
       // outline. Their own geometry receives the shadow right up to the kerb.
       for(const surface of ground){
+        if(surface.material.isMeshStandardMaterial||surface.material.isMeshLambertMaterial)continue;
         const receiver=new T.Mesh(surface.geometry,shadows);receiver.name='Sun on '+surface.name;
         receiver.receiveShadow=true;receiver.renderOrder=1;receiver.matrix.copy(surface.matrix);
         receiver.matrixAutoUpdate=false;surface.parent.add(receiver);
       }
+    }
+    if(outdoors&&clayStudy){
+      // Inspect the built volumes at the playing camera. Keep cut-outs, such
+      // as a roof crest or open grille, without projecting painted detail.
+      const clay=new Map();
+      scene.traverse(o=>{
+        if(!o.isMesh||o.name==='Distant landscape'||!o.material.depthWrite||o.material.transparent)return;
+        const mask=o.material.alphaTest>0?o.material.map:null;
+        if(!clay.has(mask)){
+          const m=new T.MeshStandardMaterial({name:'Unpainted castle study',color:0xc8c4b9,
+            roughness:.94,side:T.DoubleSide,shadowSide:T.BackSide,map:mask||null,alphaTest:mask ? .10 : 0});
+          if(mask)m.onBeforeCompile=shader=>{
+            shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',
+              'if(any(lessThan(vMapUv,vec2(0.)))||any(greaterThan(vMapUv,vec2(1.))))discard;diffuseColor.a*=texture2D(map,vMapUv).a;');
+          };
+          materials.add(m);clay.set(mask,m);
+        }
+        o.material=clay.get(mask);
+      });
     }
     batch(scene);
     scene.traverse(o=>{
@@ -20736,7 +21714,8 @@ const SchoolThree=(()=>{
         if(owner.userData.moving){o.layers.set(owner.userData.byChapter?0:1);break;}
       }
     });
-    return {scene,update,models:modelNames,movingParts,finishes:[...new Set([...materials].filter(m=>m.isMeshStandardMaterial).map(m=>m.name))],dispose(){
+    const visibility=outdoors?courtyardVisibility(scene,materials,geometrySet):null;
+    return {scene,update,visibility,models:modelNames,movingParts,finishes:[...new Set([...materials].filter(m=>m.isMeshStandardMaterial).map(m=>m.name))],dispose(){
       if(sun.castShadow)sun.shadow.dispose();
       scene.traverse(o=>{if(o.geometry)geometrySet.add(o.geometry);if(o.material&&!Array.isArray(o.material))materials.add(o.material);});
       for(const g of geometrySet)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();
@@ -20747,52 +21726,161 @@ const SchoolThree=(()=>{
     const ctx=tile.getContext('2d');ctx.imageSmoothingEnabled=false;
     const map=canvasMap(tile);return {ctx,map,w,h};
   }
-  function frameCamera(camera,frame){
-    const {x,y,w,h}=frame,cx=x+w*.5,cy=(y+h*.5)*unit*.5;
-    camera.left=-w*.5;camera.right=w*.5;camera.top=h*.5;camera.bottom=-h*.5;
-    // A pan in the camera plane keeps the distance of each world point fixed.
-    // Its depth can then be reused by moving actors anywhere inside the plate.
-    camera.position.set(cx,2400-cy,2400+cy);camera.lookAt(cx,-cy,cy);camera.updateProjectionMatrix();
+  function courtyardVisibility(scene,materials,geometries){
+    // A shared set of real triangles supplies current depth while walking.
+    // Alpha-cut openings retain their original texture and threshold.
+    const result=new T.Scene(),opaque=[],cutouts=new Map();
+    scene.updateMatrixWorld(true);
+    let vertexCount=0,indexCount=0;
+    scene.traverseVisible(o=>{
+      if(!o.isMesh||!o.layers.isEnabled(0)||!o.material.depthWrite||o.material.transparent)return;
+      const m=o.material;
+      if(m.alphaTest>0&&m.map){
+        if(!cutouts.has(m)){
+          const mask=new T.MeshBasicMaterial({map:m.map,side:m.side,alphaTest:m.alphaTest,colorWrite:false});
+          if(m.map.wrapS===T.ClampToEdgeWrapping)limitPaint(mask);
+          cutouts.set(m,mask);materials.add(mask);
+        }
+        const actual=new T.Mesh(o.geometry,cutouts.get(m));actual.matrix.copy(o.matrixWorld);
+        actual.matrixAutoUpdate=false;result.add(actual);return;
+      }
+      const g=o.geometry,count=g.attributes.position.count;
+      vertexCount+=count;indexCount+=g.index?.count??count;opaque.push(o);
+    });
+    const positions=new Float32Array(3*vertexCount);
+    const indices=vertexCount>65535?new Uint32Array(indexCount):new Uint16Array(indexCount);
+    const point=new T.Vector3();let vertex=0,index=0;
+    for(const o of opaque){
+      const g=o.geometry,src=g.attributes.position;
+      for(let i=0;i<src.count;i++)point.fromBufferAttribute(src,i).applyMatrix4(o.matrixWorld).toArray(positions,(vertex+i)*3);
+      if(g.index)for(let i=0;i<g.index.count;i++)indices[index++]=vertex+g.index.getX(i);
+      else for(let i=0;i<src.count;i++)indices[index++]=vertex+i;
+      vertex+=src.count;
+    }
+    const geom=new T.BufferGeometry();geom.setAttribute('position',new T.BufferAttribute(positions,3));geom.setIndex(new T.BufferAttribute(indices,1));
+    geom.computeBoundingSphere();geometries.add(geom);
+    const mask=new T.MeshBasicMaterial({colorWrite:false,side:T.DoubleSide});materials.add(mask);result.add(new T.Mesh(geom,mask));
+    return result;
   }
-  function campusPlate(renderer,maxSize){
+  function frameCamera(camera,frame){
+    const {x,y,w,h,lens}=frame,cx=x+w*.5,cy=y+h*.5;
+    camera.left=-w*.5;camera.right=w*.5;camera.top=h*.5;camera.bottom=-h*.5;
+    if(lens){
+      const dx=cx-courtAxis.x,dy=(cy-courtAxis.y)/unit;
+      const tx=courtAxis.x+dx*lens.cos+dy*lens.sin,tz=courtAxis.y*unit-dx*lens.sin+dy*lens.cos;
+      camera.position.set(tx+2400*lens.sin,2400-dy,tz+2400*lens.cos);camera.lookAt(tx,-dy,tz);
+    }else{
+      camera.position.set(cx,2400-cy/unit,2400+cy/unit);camera.lookAt(cx,-cy/unit,cy/unit);
+    }
+    camera.updateProjectionMatrix();
+  }
+  function campusPlate(renderer,maxSize,touch){
     const plateCamera=new T.OrthographicCamera(-1,1,1,-1,.1,9500);
     const passCamera=new T.Camera(),pass=new T.Scene();
-    const depth=new T.DepthTexture(1,1,T.UnsignedIntType);
-    depth.minFilter=depth.magFilter=T.NearestFilter;
-    const target=new T.WebGLRenderTarget(1,1,{depthTexture:depth,samples:Math.min(4,renderer.capabilities.maxSamples)});
-    target.texture.colorSpace=T.SRGBColorSpace;
-    const crop=new T.Vector4();
+    function plate(samples){
+      const depth=new T.DepthTexture(1,1,T.UnsignedIntType);depth.minFilter=depth.magFilter=T.NearestFilter;
+      const surface=new T.WebGLRenderTarget(1,1,{depthTexture:depth,samples});
+      surface.texture.colorSpace=T.SRGBColorSpace;return surface;
+    }
+    const full=plate(Math.min(4,renderer.capabilities.maxSamples)),walking=plate(0),surfaces=plate(0);
+    let target=full;
+    const crop=new T.Vector4(),previousFromView=new T.Matrix4(),historyPixel=new T.Vector2();
     const paint=new T.ShaderMaterial({name:'Orthographic colour and depth',depthFunc:T.AlwaysDepth,blending:T.NoBlending,toneMapped:false,
-      uniforms:{colourMap:{value:target.texture},depthMap:{value:depth},crop:{value:crop}},
+      uniforms:{colourMap:{value:target.texture},depthMap:{value:target.depthTexture},crop:{value:crop},turn:{value:false},
+        previousFromView:{value:previousFromView},surfaceDepth:{value:surfaces.depthTexture},
+        historyPixel:{value:historyPixel}},
       vertexShader:'varying vec2 sheet;void main(){sheet=uv;gl_Position=vec4(position.xy,0.,1.);}',
-      fragmentShader:`uniform sampler2D colourMap,depthMap;uniform vec4 crop;varying vec2 sheet;
-        void main(){vec2 p=crop.xy+sheet*crop.zw;gl_FragDepth=texture2D(depthMap,p).x;gl_FragColor=texture2D(colourMap,p);
+      fragmentShader:`uniform sampler2D colourMap,depthMap,surfaceDepth;uniform vec4 crop;uniform bool turn;
+        uniform mat4 previousFromView;uniform vec2 historyPixel;varying vec2 sheet;
+        void main(){
+          vec2 p=crop.xy+sheet*crop.zw;
+          if(turn){
+            float d=texture2D(surfaceDepth,sheet).r;
+            vec3 old=(previousFromView*vec4(vec3(sheet,d)*2.-1.,1.)).xyz*.5+.5;
+            float previous=texture2D(depthMap,old.xy).r,difference=abs(previous-old.z);
+            bool seen=all(greaterThan(old.xy,vec2(.001)))&&all(lessThan(old.xy,vec2(.999)))&&
+              difference<.00014+min(fwidth(old.z),.00025);
+            // A resolved colour texel can include part of the old silhouette
+            // even when its stored depth belongs to the sky behind a roof.
+            if(seen){
+              vec2 h=historyPixel*1.1;
+              vec4 around=vec4(texture2D(depthMap,old.xy+h).r,texture2D(depthMap,old.xy-h).r,
+                texture2D(depthMap,old.xy+vec2(h.x,-h.y)).r,texture2D(depthMap,old.xy+vec2(-h.x,h.y)).r);
+              seen=all(lessThan(abs(around-previous),vec4(.0015)));
+            }
+            if(!seen)discard;
+            gl_FragColor=texture2D(colourMap,old.xy);gl_FragDepth=0.;
+          }else{
+            gl_FragDepth=texture2D(depthMap,p).r;gl_FragColor=texture2D(colourMap,p);
+          }
           #include <colorspace_fragment>
         }`});
     const quad=new T.Mesh(new T.PlaneGeometry(2,2),paint);quad.frustumCulled=false;pass.add(quad);
+    const restoreDepth=new T.ShaderMaterial({depthFunc:T.AlwaysDepth,colorWrite:false,blending:T.NoBlending,
+      uniforms:{surfaceDepth:{value:surfaces.depthTexture}},vertexShader:paint.vertexShader,
+      fragmentShader:'uniform sampler2D surfaceDepth;varying vec2 sheet;void main(){gl_FragDepth=texture2D(surfaceDepth,sheet).r;gl_FragColor=vec4(0.);}'});
     let rect,key='',pixelScale=0,calls=0,triangles=0,refreshes=0;
+    const oldView=new T.Matrix4();
+    let lastRoom=null,lastYaw,settleAt=0;
     return function render(room,camera,frame,stage,w,h){
+      const yaw=frame.lens?.yaw,now=performance.now();
+      const changedRoom=room!==lastRoom;
+      if(changedRoom){lastRoom=room;settleAt=0;}
+      else if(yaw!==undefined&&yaw!==lastYaw)settleAt=now+180;
+      lastYaw=yaw;
       const scaleX=w/frame.w,scaleY=h/frame.h;
       const identity=room.scene.uuid+'|'+stage+'|'+w+'/'+h;
-      const refresh=identity!==key||scaleX>pixelScale*1.06||scaleX<pixelScale/1.06||frame.x<rect.x||frame.y<rect.y||
+      const angle=Math.abs((yaw??0)-(rect?.lens?.yaw??0));
+      const inMotion=yaw!==undefined&&now<settleAt;
+      const movingPhone=touch&&inMotion;
+      // Keep turns bounded. The newly lit view supplies disoccluded masonry
+      // and foliage. On stopping, the exact camera always replaces the study.
+      const angularLimit=Math.min(.065,.054/Math.sqrt(scaleX));
+      const refresh=identity!==key||angle>angularLimit||(!inMotion&&(angle>0||target===walking))||
+        scaleX>pixelScale*1.06||scaleX<pixelScale/1.06||frame.x<rect.x||frame.y<rect.y||
         frame.x+frame.w>rect.x+rect.w||frame.y+frame.h>rect.y+rect.h;
       if(refresh){
         // The guard band lets walking move across already lit stone. Only a
         // new room, chapter, material change in scale or a pan past its edge rebuilds it.
-        const tw=Math.min(maxSize,w+2*Math.min(128,Math.ceil(w*.12))),th=Math.min(maxSize,h+2*Math.min(128,Math.ceil(h*.12)));
-        rect={x:frame.x-(tw-w)*.5/scaleX,y:frame.y-(th-h)*.5/scaleY,w:tw/scaleX,h:th/scaleY};
+        const coverageW=Math.min(maxSize,w+2*Math.min(128,Math.ceil(w*.12))),coverageH=Math.min(maxSize,h+2*Math.min(128,Math.ceil(h*.12)));
+        rect={x:frame.x-(coverageW-w)*.5/scaleX,y:frame.y-(coverageH-h)*.5/scaleY,w:coverageW/scaleX,h:coverageH/scaleY,lens:frame.lens};
+        // Static lighting can be refreshed once at lower cost between steps.
+        // Harry, the depth test, controls and final still use the full buffer.
+        target=movingPhone?walking:full;
+        const density=movingPhone ? .80 : 1;
+        const tw=Math.round(coverageW*density),th=Math.round(coverageH*density);
         target.setSize(tw,th);frameCamera(plateCamera,rect);plateCamera.layers.set(0);
+        paint.uniforms.colourMap.value=target.texture;paint.uniforms.depthMap.value=target.depthTexture;
         renderer.setRenderTarget(target);renderer.render(room.scene,plateCamera);renderer.setRenderTarget(null);
+        oldView.multiplyMatrices(plateCamera.projectionMatrix,plateCamera.matrixWorldInverse);
         calls=renderer.info.render.calls;triangles=renderer.info.render.triangles;key=identity;pixelScale=scaleX;refreshes++;
+      }
+      const turning=!refresh&&angle>0;
+      paint.uniforms.turn.value=turning;
+      let surfaceCalls=0;
+      if(turning){
+        camera.updateMatrixWorld();
+        previousFromView.copy(oldView).multiply(camera.matrixWorld).multiply(camera.projectionMatrixInverse);
+        historyPixel.set(1/target.width,1/target.height);
+        surfaces.setSize(w,h);renderer.setRenderTarget(surfaces);renderer.render(room.visibility,camera);renderer.setRenderTarget(null);
+        surfaceCalls=renderer.info.render.calls;
       }
       crop.set((frame.x-rect.x)/rect.w,1-(frame.y+frame.h-rect.y)/rect.h,frame.w/rect.w,frame.h/rect.h);
       renderer.render(pass,passCamera);
       const background=room.scene.background;
-      room.scene.background=null;renderer.autoClear=false;camera.layers.set(1);
+      room.scene.background=null;renderer.autoClear=false;
+      if(turning){
+        // Re-light exposed surfaces and former silhouette pixels with their
+        // actual materials. The cached pixels reject this pass in early Z.
+        camera.layers.set(0);renderer.render(room.scene,camera);surfaceCalls+=renderer.info.render.calls;
+        quad.material=restoreDepth;renderer.render(pass,passCamera);quad.material=paint;surfaceCalls++;
+      }
+      camera.layers.set(1);
       renderer.render(room.scene,camera);
       room.scene.background=background;renderer.autoClear=true;camera.layers.enableAll();
       const dynamic=renderer.info.render;
-      return {calls:calls+dynamic.calls,triangles:triangles+dynamic.triangles,submitted:1+dynamic.calls+(refresh?calls:0),refreshes};
+      return {calls:calls+dynamic.calls,triangles:triangles+dynamic.triangles,submitted:1+dynamic.calls+surfaceCalls+(refresh?calls:0),refreshes,
+        path:refresh?'lighting-capture':turning?'visible-surfaces':'stationary-cache'};
     };
   }
   function mobileResolution(){
@@ -20826,15 +21914,16 @@ const SchoolThree=(()=>{
     }catch(e){console.warn('School WebGL renderer unavailable',e);return null;}
     const camera=new T.OrthographicCamera(-1,1,1,-1,.1,9500);
     const rooms=new Map(),doc=canvas.ownerDocument,actors=new Map(),effects=new Map();
+    const clayStudy=new URLSearchParams(doc.defaultView.location.search).get('study')==='massing';
     const anisotropy=Math.max(1,Math.min(4,gl.capabilities.getMaxAnisotropy()));
     const canReflect=gl.extensions.has('EXT_color_buffer_float');
     const maxSize=Math.min(3072,gl.getContext().getParameter(gl.getContext().MAX_RENDERBUFFER_SIZE));
     const resolution=mobileResolution(),touch=doc.defaultView.matchMedia('(pointer:coarse)').matches||doc.defaultView.navigator.maxTouchPoints>0;
     let active=null,activeId='',frameNow,stageNow,stats={};
-    const renderPlate=campusPlate(gl,maxSize);
+    const renderPlate=campusPlate(gl,maxSize,touch);
     canvas.dataset.renderer='three-webgl2';canvas.style.imageRendering='auto';
     function prepare(id,v,frame,t){
-      const room=rooms.get(id)||authorScene(canvas,id,anisotropy,canReflect);
+      const room=rooms.get(id)||authorScene(canvas,id,anisotropy,canReflect,clayStudy);
       rooms.delete(id);rooms.set(id,room);
       if(rooms.size>2){
         const first=rooms.keys().next().value;rooms.get(first).dispose();rooms.delete(first);
@@ -20870,10 +21959,11 @@ const SchoolThree=(()=>{
           color:0x211e20,transparent:true,opacity:.27,depthWrite:false
         }));
         shadow.rotation.x=-Math.PI/2;shadow.scale.set(10,4.6*unit,1);root.add(shadow);
-        figure.layers.set(1);shadow.layers.set(1);root.name=id;a={root,shadow,...layer};actors.set(id,a);
+        figure.layers.set(1);shadow.layers.set(1);root.name=id;a={root,figure,shadow,...layer};actors.set(id,a);
       }
       if(a.root.parent!==active.scene)active.scene.add(a.root);
-      a.root.visible=true;a.root.position.copy(point(x,y,height));a.shadow.position.y=(floorHeight-height+.5)*unit;const c=a.ctx;
+      a.root.visible=true;a.root.position.copy(point(x,y,height));a.figure.rotation.y=frameNow.lens?.yaw||0;
+      a.shadow.position.y=(floorHeight-height+.5)*unit;const c=a.ctx;
       a.shadow.visible=shadowScale>0;a.shadow.scale.set(10*shadowScale,4.6*unit*shadowScale,1);
       c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,a.w,a.h);c.setTransform(2,0,0,2,104,180);
       paint(c);a.map.needsUpdate=true;
@@ -20907,10 +21997,11 @@ const SchoolThree=(()=>{
       moving:(active?.movingParts||[]).map(o=>({name:o.name,position:o.position.toArray(),rotation:o.rotation.toArray().slice(0,3),visible:o.visible})),
       drawCalls:stats.calls,triangles:stats.triangles,webgl2:true,textures:gl.info.memory.textures,
       materials:active?.finishes,environment:{anisotropy,reflection:canReflect,buffer:[canvas.width,canvas.height],
-        submittedCalls:stats.submitted,lightingPasses:stats.refreshes,mobileResolution:touch?resolution.inspect():null}})};
+        submittedCalls:stats.submitted,lightingPasses:stats.refreshes,renderPath:stats.path,azimuth:frameNow?.lens?.yaw??0,
+        massingStudy:clayStudy&&activeId==='courtyard',mobileResolution:touch?resolution.inspect():null}})};
     engines.set(canvas,engine);return engine;
   }
-  return {create,inspect:canvas=>engines.get(canvas)?.inspect()};
+  return {create,courtyardLens,toSurvey,fromSurvey,inspect:canvas=>engines.get(canvas)?.inspect()};
 })();
 
 /* Character coordinates refer to the point where their feet meet the floor. */
@@ -20996,11 +22087,15 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
   const cameraFrames=new WeakMap();
   function schoolFramePoint(canvas,clientX,clientY){
     const m=cameraFrames.get(canvas),r=canvas.getBoundingClientRect();
-    return m?{x:m.x+(clientX-r.left)*m.w/r.width,y:m.y+(clientY-r.top)*m.h/r.height}:null;
+    if(!m)return null;
+    const x=m.x+(clientX-r.left)*m.w/r.width,y=m.y+(clientY-r.top)*m.h/r.height;
+    return m.lens?SchoolThree.fromSurvey(m.lens,x,y):{x,y};
   }
-  function schoolFrameSpot(canvas,x,y){
+  function schoolFrameSpot(canvas,x,y,height=0){
     const m=cameraFrames.get(canvas),r=canvas.getBoundingClientRect();
-    return m?{x:r.left+(x-m.x)*r.width/m.w,y:r.top+(y-m.y)*r.height/m.h}:null;
+    if(!m)return null;
+    const survey=m.lens?SchoolThree.toSurvey(m.lens,x,y,height):{x,y:y-height};
+    return {x:r.left+(survey.x-m.x)*r.width/m.w,y:r.top+(survey.y-m.y)*r.height/m.h};
   }
   function framing(c,v,room,gate,p) {
     const aspect=v.viewportAspect;
@@ -21376,6 +22471,7 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     if(!assetShadowsReady)return;
     const three=c.three;
     frame.x=Math.round(frame.x*2)/2;frame.y=Math.round(frame.y*2)/2;
+    if(scene==='courtyard')frame.lens=SchoolThree.courtyardLens(p);
     cameraFrames.set(c.canvas,frame);three.prepare(scene,v,frame,t);
     const estate=typeof SchoolEstate!=='undefined'&&SchoolEstate.isExtended(scene);
     const raised=scene==='entrance'?SchoolEntranceHall.floorRise(p.x,p.y):
