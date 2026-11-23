@@ -21336,8 +21336,8 @@ const SchoolThreeTrials=(()=>{
   return {build};
 })();
 
-/* All school cameras use the same floor survey. The castle approach can turn
-   about its entrance axis while the playable floor stays registered to touch. */
+/* All school cameras use the same floor survey. The castle keeps its slight,
+   fixed entrance angle and the playable floor stays registered to touch. */
 const SchoolThree=(()=>{
   'use strict';
   const T=SchoolThreeLibrary,unit=Math.SQRT2;
@@ -21345,12 +21345,10 @@ const SchoolThree=(()=>{
   const sample=new T.Vector3(),normalMatrix=new T.Matrix3();
   const engines=new WeakMap();
   const courtAxis={x:320,y:180};
-  function courtyardLens(player){
-    const side=Math.tanh((player.x-courtAxis.x)/106);
-    const approach=Math.max(0,Math.min(1,(player.y-156)/112));
-    const yaw=.148*side+.048-.091*approach;
-    return {yaw,cos:Math.cos(yaw),sin:Math.sin(yaw)};
-  }
+  // A single optical axis for the bridge, the paved court and the doorway.
+  const yaw=-.025;
+  const fixedLens=Object.freeze({yaw,cos:Math.cos(yaw),sin:Math.sin(yaw)});
+  function courtyardLens(){return fixedLens;}
   function toSurvey(lens,x,y,height=0){
     if(!lens)return {x,y:y-height};
     const dx=x-courtAxis.x,dy=(y-courtAxis.y)*unit;
@@ -21714,8 +21712,7 @@ const SchoolThree=(()=>{
         if(owner.userData.moving){o.layers.set(owner.userData.byChapter?0:1);break;}
       }
     });
-    const visibility=outdoors?courtyardVisibility(scene,materials,geometrySet):null;
-    return {scene,update,visibility,models:modelNames,movingParts,finishes:[...new Set([...materials].filter(m=>m.isMeshStandardMaterial).map(m=>m.name))],dispose(){
+    return {scene,update,models:modelNames,movingParts,finishes:[...new Set([...materials].filter(m=>m.isMeshStandardMaterial).map(m=>m.name))],dispose(){
       if(sun.castShadow)sun.shadow.dispose();
       scene.traverse(o=>{if(o.geometry)geometrySet.add(o.geometry);if(o.material&&!Array.isArray(o.material))materials.add(o.material);});
       for(const g of geometrySet)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();
@@ -21725,42 +21722,6 @@ const SchoolThree=(()=>{
     const tile=doc.createElement('canvas');tile.width=w;tile.height=h;
     const ctx=tile.getContext('2d');ctx.imageSmoothingEnabled=false;
     const map=canvasMap(tile);return {ctx,map,w,h};
-  }
-  function courtyardVisibility(scene,materials,geometries){
-    // A shared set of real triangles supplies current depth while walking.
-    // Alpha-cut openings retain their original texture and threshold.
-    const result=new T.Scene(),opaque=[],cutouts=new Map();
-    scene.updateMatrixWorld(true);
-    let vertexCount=0,indexCount=0;
-    scene.traverseVisible(o=>{
-      if(!o.isMesh||!o.layers.isEnabled(0)||!o.material.depthWrite||o.material.transparent)return;
-      const m=o.material;
-      if(m.alphaTest>0&&m.map){
-        if(!cutouts.has(m)){
-          const mask=new T.MeshBasicMaterial({map:m.map,side:m.side,alphaTest:m.alphaTest,colorWrite:false});
-          if(m.map.wrapS===T.ClampToEdgeWrapping)limitPaint(mask);
-          cutouts.set(m,mask);materials.add(mask);
-        }
-        const actual=new T.Mesh(o.geometry,cutouts.get(m));actual.matrix.copy(o.matrixWorld);
-        actual.matrixAutoUpdate=false;result.add(actual);return;
-      }
-      const g=o.geometry,count=g.attributes.position.count;
-      vertexCount+=count;indexCount+=g.index?.count??count;opaque.push(o);
-    });
-    const positions=new Float32Array(3*vertexCount);
-    const indices=vertexCount>65535?new Uint32Array(indexCount):new Uint16Array(indexCount);
-    const point=new T.Vector3();let vertex=0,index=0;
-    for(const o of opaque){
-      const g=o.geometry,src=g.attributes.position;
-      for(let i=0;i<src.count;i++)point.fromBufferAttribute(src,i).applyMatrix4(o.matrixWorld).toArray(positions,(vertex+i)*3);
-      if(g.index)for(let i=0;i<g.index.count;i++)indices[index++]=vertex+g.index.getX(i);
-      else for(let i=0;i<src.count;i++)indices[index++]=vertex+i;
-      vertex+=src.count;
-    }
-    const geom=new T.BufferGeometry();geom.setAttribute('position',new T.BufferAttribute(positions,3));geom.setIndex(new T.BufferAttribute(indices,1));
-    geom.computeBoundingSphere();geometries.add(geom);
-    const mask=new T.MeshBasicMaterial({colorWrite:false,side:T.DoubleSide});materials.add(mask);result.add(new T.Mesh(geom,mask));
-    return result;
   }
   function frameCamera(camera,frame){
     const {x,y,w,h,lens}=frame,cx=x+w*.5,cy=y+h*.5;
@@ -21774,113 +21735,45 @@ const SchoolThree=(()=>{
     }
     camera.updateProjectionMatrix();
   }
-  function campusPlate(renderer,maxSize,touch){
+  function campusPlate(renderer,maxSize){
     const plateCamera=new T.OrthographicCamera(-1,1,1,-1,.1,9500);
     const passCamera=new T.Camera(),pass=new T.Scene();
-    function plate(samples){
-      const depth=new T.DepthTexture(1,1,T.UnsignedIntType);depth.minFilter=depth.magFilter=T.NearestFilter;
-      const surface=new T.WebGLRenderTarget(1,1,{depthTexture:depth,samples});
-      surface.texture.colorSpace=T.SRGBColorSpace;return surface;
-    }
-    const full=plate(Math.min(4,renderer.capabilities.maxSamples)),walking=plate(0),surfaces=plate(0);
-    let target=full;
-    const crop=new T.Vector4(),previousFromView=new T.Matrix4(),historyPixel=new T.Vector2();
+    const depth=new T.DepthTexture(1,1,T.UnsignedIntType);
+    depth.minFilter=depth.magFilter=T.NearestFilter;
+    const target=new T.WebGLRenderTarget(1,1,{depthTexture:depth,samples:Math.min(4,renderer.capabilities.maxSamples)});
+    target.texture.colorSpace=T.SRGBColorSpace;
+    const crop=new T.Vector4();
     const paint=new T.ShaderMaterial({name:'Orthographic colour and depth',depthFunc:T.AlwaysDepth,blending:T.NoBlending,toneMapped:false,
-      uniforms:{colourMap:{value:target.texture},depthMap:{value:target.depthTexture},crop:{value:crop},turn:{value:false},
-        previousFromView:{value:previousFromView},surfaceDepth:{value:surfaces.depthTexture},
-        historyPixel:{value:historyPixel}},
+      uniforms:{colourMap:{value:target.texture},depthMap:{value:depth},crop:{value:crop}},
       vertexShader:'varying vec2 sheet;void main(){sheet=uv;gl_Position=vec4(position.xy,0.,1.);}',
-      fragmentShader:`uniform sampler2D colourMap,depthMap,surfaceDepth;uniform vec4 crop;uniform bool turn;
-        uniform mat4 previousFromView;uniform vec2 historyPixel;varying vec2 sheet;
-        void main(){
-          vec2 p=crop.xy+sheet*crop.zw;
-          if(turn){
-            float d=texture2D(surfaceDepth,sheet).r;
-            vec3 old=(previousFromView*vec4(vec3(sheet,d)*2.-1.,1.)).xyz*.5+.5;
-            float previous=texture2D(depthMap,old.xy).r,difference=abs(previous-old.z);
-            bool seen=all(greaterThan(old.xy,vec2(.001)))&&all(lessThan(old.xy,vec2(.999)))&&
-              difference<.00014+min(fwidth(old.z),.00025);
-            // A resolved colour texel can include part of the old silhouette
-            // even when its stored depth belongs to the sky behind a roof.
-            if(seen){
-              vec2 h=historyPixel*1.1;
-              vec4 around=vec4(texture2D(depthMap,old.xy+h).r,texture2D(depthMap,old.xy-h).r,
-                texture2D(depthMap,old.xy+vec2(h.x,-h.y)).r,texture2D(depthMap,old.xy+vec2(-h.x,h.y)).r);
-              seen=all(lessThan(abs(around-previous),vec4(.0015)));
-            }
-            if(!seen)discard;
-            gl_FragColor=texture2D(colourMap,old.xy);gl_FragDepth=0.;
-          }else{
-            gl_FragDepth=texture2D(depthMap,p).r;gl_FragColor=texture2D(colourMap,p);
-          }
+      fragmentShader:`uniform sampler2D colourMap,depthMap;uniform vec4 crop;varying vec2 sheet;
+        void main(){vec2 p=crop.xy+sheet*crop.zw;gl_FragDepth=texture2D(depthMap,p).x;gl_FragColor=texture2D(colourMap,p);
           #include <colorspace_fragment>
         }`});
     const quad=new T.Mesh(new T.PlaneGeometry(2,2),paint);quad.frustumCulled=false;pass.add(quad);
-    const restoreDepth=new T.ShaderMaterial({depthFunc:T.AlwaysDepth,colorWrite:false,blending:T.NoBlending,
-      uniforms:{surfaceDepth:{value:surfaces.depthTexture}},vertexShader:paint.vertexShader,
-      fragmentShader:'uniform sampler2D surfaceDepth;varying vec2 sheet;void main(){gl_FragDepth=texture2D(surfaceDepth,sheet).r;gl_FragColor=vec4(0.);}'});
     let rect,key='',pixelScale=0,calls=0,triangles=0,refreshes=0;
-    const oldView=new T.Matrix4();
-    let lastRoom=null,lastYaw,settleAt=0;
     return function render(room,camera,frame,stage,w,h){
-      const yaw=frame.lens?.yaw,now=performance.now();
-      const changedRoom=room!==lastRoom;
-      if(changedRoom){lastRoom=room;settleAt=0;}
-      else if(yaw!==undefined&&yaw!==lastYaw)settleAt=now+180;
-      lastYaw=yaw;
       const scaleX=w/frame.w,scaleY=h/frame.h;
-      const identity=room.scene.uuid+'|'+stage+'|'+w+'/'+h;
-      const angle=Math.abs((yaw??0)-(rect?.lens?.yaw??0));
-      const inMotion=yaw!==undefined&&now<settleAt;
-      const movingPhone=touch&&inMotion;
-      // Keep turns bounded. The newly lit view supplies disoccluded masonry
-      // and foliage. On stopping, the exact camera always replaces the study.
-      const angularLimit=Math.min(.065,.054/Math.sqrt(scaleX));
-      const refresh=identity!==key||angle>angularLimit||(!inMotion&&(angle>0||target===walking))||
-        scaleX>pixelScale*1.06||scaleX<pixelScale/1.06||frame.x<rect.x||frame.y<rect.y||
+      const identity=room.scene.uuid+'|'+stage+'|'+w+'/'+h+'|'+(frame.lens?.yaw??0);
+      const refresh=identity!==key||scaleX>pixelScale*1.06||scaleX<pixelScale/1.06||frame.x<rect.x||frame.y<rect.y||
         frame.x+frame.w>rect.x+rect.w||frame.y+frame.h>rect.y+rect.h;
       if(refresh){
         // The guard band lets walking move across already lit stone. Only a
         // new room, chapter, material change in scale or a pan past its edge rebuilds it.
-        const coverageW=Math.min(maxSize,w+2*Math.min(128,Math.ceil(w*.12))),coverageH=Math.min(maxSize,h+2*Math.min(128,Math.ceil(h*.12)));
-        rect={x:frame.x-(coverageW-w)*.5/scaleX,y:frame.y-(coverageH-h)*.5/scaleY,w:coverageW/scaleX,h:coverageH/scaleY,lens:frame.lens};
-        // Static lighting can be refreshed once at lower cost between steps.
-        // Harry, the depth test, controls and final still use the full buffer.
-        target=movingPhone?walking:full;
-        const density=movingPhone ? .80 : 1;
-        const tw=Math.round(coverageW*density),th=Math.round(coverageH*density);
+        const tw=Math.min(maxSize,w+2*Math.min(128,Math.ceil(w*.12))),th=Math.min(maxSize,h+2*Math.min(128,Math.ceil(h*.12)));
+        rect={x:frame.x-(tw-w)*.5/scaleX,y:frame.y-(th-h)*.5/scaleY,w:tw/scaleX,h:th/scaleY,lens:frame.lens};
         target.setSize(tw,th);frameCamera(plateCamera,rect);plateCamera.layers.set(0);
-        paint.uniforms.colourMap.value=target.texture;paint.uniforms.depthMap.value=target.depthTexture;
         renderer.setRenderTarget(target);renderer.render(room.scene,plateCamera);renderer.setRenderTarget(null);
-        oldView.multiplyMatrices(plateCamera.projectionMatrix,plateCamera.matrixWorldInverse);
         calls=renderer.info.render.calls;triangles=renderer.info.render.triangles;key=identity;pixelScale=scaleX;refreshes++;
-      }
-      const turning=!refresh&&angle>0;
-      paint.uniforms.turn.value=turning;
-      let surfaceCalls=0;
-      if(turning){
-        camera.updateMatrixWorld();
-        previousFromView.copy(oldView).multiply(camera.matrixWorld).multiply(camera.projectionMatrixInverse);
-        historyPixel.set(1/target.width,1/target.height);
-        surfaces.setSize(w,h);renderer.setRenderTarget(surfaces);renderer.render(room.visibility,camera);renderer.setRenderTarget(null);
-        surfaceCalls=renderer.info.render.calls;
       }
       crop.set((frame.x-rect.x)/rect.w,1-(frame.y+frame.h-rect.y)/rect.h,frame.w/rect.w,frame.h/rect.h);
       renderer.render(pass,passCamera);
       const background=room.scene.background;
-      room.scene.background=null;renderer.autoClear=false;
-      if(turning){
-        // Re-light exposed surfaces and former silhouette pixels with their
-        // actual materials. The cached pixels reject this pass in early Z.
-        camera.layers.set(0);renderer.render(room.scene,camera);surfaceCalls+=renderer.info.render.calls;
-        quad.material=restoreDepth;renderer.render(pass,passCamera);quad.material=paint;surfaceCalls++;
-      }
-      camera.layers.set(1);
+      room.scene.background=null;renderer.autoClear=false;camera.layers.set(1);
       renderer.render(room.scene,camera);
       room.scene.background=background;renderer.autoClear=true;camera.layers.enableAll();
       const dynamic=renderer.info.render;
-      return {calls:calls+dynamic.calls,triangles:triangles+dynamic.triangles,submitted:1+dynamic.calls+surfaceCalls+(refresh?calls:0),refreshes,
-        path:refresh?'lighting-capture':turning?'visible-surfaces':'stationary-cache'};
+      return {calls:calls+dynamic.calls,triangles:triangles+dynamic.triangles,submitted:1+dynamic.calls+(refresh?calls:0),refreshes,path:refresh?'lighting-capture':'stationary-cache'};
     };
   }
   function mobileResolution(){
@@ -21920,7 +21813,7 @@ const SchoolThree=(()=>{
     const maxSize=Math.min(3072,gl.getContext().getParameter(gl.getContext().MAX_RENDERBUFFER_SIZE));
     const resolution=mobileResolution(),touch=doc.defaultView.matchMedia('(pointer:coarse)').matches||doc.defaultView.navigator.maxTouchPoints>0;
     let active=null,activeId='',frameNow,stageNow,stats={};
-    const renderPlate=campusPlate(gl,maxSize,touch);
+    const renderPlate=campusPlate(gl,maxSize);
     canvas.dataset.renderer='three-webgl2';canvas.style.imageRendering='auto';
     function prepare(id,v,frame,t){
       const room=rooms.get(id)||authorScene(canvas,id,anisotropy,canReflect,clayStudy);
@@ -22085,6 +21978,7 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     return {x:Math.max(0,Math.min(256-extra,x-extra/2)),y};
   }
   const cameraFrames=new WeakMap();
+  const courtyardShots=new WeakMap();
   function schoolFramePoint(canvas,clientX,clientY){
     const m=cameraFrames.get(canvas),r=canvas.getBoundingClientRect();
     if(!m)return null;
@@ -22097,8 +21991,46 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     const survey=m.lens?SchoolThree.toSurvey(m.lens,x,y,height):{x,y:y-height};
     return {x:r.left+(survey.x-m.x)*r.width/m.w,y:r.top+(survey.y-m.y)*r.height/m.h};
   }
+  function courtyardFrame(canvas,p,ratio,portrait,height){
+    const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
+    const spawn=SchoolCourtyard.spawn,box=SchoolCourtyard.bounds;
+    // The viaduct and the oak doors each have a composed shot. Walking into
+    // the apron advances the framing; reversing up to ten floor units keeps
+    // the achieved view. Nothing advances while Harry is standing still.
+    const inward=clamp((236-p.y)/51,0,1),outward=clamp((246-p.y)/51,0,1);
+    let shot=courtyardShots.get(canvas);
+    if(!shot||shot.portrait!==portrait){
+      shot={portrait,approach:inward,panX:0,panY:0};
+      courtyardShots.set(canvas,shot);
+    }
+    shot.approach=clamp(shot.approach,inward,outward);
+    const progress=shot.approach;
+    const widePart=1-progress*progress*(3-2*progress);
+    const skylineTop=SchoolCourtyardSkyline.crownY-15;
+    const wideHeight=Math.min(box.h,box.w/ratio,
+      Math.max(spawn.y-skylineTop+45,portrait?416/ratio:0));
+    const closeHeight=Math.min(height,wideHeight);
+    const h=Math.round(closeHeight*Math.pow(wideHeight/closeHeight,widePart)*2)/2;
+    const w=Math.min(box.w,Math.round(h*ratio*2)/2);
+    const mix=wideHeight>closeHeight?clamp((h-closeHeight)/(wideHeight-closeHeight),0,1):0;
+    const cx=spawn.x+(portrait?17:12)*mix;
+    const closeTop=185-(portrait?65:79)-closeHeight*.48;
+    const wideTop=portrait?skylineTop:spawn.y-wideHeight+45;
+    const top=closeTop+(wideTop-closeTop)*mix;
+    // Outside the safe area the framing takes up just the excess. Walking
+    // back into it leaves the camera where it was, on both horizontal axes.
+    const halfSafe=w*.27,headroom=Math.min(h*.34,72),footroom=h*(.10-.067*mix);
+    shot.panX=clamp(shot.panX,p.x-cx-halfSafe,p.x-cx+halfSafe);
+    shot.panY=clamp(shot.panY,p.y+footroom-h-top,p.y-headroom-top);
+    const x=clamp(cx+shot.panX-w/2,box.x,box.x+box.w-w);
+    const y=clamp(top+shot.panY,box.y,box.y+box.h-h);
+    // A clipped frame at the castle edge must not accumulate hidden travel.
+    shot.panX=x+w/2-cx;shot.panY=y-top;
+    return {x,y,w,h};
+  }
   function framing(c,v,room,gate,p) {
     const aspect=v.viewportAspect;
+    if(room!=='courtyard')courtyardShots.delete(c.canvas);
     if(typeof SchoolEstate!=='undefined'&&SchoolEstate.isExtended(room)){
       const ratio=aspect||16/9,portrait=ratio<1.05,kind=SchoolEstate.kind(room);
       const stair=kind==='stair',outside=kind==='grounds';
@@ -22133,25 +22065,7 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     if(room==='courtyard'||room==='entrance'||room==='great'){
       const ratio=aspect||384/216,portrait=ratio<1.05;
       const height=portrait?Math.min(475,Math.max(305,211/ratio)):Math.min(316,Math.max(232,(c.canvas.clientHeight||390)/1.66));
-      if(room==='courtyard'){
-        // From the viaduct, see the roof of the round tower. At the steps the
-        // same sightline settles on the carved doorway at character scale.
-        const t=Math.min(1,Math.max(0,(p.y-185)/61)),overview=t*t*(3-2*t);
-        const retreat=Math.max(0,p.y-246);
-        const box=SchoolCourtyard.bounds;
-        const skylineTop=SchoolCourtyardSkyline.crownY-15;
-        const fullTower=SchoolCourtyard.spawn.y-skylineTop+45;
-        const wide=portrait?Math.max(fullTower,Math.min(box.h,416/ratio)):fullTower;
-        const h=Math.min(box.h,Math.floor(box.w/ratio*2)/2,Math.round((height+(wide-height)*overview+retreat*.82)*2)/2);
-        const w=Math.min(box.w,Math.round(h*ratio*2)/2);
-        const cx=.87*p.x+.13*320+(portrait?17:12)*overview;
-        const closeTop=p.y-(portrait?65:79)-height*.48;
-        const distantTop=portrait?skylineTop+retreat*.13:p.y-h+45;
-        const top=closeTop+(distantTop-closeTop)*overview;
-        const x=Math.max(box.x,Math.min(cx-w/2,box.x+box.w-w));
-        const y=Math.max(box.y,Math.min(top,box.y+box.h-h));
-        return {x,y,w,h};
-      }
+      if(room==='courtyard')return courtyardFrame(c.canvas,p,ratio,portrait,height);
       const hub=room==='entrance';
       const approach=hub&&!portrait?Math.max(height,254+36*Math.max(0,Math.min(1,(p.y-215)/62))):height;
       const w=Math.round(approach*ratio*2)/2,h=Math.round(approach*2)/2;
@@ -22471,7 +22385,7 @@ const { drawSchoolFrame, drawSchoolCard, schoolFramePoint, schoolFrameSpot, scho
     if(!assetShadowsReady)return;
     const three=c.three;
     frame.x=Math.round(frame.x*2)/2;frame.y=Math.round(frame.y*2)/2;
-    if(scene==='courtyard')frame.lens=SchoolThree.courtyardLens(p);
+    if(scene==='courtyard')frame.lens=SchoolThree.courtyardLens();
     cameraFrames.set(c.canvas,frame);three.prepare(scene,v,frame,t);
     const estate=typeof SchoolEstate!=='undefined'&&SchoolEstate.isExtended(scene);
     const raised=scene==='entrance'?SchoolEntranceHall.floorRise(p.x,p.y):
