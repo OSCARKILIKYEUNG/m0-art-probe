@@ -91,7 +91,7 @@ body[data-mode=clean] .overlay{display:none!important}
   await Promise.all(Array.from({length:5},download));
   status.textContent='Preparing the Entrance Hall…';
   document.getElementById('figure-data').packedFigure=bytes;
-  const script=document.createElement('script');script.src="hall-a95ceb05c10e466a2efc.js";
+  const script=document.createElement('script');script.src="hall-d441b5d782d65dda190f.js";
   script.onerror=()=>{status.textContent='Could not load the hall. Reload to try again.';};
   document.body.appendChild(script);
 })().catch(function(e){const status=document.getElementById('loading');status.textContent='The hall could not load. '+e.message+' ';const retry=document.createElement('button');retry.textContent='Try again';retry.onclick=()=>location.reload();status.appendChild(retry);});</script>
