@@ -33,6 +33,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid #f4d8a1;outline-off
 #lift span{white-space:normal}
 #pad{display:none;position:absolute;left:max(20px,env(safe-area-inset-left));bottom:max(16px,env(safe-area-inset-bottom));width:88px;height:88px;border:1px solid #e9dbbe61;border-radius:50%;background:#22282149;align-items:center;justify-content:center}
 #knob{width:34px;height:34px;border:1px solid #e6dec6a3;border-radius:50%;background:#4a493fb0;pointer-events:none}
+#pad::before{content:"";position:absolute;inset:18%;border:1px dashed #dfcfaa68;border-radius:50%;pointer-events:none}
+#pad[data-running] #knob{background:#665839e8;border-color:#f1d79c}
 @media(pointer:coarse){#pad{display:flex}}
 body[data-mode=clean] .overlay{display:none!important}
 [hidden]{display:none!important}
@@ -44,8 +46,8 @@ body[data-mode=clean] .overlay{display:none!important}
   <div id="loading" role="status">Entering Hogwarts…</div>
   <div class="overlay" id="room-note" role="status" hidden></div>
   <button class="overlay" id="passage" type="button" hidden></button>
-  <details class="overlay" id="help"><summary aria-label="Controls">?</summary><p>Walk with WASD, the arrows, the touch pad or a tap on the floor. The far double doors lead to the Great Hall. At the High Table, tap Greet or press E to greet Professor Dumbledore.</p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack button to aim. Shift rolls.</p></details>
-  <div class="overlay" id="pad" role="group" aria-label="Move"><span id="knob"></span></div>
+  <details class="overlay" id="help"><summary aria-label="Controls">?</summary><p>Walk with WASD, the arrows or a tap on the floor. Hold R with a direction key to run. On the touch pad, push gently to walk or past the ring to run. Shift rolls.</p><p>The far double doors lead to the Great Hall. At the High Table, tap Greet or press E to greet Professor Dumbledore.</p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack button to aim.</p></details>
+  <div class="overlay" id="pad" role="group" aria-label="Move, push past the ring to run"><span id="knob"></span></div>
   <div class="overlay" id="actions" role="group" aria-label="Wand actions">
     <button class="action" id="roll" type="button" aria-label="Roll"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11a7 7 0 1 1 3 8M5 6v5h5"/><path d="m11 14 2-4 3 1"/></svg><span>Roll</span></button>
     <button class="action" id="basic" data-spell="basic" type="button" aria-label="Basic Cast"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 21 7-8-3-.2L20 3l-6 8 3 .2-8 7m-4-9 2 1M15 19l1 2"/></svg><span>Basic Cast</span></button>
@@ -110,6 +112,6 @@ body[data-mode=clean] .overlay{display:none!important}
     const el=document.createElement('script');el.src=runtime;el.onerror=()=>retry(Error('Room code could not load.'));
     document.body.appendChild(el);
   }catch(e){retry(e);}
-})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-53b9b92ce7fa16a69e66.js");</script>
+})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-e153ff181b1c85a0df5d.js");</script>
 </body>
 </html>
