@@ -27,6 +27,10 @@ button:focus-visible,summary:focus-visible{outline:2px solid #f4d8a1;outline-off
 #help #graphics-options{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px}
 #graphics-quality{min-height:44px;max-width:100%;font:inherit;font-size:16px;color:#fff5da;background:#332e24;border:1px solid #ab9673;border-radius:4px;padding:4px 7px}
 #graphics-quality:focus-visible{outline:2px solid #f4d8a1;outline-offset:2px}
+#help #art-credit-text{display:block;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:8px}
+#help #art-credit-text[hidden]{display:none}
+#art-credit-text a{color:#f5d79b}
+#art-credit-toggle{font:inherit;color:inherit;background:transparent;border:0;text-decoration:underline;padding:5px 0;cursor:pointer}
 #room-note{position:absolute;top:max(14px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:4px 11px;color:#f2e9d8;background:#24251dd9;border-radius:3px;font:16px Georgia,serif;pointer-events:none;text-align:center}
 body[data-phone-view] main[aria-label="Hogwarts Black Lake Crossing"] #room-note{left:max(12px,env(safe-area-inset-left));transform:none}
 #passage{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);min-height:44px;padding:5px 14px;background:#23261ee8;border:1px solid #c3ac80;border-radius:5px;font:14px Georgia,serif}
@@ -73,8 +77,14 @@ body[data-mode=clean] .overlay{display:none!important}
 #school-map small{font:11px system-ui;color:#beb39c}
 #school-map output{display:block;line-height:1.35}#school-map a{display:inline-block;color:#f2d59d;margin-top:8px}#school-map a[hidden]{display:none}
 </style>
-<script type="application/octet-stream" data-stair-packet="common" data-src="stair-9979e1bb7f5dc5abc0b3.gz"></script>
-<script type="application/octet-stream" data-stair-packet="G" data-src="stair-01a68f8f247a5256f2af.gz"></script>
+<script type="application/octet-stream" id="court-prop-stone-hearth" data-court-prop="stone-hearth" data-src="furnishing-612963e9a0e9149a6210.gz"></script>
+<script type="application/octet-stream" id="court-prop-guardian" data-court-prop="guardian" data-src="furnishing-cfa959c15aebe5d2d358.gz"></script>
+<script type="application/octet-stream" id="court-prop-gryffindor-lion" data-court-prop="gryffindor-lion" data-src="furnishing-bbe1a7461718dc009f15.gz"></script>
+<script type="application/octet-stream" id="court-prop-hufflepuff-badger" data-court-prop="hufflepuff-badger" data-src="furnishing-e67cddfddda52e984819.gz"></script>
+<script type="application/octet-stream" id="court-prop-ravenclaw-eagle" data-court-prop="ravenclaw-eagle" data-src="furnishing-672c1bf99b275c84964f.gz"></script>
+<script type="application/octet-stream" id="court-prop-slytherin-serpent" data-court-prop="slytherin-serpent" data-src="furnishing-3d09851aa078801ed8d9.gz"></script>
+<script type="application/octet-stream" data-stair-packet="common" data-src="stair-7bfb4dd2bd5973b503b7.gz"></script>
+<script type="application/octet-stream" data-stair-packet="G" data-src="stair-4db2491ce6ba0062520f.gz"></script>
 <script type="application/octet-stream" data-stair-packet="F1" data-src="stair-a3fe3832d88cf8108616.gz"></script>
 <script type="application/octet-stream" data-stair-packet="F2" data-src="stair-6c61334bd0bc673d987d.gz"></script>
 <script type="application/octet-stream" data-stair-packet="F3" data-src="stair-05f112856d16ca68c0e0.gz"></script>
@@ -95,7 +105,25 @@ body[data-mode=clean] .overlay{display:none!important}
   <button class="overlay" id="open-school-map" type="button" aria-haspopup="dialog" aria-controls="school-map">Map</button>
   <details class="overlay" id="help"><summary aria-label="Controls">?</summary>
     <p id="graphics-options"><label for="graphics-quality">Graphics</label><select id="graphics-quality" disabled><option value="performance">Performance</option><option value="quality">Quality</option></select></p>
-    <p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. Climb the stairs along the wall to the waiting terrace. The moving flight visits two upper landings in turn. Step aboard while it is still. Stay on the steps to ride to the other landing, or wait on the stone platform for its return.</p><p id="stair-view-help">Drag the view to look around the Grand Staircase. On touchscreens, drag the right side above the action buttons.<br><button id="reset-stair-view" type="button" aria-keyshortcuts="V">Reset view (V)</button></p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p></details>
+    <p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. From Ground Landing, descend the fixed stone stairs to Lower Court. The moving flight above visits two upper landings in turn. Step aboard while it is still.</p><p id="stair-view-help">Drag the view to look around the Grand Staircase. On touchscreens, drag the right side above the action buttons.<br><button id="reset-stair-view" type="button" aria-keyshortcuts="V">Reset view (V)</button></p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p>
+    <p><button id="art-credit-toggle" type="button" aria-controls="art-credit-text" aria-expanded="false">Art credits</button><span id="art-credit-text" hidden>Hogwarts lower court stone sculptures
+
+Gryffindor lion
+The seated lion is adapted from “Löwe”, a scan by noe-3d.at of a sandstone sculpture by Fritz Zerritsch outside the Austrian National Library in Vienna.
+Original work  <a href="https://sketchfab.com/3d-models/lowe-4522a4cdc1c14190bf1a8811fa27da32" target="_blank" rel="noopener noreferrer">https://sketchfab.com/3d-models/lowe-4522a4cdc1c14190bf1a8811fa27da32</a>
+CC0 1.0 Universal  <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">https://creativecommons.org/publicdomain/zero/1.0/</a>
+FRIDAY fitted the high-resolution scan to a new limestone base, authored the current stone finish and rebuilt the UVs, shading and geometry for the game.
+
+Ravenclaw eagle
+Adapted from “Eagle Sculpture” by jerryfisher (Jerry Fisher). The scan depicts the circa-1929 Indiana limestone eagle from the former First National Bank in Sioux Falls.
+Original work  <a href="https://sketchfab.com/3d-models/eagle-sculpture-811daf3a66fe4777a2d26b2fca951528" target="_blank" rel="noopener noreferrer">https://sketchfab.com/3d-models/eagle-sculpture-811daf3a66fe4777a2d26b2fca951528</a>
+Archived file  <a href="https://zenodo.org/records/10355041" target="_blank" rel="noopener noreferrer">https://zenodo.org/records/10355041</a>
+Creative Commons Attribution 4.0 International  <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">https://creativecommons.org/licenses/by/4.0/</a>
+FRIDAY adapted the orientation, scale, base and limestone finish, created a new mobile mesh and UV atlas, and baked the sculpted relief, surface colour, occlusion and roughness.
+
+Hufflepuff badger and Slytherin serpent
+Original meshes, posing, plinths and stone finishes by FRIDAY for this game. The lower court grouping and its plinths are original game designs.</span></p>
+  </details>
   <div class="overlay" id="pad" role="group" aria-label="Move Harry"><span id="knob"></span></div>
   <div class="overlay" id="actions" role="group" aria-label="Movement and wand actions">
     <button class="action" id="jump" type="button" aria-label="Jump" aria-keyshortcuts="C"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="m6 10 4.4-1.2 2.7-2.1 2.9 2.5 3.2-3.7M13.1 7.6l-2.3 5.6 4.8 1.3-2.1 4.1m-3.2-5.5-2.8 3.2-4.2-1.6M17 21h4"/></svg><span>Jump</span></button>
@@ -170,6 +198,6 @@ body[data-mode=clean] .overlay{display:none!important}
     const el=document.createElement('script');el.src=runtime;el.onerror=()=>retry(Error('Room code could not load.'));
     document.body.appendChild(el);
   }catch(e){retry(e);}
-})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-c1fa1281cabe9409f10d.js");</script>
+})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-6643f8214a6970814806.js");</script>
 </body>
 </html>
