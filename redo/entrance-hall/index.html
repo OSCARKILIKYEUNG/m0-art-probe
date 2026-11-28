@@ -22,6 +22,11 @@ button:focus-visible,summary:focus-visible{outline:2px solid #f4d8a1;outline-off
 #help p{clear:both;max-width:240px;padding:12px 15px;margin:38px 0 0;background:#232321ec;border-radius:5px;font-size:13px;line-height:1.5}
 #stair-view-help{display:none}body[data-stair-view] #stair-view-help{display:block}#reset-stair-view{font:inherit;color:inherit;background:transparent;border:1px solid #b3a37d;border-radius:3px;padding:3px 9px;margin-top:6px}
 #help p+p{margin:0;padding-top:2px}
+#help[open]{z-index:5;max-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+#help[open] p,#help[open] summary,#help select{touch-action:pan-y}
+#help #graphics-options{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px}
+#graphics-quality{min-height:44px;max-width:100%;font:inherit;font-size:16px;color:#fff5da;background:#332e24;border:1px solid #ab9673;border-radius:4px;padding:4px 7px}
+#graphics-quality:focus-visible{outline:2px solid #f4d8a1;outline-offset:2px}
 #room-note{position:absolute;top:max(14px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:4px 11px;color:#f2e9d8;background:#24251dd9;border-radius:3px;font:16px Georgia,serif;pointer-events:none;text-align:center}
 body[data-phone-view] main[aria-label="Hogwarts Black Lake Crossing"] #room-note{left:max(12px,env(safe-area-inset-left));transform:none}
 #passage{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);min-height:44px;padding:5px 14px;background:#23261ee8;border:1px solid #c3ac80;border-radius:5px;font:14px Georgia,serif}
@@ -68,7 +73,7 @@ body[data-mode=clean] .overlay{display:none!important}
 #school-map small{font:11px system-ui;color:#beb39c}
 #school-map output{display:block;line-height:1.35}#school-map a{display:inline-block;color:#f2d59d;margin-top:8px}#school-map a[hidden]{display:none}
 </style>
-<script type="application/octet-stream" data-stair-packet="common" data-src="stair-f1e7c17cab31c3b23e26.gz"></script>
+<script type="application/octet-stream" data-stair-packet="common" data-src="stair-9979e1bb7f5dc5abc0b3.gz"></script>
 <script type="application/octet-stream" data-stair-packet="G" data-src="stair-01a68f8f247a5256f2af.gz"></script>
 <script type="application/octet-stream" data-stair-packet="F1" data-src="stair-a3fe3832d88cf8108616.gz"></script>
 <script type="application/octet-stream" data-stair-packet="F2" data-src="stair-6c61334bd0bc673d987d.gz"></script>
@@ -88,7 +93,9 @@ body[data-mode=clean] .overlay{display:none!important}
   <div class="overlay" id="room-note" role="status" hidden></div>
   <button class="overlay" id="passage" type="button" hidden></button>
   <button class="overlay" id="open-school-map" type="button" aria-haspopup="dialog" aria-controls="school-map">Map</button>
-  <details class="overlay" id="help"><summary aria-label="Controls">?</summary><p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. Climb the stairs along the wall to the waiting terrace. The moving flight visits two upper landings in turn. Step aboard while it is still. Stay on the steps to ride to the other landing, or wait on the stone platform for its return.</p><p id="stair-view-help">Drag the view to look around the Grand Staircase. On touchscreens, drag the right side above the action buttons.<br><button id="reset-stair-view" type="button" aria-keyshortcuts="V">Reset view (V)</button></p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p></details>
+  <details class="overlay" id="help"><summary aria-label="Controls">?</summary>
+    <p id="graphics-options"><label for="graphics-quality">Graphics</label><select id="graphics-quality" disabled><option value="performance">Performance</option><option value="quality">Quality</option></select></p>
+    <p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. Climb the stairs along the wall to the waiting terrace. The moving flight visits two upper landings in turn. Step aboard while it is still. Stay on the steps to ride to the other landing, or wait on the stone platform for its return.</p><p id="stair-view-help">Drag the view to look around the Grand Staircase. On touchscreens, drag the right side above the action buttons.<br><button id="reset-stair-view" type="button" aria-keyshortcuts="V">Reset view (V)</button></p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p></details>
   <div class="overlay" id="pad" role="group" aria-label="Move Harry"><span id="knob"></span></div>
   <div class="overlay" id="actions" role="group" aria-label="Movement and wand actions">
     <button class="action" id="jump" type="button" aria-label="Jump" aria-keyshortcuts="C"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="m6 10 4.4-1.2 2.7-2.1 2.9 2.5 3.2-3.7M13.1 7.6l-2.3 5.6 4.8 1.3-2.1 4.1m-3.2-5.5-2.8 3.2-4.2-1.6M17 21h4"/></svg><span>Jump</span></button>
@@ -163,6 +170,6 @@ body[data-mode=clean] .overlay{display:none!important}
     const el=document.createElement('script');el.src=runtime;el.onerror=()=>retry(Error('Room code could not load.'));
     document.body.appendChild(el);
   }catch(e){retry(e);}
-})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-35ad27eff2c552f65014.js");</script>
+})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-c1fa1281cabe9409f10d.js");</script>
 </body>
 </html>
