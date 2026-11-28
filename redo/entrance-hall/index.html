@@ -20,6 +20,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid #f4d8a1;outline-off
 #help summary{list-style:none;cursor:pointer;float:right;width:30px;height:30px;border:1px solid #f1deaf7d;border-radius:50%;display:grid;place-items:center;background:#211d1696;font:italic 16px Georgia,serif}
 #help summary::-webkit-details-marker{display:none}
 #help p{clear:both;max-width:240px;padding:12px 15px;margin:38px 0 0;background:#232321ec;border-radius:5px;font-size:13px;line-height:1.5}
+#stair-view-help{display:none}body[data-stair-view] #stair-view-help{display:block}#reset-stair-view{font:inherit;color:inherit;background:transparent;border:1px solid #b3a37d;border-radius:3px;padding:3px 9px;margin-top:6px}
 #help p+p{margin:0;padding-top:2px}
 #room-note{position:absolute;top:max(14px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:4px 11px;color:#f2e9d8;background:#24251dd9;border-radius:3px;font:16px Georgia,serif;pointer-events:none;text-align:center}
 body[data-phone-view] main[aria-label="Hogwarts Black Lake Crossing"] #room-note{left:max(12px,env(safe-area-inset-left));transform:none}
@@ -67,15 +68,15 @@ body[data-mode=clean] .overlay{display:none!important}
 #school-map small{font:11px system-ui;color:#beb39c}
 #school-map output{display:block;line-height:1.35}#school-map a{display:inline-block;color:#f2d59d;margin-top:8px}#school-map a[hidden]{display:none}
 </style>
-<script type="application/octet-stream" data-stair-packet="common" data-src="stair-5f21b5b175240b843627.gz"></script>
-<script type="application/octet-stream" data-stair-packet="G" data-src="stair-8ab73f26ff775b12f0a6.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F1" data-src="stair-5cfb77097d63af5205cc.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F2" data-src="stair-439a6d8f796cb4ecea03.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F3" data-src="stair-cc53b1c06690ecb71c39.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F4" data-src="stair-462ad572f03ceec2aed6.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F5" data-src="stair-68d4ce2c35e157dd44d5.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F6" data-src="stair-793c33f81c82bba815c4.gz"></script>
-<script type="application/octet-stream" data-stair-packet="F7" data-src="stair-b635358764a2d9df2bf7.gz"></script>
+<script type="application/octet-stream" data-stair-packet="common" data-src="stair-f1e7c17cab31c3b23e26.gz"></script>
+<script type="application/octet-stream" data-stair-packet="G" data-src="stair-01a68f8f247a5256f2af.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F1" data-src="stair-a3fe3832d88cf8108616.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F2" data-src="stair-6c61334bd0bc673d987d.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F3" data-src="stair-05f112856d16ca68c0e0.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F4" data-src="stair-8e38e701c28e2b781352.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F5" data-src="stair-8177324444f57b071b82.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F6" data-src="stair-9397ac4ea3bf9523a41f.gz"></script>
+<script type="application/octet-stream" data-stair-packet="F7" data-src="stair-1564cc9e68c0845f1ef3.gz"></script>
 <script type="application/octet-stream" id="school-surface-data" data-src="surface-01e2f421eb52602aee7b.webp"></script>
 <script type="application/octet-stream" id="lake-castle-surface-data" data-src="surface-36838c76b76d9f118ccf.webp"></script>
 <script type="application/octet-stream" id="grounds-surface-data" data-src="surface-23556b50f12497ef80a0.webp"></script>
@@ -87,7 +88,7 @@ body[data-mode=clean] .overlay{display:none!important}
   <div class="overlay" id="room-note" role="status" hidden></div>
   <button class="overlay" id="passage" type="button" hidden></button>
   <button class="overlay" id="open-school-map" type="button" aria-haspopup="dialog" aria-controls="school-map">Map</button>
-  <details class="overlay" id="help"><summary aria-label="Controls">?</summary><p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. Climb the stairs along the wall to the waiting terrace. The moving flight visits two upper landings in turn. Step aboard while it is still. Stay on the steps to ride to the other landing, or wait on the stone platform for its return.</p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p></details>
+  <details class="overlay" id="help"><summary aria-label="Controls">?</summary><p>Drag anywhere on the left to move. Tap the floor to walk, or use WASD or the arrow keys. Tap Run to switch between running and walking, or hold R to run. C jumps. Shift rolls.</p><p>The oak doors lead to the Great Hall and Professor Dumbledore. The west arch leads to the Grand Staircase. Climb the stairs along the wall to the waiting terrace. The moving flight visits two upper landings in turn. Step aboard while it is still. Stay on the steps to ride to the other landing, or wait on the stone platform for its return.</p><p id="stair-view-help">Drag the view to look around the Grand Staircase. On touchscreens, drag the right side above the action buttons.<br><button id="reset-stair-view" type="button" aria-keyshortcuts="V">Reset view (V)</button></p><p>J fires Basic Cast. Use 1 or Space for Flipendo, 2 for Wingardium Leviosa and 3 for Lumos. Drag an attack or a directional spell to aim. Q uses Ultimate. Six Basic Cast impacts refill its ring.</p></details>
   <div class="overlay" id="pad" role="group" aria-label="Move Harry"><span id="knob"></span></div>
   <div class="overlay" id="actions" role="group" aria-label="Movement and wand actions">
     <button class="action" id="jump" type="button" aria-label="Jump" aria-keyshortcuts="C"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="m6 10 4.4-1.2 2.7-2.1 2.9 2.5 3.2-3.7M13.1 7.6l-2.3 5.6 4.8 1.3-2.1 4.1m-3.2-5.5-2.8 3.2-4.2-1.6M17 21h4"/></svg><span>Jump</span></button>
@@ -109,7 +110,7 @@ body[data-mode=clean] .overlay{display:none!important}
 <script type="application/octet-stream" id="portrait-sir-cadogan-frames-data" data-src="painting-sir-cadogan-frames-370a8fe33c8b4f47ae0f.webp"></script>
 <script type="application/octet-stream" id="portrait-fat-lady-gif-data" data-src="painting-fat-lady-671c837b57601d4d7535.gif"></script>
 <script type="application/octet-stream" id="portrait-sir-cadogan-gif-data" data-src="painting-sir-cadogan-0049f575b301cf45c11b.gif"></script>
-<script type="application/json" id="character-files">{"figure-data":{"length":11587390,"files":["figure-1798a71e6ff9c03a12e9.bin","figure-c1402a095f3935dd1d1d.bin","figure-9d98f594f9893b7dfe73.bin","figure-5111d76cced73714c7b6.bin","figure-65c49ed5a006893ed053.bin","figure-9cce8adf39781801ffcc.bin","figure-8bf2dd9ac3ccf3bb66e2.bin","figure-580b1d49bbf6d3fda788.bin","figure-c0132686cf9def0c9ef8.bin","figure-bcb347124d06fb7c85ed.bin","figure-3105950be3183fbe4477.bin","figure-bf432d8441366c94bd80.bin","figure-aebb0de7f02cf69407dd.bin","figure-d5424bf7be70abeabb1c.bin","figure-0db03c651fe2529e6093.bin","figure-1c389356ff79b0505e59.bin","figure-1dc933fe05d0edbd426c.bin","figure-b0034c9d65131a493320.bin","figure-eb3a2fe5f78f27f0b872.bin","figure-d53034263b2f24834a38.bin","figure-b4845bfd49b1756b72f1.bin","figure-54bd4048fe6ad57795e5.bin","figure-1544650cfdb3d7517f19.bin"]},"headmaster-data":{"length":10889396,"files":["figure-d630edd656b0fb42a7bd.bin","figure-b8a6a5a242a8b667b0b5.bin","figure-fd1af706ab56a4d9607c.bin","figure-e23400606d5e92538615.bin","figure-5f5b503bfa7218270ede.bin","figure-d70f44ce8dbe30fdf013.bin","figure-2f490ed2d35c3929a761.bin","figure-f53ca19faf42df61a4d6.bin","figure-6a465a45168c3bca2bd6.bin","figure-7468aab64e073166bf55.bin","figure-7254530fbacc3eb797c7.bin","figure-f61b7bf79b4104556cd8.bin","figure-55f6b5352cf5e8bea14c.bin","figure-625029189f7eda661058.bin","figure-a89ca895a19829aa0409.bin","figure-4c3fddfc8b39f7bf7af5.bin","figure-af9435406ece925f7642.bin","figure-a070835b705ec5d61760.bin","figure-e719be2c59dec06b8355.bin","figure-3c2e0eefe00b00c279a2.bin","figure-0d2f9bab29efd00fb020.bin"]}}</script>
+<script type="application/json" id="character-files">{"figure-data":{"length":6971060,"files":["figure-41b25366cd4d829849cb.bin","figure-57cc5bf4eda9aa3e5d8e.bin","figure-e90b67e19067d3e4ae42.bin","figure-e6c6173e96a0462ec503.bin","figure-a12ed66f5bc8c10b55c9.bin","figure-893d4202f58f8683b657.bin","figure-80fe0c5b0368bcc3c50c.bin","figure-b63cf19858f28b4969c3.bin","figure-a2a099085978133f8e47.bin","figure-63788808312a44ed9786.bin","figure-cb77cd8d9c807d989dd4.bin","figure-d55bbaf521d1fd39d5e3.bin","figure-c30be86c6ab95cfae66f.bin","figure-f7e3423b7fc1857b0513.bin"]},"headmaster-data":{"length":4581949,"files":["figure-f1d27afd47b5846587f2.bin","figure-838e1ee46dcee9d00d75.bin","figure-c8e7c814ed4c927eed90.bin","figure-da42b8fda41e48b585ac.bin","figure-4e2bff90b6b73325cf36.bin","figure-5266d16da4f898e097f9.bin","figure-2b3006daa6476fd0aa66.bin","figure-141b2372eb65c7d0a39d.bin","figure-42229de0d8efd801134e.bin"]}}</script>
 <script>(async function boot(assets,width,runtime){
   const status=document.getElementById('loading');
   async function download(asset,progress){
@@ -162,6 +163,6 @@ body[data-mode=clean] .overlay{display:none!important}
     const el=document.createElement('script');el.src=runtime;el.onerror=()=>retry(Error('Room code could not load.'));
     document.body.appendChild(el);
   }catch(e){retry(e);}
-})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-f70d91be4882d51d9577.js");</script>
+})(JSON.parse(document.getElementById("character-files").textContent),524288,"hall-35ad27eff2c552f65014.js");</script>
 </body>
 </html>
